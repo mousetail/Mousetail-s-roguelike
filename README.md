@@ -3,7 +3,7 @@ A roguelike I have been working on. Link to blog: http://www.gamedev.net/blog/20
 
 Work started in august 2014
 
-Most of the components and basic arcitecture can be found in design folder.
+Most of the components and basic architecture can be found in design folder.
 
 Instructions for running:
 You need python 2.7 installed, and a recent pygame distribution. Open src/3d_render.py with pythonw.exe. It should work.
