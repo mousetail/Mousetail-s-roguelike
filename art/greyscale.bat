@@ -1,0 +1,1 @@
+convert spritesheet_iso1.png -channel RGBA -matte -colorspace gray spritesheet_grey_1.png
