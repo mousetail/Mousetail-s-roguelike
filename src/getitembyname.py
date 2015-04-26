@@ -73,9 +73,6 @@ class ItemStore:
 itemRandomizer=ItemStore()
 ri=itemRandomizer.register_item
 rm=itemRandomizer.register_item
-@ri("short sword",5,0,99,(ITM_ITEM, ITM_WEAPON))
-def short_sword(position, world, cage):
-    return items.Weapon(position,cage.lookup("shortsword.png"),cage, world, "sword","swords",5,1)
 #@ri("healing potion",5,0,99)
 #def healing_potion(position, world, cage):
 #    return items.HealingPotion(position,cage.lookup("potion.png"), cage, world, "red potion", "red potions", 2)

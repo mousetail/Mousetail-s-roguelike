@@ -233,7 +233,7 @@ class Generator(Grid):
             if len(self.rooms)>0:
                 minroom=min(self.rooms,key=lambda r2: room.distance(r2))
                 #print "FINDING PATH (OUTSIDE)"
-                thispath=self.findpath(room.center(),room2.center(),(room,room2))
+                thispath=self.findpath(room.center(),minroom.center(),(room,minroom))
                 #print "2}FOUND A PATH"
             if isinstance(thispath,list):
                 self.rooms.append(room)
@@ -444,8 +444,9 @@ class Generator(Grid):
         if (not points) or points[-1]!=pointb:
             return False
         else:
-            for i in points:
+            pass
+            #for i in points:
                 
-                self[i]=self.objectdefinitions["paths"][0]
+                #self[i]=self.objectdefinitions["paths"][0]
         return points
             #print "finished a room"

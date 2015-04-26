@@ -101,14 +101,7 @@ class Armor(Item):
     __isarmor__=True
     defence=(1,)*8
     slot=""
-class Weapon(Item):
-    __isweapon__=True
-    damage=(0,0,0,0,0,0,0,0)
-    twohanded=False
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, damage=None):
-        Item.__init__(self, position, image, cage, world, name, pname, weight)
-        if damage:
-            self.damage=damage
+
 class Food(Item):
     def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, nutrition=0):
         Item.__init__(self, position, image, cage, world, name, pname, weight)

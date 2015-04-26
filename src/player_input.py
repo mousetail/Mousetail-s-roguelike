@@ -8,6 +8,7 @@ import random
 import generator
 import itertools
 from constants import *
+from sys import stderr
 
 
 class FakeList(object):
@@ -123,7 +124,7 @@ class PlayerObject(StaticObject):
         self.say()
     def wear(self, item, saystuff=True, dostuff=True):
         slot=""
-        if isinstance(item,items.Weapon):
+        if hasattr(item, "__isweapon__"):
             slot=None
             for i in self.body.weapon_slots:
                 if self.equipment[i]==None:
@@ -131,7 +132,7 @@ class PlayerObject(StaticObject):
             if not slot:
                 if saystuff:
                     self.say("you don't have a hand free")
-        elif isinstance(item, items.Armor):
+        elif hasattr(item, "__isarmor__"):
             if not item.slot:
                 if saystuff:
                     self.say(item.name+" is not a valid piece of armor")
@@ -386,9 +387,21 @@ class PlayerObject(StaticObject):
                             else:
                                 self.say("try again: ")
                                 redraws+=1
+                elif self.input_mode=="throw1":
+                    if event.type==pygame.KEYDOWN:
+                        self.say(event.unicode)
+                        if event.key==pygame.K_RETURN:
+                            self.input_mode="normal"
+                            self.say("whatever")
+                            redraws+=1
+                        else:
+                            itm=self.removebyletter(event.unicode,False,True,1)
+                            if itm and itm[0] and hasattr(itm, "throw") and hasattr(itm, "throwEvent"):
+                                self.redictInput(itm, itm.throwEvent())
+                            else:
+                                self.say("try again:")
+                        redraws+=1
                 elif self.input_mode=="use":
-                    #-----------------------------------------I WANT TO ADD MORE COMplicATED BEHAVIOR FOR THIS
-                    #TODO: allow advanced methods
                     if event.type==pygame.KEYDOWN:
                         self.say(event.unicode)
                         if event.key==pygame.K_RETURN:
@@ -622,9 +635,20 @@ class PlayerObject(StaticObject):
                 if not f:
                     self.say("there is nothing to pick up!")
                 actions+=100
+            elif action.typ=="throw":
+                
+                if "letter" in action.data:
+                    itm=self.removebyletter(action.data["letter"],False, True, 1)
+                    itm.owner=self
+                    itm[0].throw(action.data["direction"])
+                elif "item" in action.data:
+                    itm=action.data["item"]
+                    itm.owner=self
+                    itm.throw(action.data["direction"])
+                actions+=100
             elif action.typ=="other" or action.typ=="costom":
                 actions+=action.data["action"](action)
-                    
+                 
                 
                 
                 
@@ -650,7 +674,10 @@ class PlayerObject(StaticObject):
     def flag(self, flag):
         self.status_messages.append(flag)
     def unflag(self, flag):
-        self.status_messages.remove(flag)
+        if flag in self.status_messages:
+            self.status_messages.remove(flag)
+        else:
+            print >>stderr, "ERROR, FLAG NOT IN STATUS MESSAGES (player_input.PlayerObject.unflag(flag))"
 class MonsterObject(PlayerObject):
     
     def receiveEvent(self, event):

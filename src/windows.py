@@ -210,7 +210,10 @@ class InventoryWindow(StatWindow):
         ypos=-self.scroll
         if self.tab=="inv":
             for item in self.trackmonster.inventory:
-                self.drawsurface.blit(tm.inventory[item][0].image,[5,ypos])
+                if tm.inventory[item][0].image.get_height()==64:
+                    self.drawsurface.blit(tm.inventory[item][0].image,[5,ypos])
+                else:
+                    self.drawsurface.blit(tm.inventory[item][0].image,[5,ypos-32])
                 if len(tm.inventory[item])==1:
                     nm=tm.inventory[item][0].name
                 else:

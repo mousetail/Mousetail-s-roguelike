@@ -53,6 +53,8 @@ FLAG_HUNGRY_2=4
 FLAG_FAST=5
 FLAG_FAST_2=6
 
+from pygame.locals import *
+
 flag_uncode={0:"burdened",1:"full",2:"very full", 3:"hungry", 4:"very hungry", 5:"fast", 6: "very fast"}
 
 def emergencyReturn(function, r):
