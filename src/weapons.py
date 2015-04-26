@@ -12,6 +12,7 @@ class Weapon(items.Item):
     damage=(0,0,0,0,0,0,0,0)
     twohanded=False
     
+
     speed=800
     
     range=8
@@ -21,9 +22,7 @@ class Weapon(items.Item):
         if damage:
             self.damage=damage
         
-        
-    
-    
+
 
 
 @getitembyname.ri("short sword",1,0,99,(ITM_ITEM, ITM_WEAPON))
@@ -32,4 +31,5 @@ def short_sword(position, world, cage):
 @getitembyname.ri("dagger",5,0,99,(ITM_ITEM, ITM_WEAPON))
 def dagger(position, world, cage):
     return Weapon(position,cage.lookup("dagger.png"),cage, world, "dagger","daggers",3,0.5)
+
     
