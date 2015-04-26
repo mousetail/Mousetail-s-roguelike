@@ -77,7 +77,7 @@ class Displayer_3d():
         sys.stdout=self.windows[-1]
         self.windows.append(windows.InventoryWindow([300,(self.screen.get_height()-32)/2],[self.screen.get_width()-300,(self.screen.get_height()-32)/2+32],
                                                     self.font, self.world.player))
-        #self.windows.append(windows.CombatDebugWindow([100,200],[50,50],self.font,self.world.player))
+        self.windows.append(windows.CombatDebugWindow([100,200],[50,50],self.font,self.world.player))
         
         self.world.player.welcomeMessage()
         

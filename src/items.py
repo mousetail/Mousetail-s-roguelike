@@ -5,6 +5,7 @@ Created on 1 jan. 2015
 '''
 import player_input
 import generator
+from constants import *
 
 
 
@@ -19,6 +20,7 @@ class EventScheduler():
         self.args=args
     def gameTurn(self):
         self.event(*self.args)
+        self.world.objects.remove(self)
         return 100
 def getfirstemptyletter(dictionary):
     for i in alphabet:
@@ -41,6 +43,8 @@ class Item(player_input.StaticObject):
     pname="invalid items"
     image=None
     weight=0
+    range=1
+    speed=100
 
     def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None): #Assumed to be a class level attribute if not passed
         '''
@@ -48,6 +52,11 @@ class Item(player_input.StaticObject):
         '''
         player_input.StaticObject.__init__(self, position, image, cage, world, 0, False)
         self.owner=None
+        
+        self.isflying=False
+        self.direction=(0,0)
+        self.action_points=0
+        
         if name:
             self.name=name
         if pname:
@@ -75,6 +84,41 @@ class Item(player_input.StaticObject):
             return False
     def getWeight(self):
         return self.weight;
+    def throw(self, direction):
+        assert self in self.world.objects
+        self.direction=direction
+        self.isflying=True
+        self.turnsinair=0
+        return 50+12*self.weight
+    
+    def throwEvent(self, event):
+        if event.type==KEYDOWN:
+            if event.key==K_DOWN:
+                return "normal", Command("throw",item=self,direction=(-1,0))
+            elif event.key==K_UP:
+                return "normal", Command("throw",item=self,direction=(1,0))
+            elif event.key==K_LEFT:
+                return "normal", Command("throw",item=self,direction=(0,-1))
+            elif event.key==K_RIGHT:
+                return "normal", Command("throw",item=self, direction=(0,1))
+        return self.throwEvent, None
+    
+    def gameTurn(self):
+        if self.isflying:
+            newposition=self.position[0]+self.direction[0],self.position[1]+self.direction[1]
+            if self.world.grid.hasindex(newposition) and (not self.world.grid[newposition] in WALLS):
+                self.position=newposition
+            else:
+                self.isflying=False
+                
+                return 100
+            
+            
+            self.turnsinair+=1
+            if self.turnsinair >= self.range:
+                self.isflying=False
+            
+        return  100
 class Potion(Item):
     imagename="potion.png"
     name="potion"

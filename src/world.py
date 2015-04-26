@@ -55,11 +55,10 @@ class World(object):
         self.newround=False
     def update(self):
         self.dirty=False
-        redraw=False
         for i in self.objects:
-            redraw=redraw or i.update()
+            if hasattr(i, "update"):
+                self.dirty=self.dirty or i.update()
         deadobj=[]
-        self.dirty=redraw
         for obj in self.objects:
             if hasattr(obj, "dead") and obj.dead:
                 deadobj.append(obj)
@@ -101,14 +100,18 @@ class World(object):
                 self.objindex=0
                 if not self.newround:
                     
-                    self.dirty=True
                     for i in self.objects:
                         if hasattr(i,"action_points"):
                             if hasattr(i, "getspeed"):
                                 i.action_points+=i.getspeed()
                             else:
                                 i.action_points+=i.speed
-                
+                else:
+                    
+                    self.dirty=True
+                    self.newround=False
+                    
+                    break
                 
                 self.newround=False
             elif isinstance(i,player_input.PlayerObject):
@@ -122,6 +125,7 @@ class World(object):
                 
                 i.receiveEvent(event)
     def spawnItem(self, item):
+        item.owner=self
         self.objects.append(item)     
 
 if __name__=="__main__":

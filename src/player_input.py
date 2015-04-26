@@ -57,8 +57,7 @@ class StaticObject(object):
             
     def receiveEvent(self, event):
         pass
-    def update(self):
-        return False, False
+    
     def __repr__(self):
         return ("<"+type(self).__name__+" at "+str(self.position)+">")
     
@@ -89,7 +88,7 @@ class PlayerObject(StaticObject):
     
     def __init__(self,position,body,cage,world, speed=100, name=None):
         self.speed=speed
-        
+        self.dirty=False
         self.world=world
         self.visible=generator.Grid(self.world.grid_size,False)
         self.action_points=0
@@ -280,6 +279,7 @@ class PlayerObject(StaticObject):
             self.say("B}You feel strong")
     def say(self, what=""):
         """send a message to the player, to be displayed in the log"""
+        self.dirty=True
         print what
     def kill(self, message):
         self.say("1}you die")
@@ -288,7 +288,6 @@ class PlayerObject(StaticObject):
         self.dead=True
     def update(self):
         actions=0
-        redraws=0
         if self.events:
             self.old_postion=self.position[:]
             for event in self.events:
@@ -296,7 +295,6 @@ class PlayerObject(StaticObject):
                     if event.type==pygame.KEYDOWN:
                         
                         actions+=1
-                        redraws+=1
                         if event.key==pygame.K_UP:
                             self.actions.append(Command("move",{"direction":(1,0)}))
                         elif event.key==pygame.K_DOWN:
@@ -335,7 +333,10 @@ class PlayerObject(StaticObject):
                             self.actions.append(Command("close"))
                         elif event.key==pygame.K_COMMA:
                             self.actions.append(Command("pickup"))
-    
+                        elif event.key==pygame.K_t:
+                            self.input_mode="throw1"
+                            actions-=1
+                            self.say("what would you like to throw?")
                         else:
                             actions-=1
                 elif self.input_mode=="drop":
@@ -355,7 +356,6 @@ class PlayerObject(StaticObject):
                             
                         
                         actions+=1
-                        redraws+=1
                 elif self.input_mode=="wear":
                     
                     if event.type==pygame.KEYDOWN:
@@ -363,7 +363,6 @@ class PlayerObject(StaticObject):
                         if event.key==pygame.K_RETURN:
                             self.input_mode="normal"
                             self.say("whatever")
-                            redraws+=1
                         else:
                             itm=self.removebyletter(event.unicode,False,True,1)
                             if itm and itm[0] and self.wear(itm[0], True, False):
@@ -371,14 +370,12 @@ class PlayerObject(StaticObject):
                                 self.input_mode="normal"
                             else:
                                 self.say("try again:")
-                        redraws+=1
                 elif self.input_mode=="remove":
                     if event.type==pygame.KEYDOWN:
                         self.say(event.unicode)
                         if event.key==pygame.K_RETURN:
                             self.input_mode="normal"
                             self.say("whatever")
-                            redraws+=1
                         else:
                             itm=self.removearmorbyletter(event.unicode,False, True)
                             if itm:
@@ -386,21 +383,20 @@ class PlayerObject(StaticObject):
                                 self.actions.append(Command("remove",letter=event.unicode))
                             else:
                                 self.say("try again: ")
-                                redraws+=1
                 elif self.input_mode=="throw1":
                     if event.type==pygame.KEYDOWN:
                         self.say(event.unicode)
                         if event.key==pygame.K_RETURN:
                             self.input_mode="normal"
                             self.say("whatever")
-                            redraws+=1
                         else:
                             itm=self.removebyletter(event.unicode,False,True,1)
-                            if itm and itm[0] and hasattr(itm, "throw") and hasattr(itm, "throwEvent"):
-                                self.redictInput(itm, itm.throwEvent())
-                            else:
+                            if itm and itm[0] and hasattr(itm[0], "throw") and hasattr(itm[0], "throwEvent"):
+                                self.redictInput(itm[0].throwEvent)
+                            elif not itm or not itm[0]:
                                 self.say("try again:")
-                        redraws+=1
+                            else:
+                                self.say("you can't throw a "+itm[0].name)
                 elif self.input_mode=="use":
                     if event.type==pygame.KEYDOWN:
                         self.say(event.unicode)
@@ -409,34 +405,28 @@ class PlayerObject(StaticObject):
                             self.say("whatever")
                             if random.randint(0,100)==33:
                                 self.say("I am just trying to help...")
-                            redraws+=1
                         else:
                             itm=self.removebyletter(event.unicode,False, True, 1)
                             if itm:
                                 self.actions.append(Command("use",item=itm[0]))
                                 self.input_mode="normal"
                                 actions+=1
-                                redraws+=1
                             else:
                                 self.say("try again: ")
-                                redraws+=1
                 elif self.input_mode=="eat":
                     if event.type==pygame.KEYDOWN:
                         self.say(event.unicode)
                         if event.key==pygame.K_RETURN:
                             self.input_mode="normal"
                             self.say("whatever")
-                            redraws+=1
                         else:
                             itm=self.removebyletter(event.unicode,False, True, 1)
                             if itm and itm[0]:
                                 self.actions.append(Command("eat",letter=event.unicode))
                                 self.input_mode="normal"
                                 actions+=1
-                                redraws+=1
                             else:
-                                self.say("try again: ")
-                                redraws+=1        
+                                self.say("try again: ")      
                 elif callable(self.input_mode):
                     if event.type!=pygame.KEYDOWN or event.key!=pygame.K_ESCAPE:
                         output=self.input_mode(event)
@@ -450,7 +440,11 @@ class PlayerObject(StaticObject):
                     pass #Relates to requestmoreinfo function
                             
         self.events[:]=[]
-        return bool(redraws)
+        olddirty=self.dirty
+        self.dirty=False
+        
+        
+        return olddirty
     def requestmoreinfo(self, callback, infotype, **kwars):
         if infotype is not None:
             self.input_mode=(infotype, callback)
@@ -504,33 +498,40 @@ class PlayerObject(StaticObject):
                     return j
         self.update_storage_fullness()
         return False
-    def drop(self, itm):
-        for i in itm:
-            i.position=self.position[:]
-            
-            i.owner=self.world
-        self.world.objects.extend(itm)
-        if len(itm)==1:
-            self.say("dropped a "+itm[0].name)
-            return True
+    def drop(self, itm, saystuff=True):
+        if isinstance(itm, list) or isinstance(itm, tuple):
+            for i in itm:
+                i.position=self.position[:]
+                
+                i.owner=self.world
+            self.world.objects.extend(itm)
+            if len(itm)==1:
+                if saystuff:
+                    self.say("dropped a "+itm[0].name)
+                return True
+            else:
+                if saystuff:
+                    self.say("dropped "+str(len(itm))+" "+itm[0].pname)
+                return True
         else:
-            self.say("dropped "+str(len(itm))+" "+itm[0].pname)
+            self.removebyidentity(itm)
+            itm.position=self.position[:]
+            self.world.spawnItem(itm)
+            if saystuff:
+                self.say("dropped a "+itm.name)
             return True
-    
     def redictInput(self, method):
         self.input_mode=method
     def AIturn(self):
         return True
     def gameTurn(self):
         actions=0
-        redraws=0
         if self.actions:
             action=self.actions.pop()
             if action.typ=="move":
                 self.old_position=self.position[:]
                 
                 actions+=100
-                redraws+=1
                 self.old_position[0]+=action.data["direction"][0]
                 self.old_position[1]+=action.data["direction"][1]
                 for i in self.world.objects:
@@ -597,7 +598,6 @@ class PlayerObject(StaticObject):
                     if self.world.grid[i] in generator.door_pair_reverse:
                         self.world.grid[i]=generator.door_pair_reverse[self.world.grid[i]]
                         self.say("you open the door")
-                        redraws+=1
                         actions+=100
                         wk=True
                         break
@@ -607,7 +607,6 @@ class PlayerObject(StaticObject):
                 if not wk:
                     
                     self.say("There is no door here")
-                redraws+=1
                 actions+=100
             elif action.typ=="close":
                 wk=False
@@ -615,24 +614,24 @@ class PlayerObject(StaticObject):
                     if self.world.grid[i] in generator.door_pairs:
                         self.world.grid[i]=generator.door_pairs[self.world.grid[i]]
                         self.say("you close the door")
-                        redraws+=1
                         actions+=100
                         wk=True
                         break
                 if not wk:
                     self.say("There is no door here")
                     actions-=1
-                redraws+=1
             elif action.typ=="pickup":
                 f=False
                 for i in self.world.objects:
-                    if hasattr(i,"position") and i is not self and i.position==self.position:
+                    if hasattr(i,"position") and i is not self and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
                         if isinstance(i,items.Item):
                             self.world.objects.remove(i)
                             self.addtoinventory(i)
                             f=True
                             break
+                    
                 if not f:
+                    
                     self.say("there is nothing to pick up!")
                 actions+=100
             elif action.typ=="throw":
@@ -640,12 +639,13 @@ class PlayerObject(StaticObject):
                 if "letter" in action.data:
                     itm=self.removebyletter(action.data["letter"],False, True, 1)
                     itm.owner=self
-                    itm[0].throw(action.data["direction"])
+                    self.drop(itm, False)
+                    actions+=itm[0].throw(action.data["direction"])
                 elif "item" in action.data:
                     itm=action.data["item"]
-                    itm.owner=self
-                    itm.throw(action.data["direction"])
-                actions+=100
+                    self.drop(itm, False)
+                    actions+=itm.throw(action.data["direction"])
+                
             elif action.typ=="other" or action.typ=="costom":
                 actions+=action.data["action"](action)
                  

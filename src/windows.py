@@ -289,7 +289,7 @@ class CombatDebugWindow(BaseWindow):
             #print i[:4]
             
             
-            self.drawsurface.fill([[255,255,255],[100,100,100],[200,200,200],[100,100,200]][j], i[:4])
+            self.drawsurface.fill([random.choice(pygame.color.THECOLORS.values()),[100,100,100],[200,200,200],[100,100,200]][j], i[:4])
             j+=1
             j%=4
         if hasattr(body, "lastattackspot"):
