@@ -43,7 +43,7 @@ class HumanBody(object):
     weapon_slots=["left hand","right hand"]
     def updatemaxhealth(self):
         
-        self.maxhealth=(self.mind.getstat("constitution")+2)**2
+        self.maxhealth=(self.getstat("constitution")+2)**2
     
     drops=[(1,"meat")]
     def drop(self):
@@ -92,11 +92,14 @@ class HumanBody(object):
                 self.mind.visible[i]=2
         
     def updatemaxweight(self):
-        self.maxweight=17+(3**self.mind.getstat("strength"))
+        self.maxweight=17+(3**self.getstat("strength"))
     def update(self):
         self.health+=0.01
         if self.health>self.maxhealth:
             self.health=self.maxhealth
+    def getstat(self, stat):
+        return self.mind.getstat(stat)
+    
     def dodamage(self, region, damage, damagetype, message, countarmor=True):
         if self.health>0:
             d=damage*self.attack_zones[region][4][damagetype]
@@ -113,7 +116,12 @@ class HumanBody(object):
                 #kilowicking
         else:
             pass
-    def attack(self, other):
+    
+    def attack(self, other, weapon=None):
+        
+        #TODO: find a inheritence safe-way to call this method when one member isn't a instance of the class
+        #WONT RUN RIGHT NOW
+        
         otherbody=other.body
         max_height=self.size*self.max_attack_height_ratio
         if self.target in otherbody.attack_zones and otherbody.attack_zones[self.target][1]<=max_height:
@@ -126,7 +134,7 @@ class HumanBody(object):
         if target_center[1]>=max_height-3:
             target_center[1]=max_height-3
         rotation=random.random()*2*math.pi
-        distance=(random.random()**2)*(100.0/(self.mind.getstat("accuracy")))
+        distance=(random.random()**2)*(100.0/(self.getstat("accuracy")))
         position=[target_center[0]+distance*math.cos(rotation),target_center[1]+distance*math.sin(rotation)]
         #REMOVE LATER
         otherbody.lastattackspot=position
@@ -139,15 +147,18 @@ class HumanBody(object):
              and otherbody.attack_zones[bodypart][1]<position[1]<(otherbody.attack_zones[bodypart][1]+otherbody.attack_zones[bodypart][3]):
                 hit=bodypart
         if hit:
-            damage=[((self.mind.getstat("level")+random.random()
-                    *self.mind.getstat("level"))),0,0,0,0,0,0,0]
+            damage=[((self.getstat("level")+random.random()
+                    *self.getstat("level"))),0,0,0,0,0,0,0]
             if self.mind.equipment[self.weapon_slots[0]]:
-                sword=self.mind.equipment[self.weapon_slots[0]]
+                if weapon==None:
+                    sword=self.mind.equipment[self.weapon_slots[0]]
+                else:
+                    sword=weapon
                 if isinstance(sword.damage,int):
-                    damage[0]+=sword.damage*self.mind.getstat("level")*random.random()
+                    damage[0]+=sword.damage*self.getstat("level")*random.random()
                 else:
                     for i in range(len(sword.damage)):
-                        damage[i]+=sword.damage[i]*self.mind.getstat("level")*random.random()
+                        damage[i]+=sword.damage[i]*self.getstat("level")*random.random()
             for i in range(len(damage)):
                 other.body.dodamage(hit,damage[i],i,self.name)
             self.mind.say("you hit the "+other.name+"'s "+hit)

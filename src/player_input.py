@@ -10,6 +10,8 @@ import itertools
 from constants import *
 from sys import stderr
 
+import items
+
 
 class FakeList(object):
     def append(self,what):
@@ -34,35 +36,10 @@ class ObjectSpawner(object):
                 
         return 300
 
-class StaticObject(object):
-    def __init__(self,position,image, cage=None,world=None, speed=0, recieveevent=False):
-        self.position=list(position)
-        #print "-----------------------------------------------"
-        #print position
-        #print position[1]-position[0]
-        self.image=image
-        self.cage=cage
-        #if not self.image:
-        #    print "didn't get a image"
-        if recieveevent:
-            self.events=[]
-        else:
-            self.events=FakeList()
-    def draw(self,screen,position):
-        if self.image and self.image.get_height()==128:
-            screen.blit(self.image,(position[0],position[1]-32))
-        elif self.image:
-            
-            screen.blit(self.image,(position[0],position[1]))
-            
-    def receiveEvent(self, event):
-        pass
-    
-    def __repr__(self):
-        return ("<"+type(self).__name__+" at "+str(self.position)+">")
+
     
 
-class PlayerObject(StaticObject):
+class PlayerObject(items.StaticObject):
     '''
     A class that represents a player
     
@@ -105,12 +82,13 @@ class PlayerObject(StaticObject):
         self.status_messages=[]
         self.body=body(self, world)
         self.body.updatemaxweight()
+        self.events=[]
         self.fullness=1000 #BASE 1000
         if name:
             self.name=name
         else:
             self.name=self.body.name
-        StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
+        items.StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
     def welcomeMessage(self):
         
         self.say("B}Welcome to Mousetail's roguelike")
@@ -638,13 +616,12 @@ class PlayerObject(StaticObject):
                 
                 if "letter" in action.data:
                     itm=self.removebyletter(action.data["letter"],False, True, 1)
-                    itm.owner=self
                     self.drop(itm, False)
-                    actions+=itm[0].throw(action.data["direction"])
+                    actions+=itm[0].throw(self,action.data["direction"])
                 elif "item" in action.data:
                     itm=action.data["item"]
                     self.drop(itm, False)
-                    actions+=itm.throw(action.data["direction"])
+                    actions+=itm.throw(self,action.data["direction"])
                 
             elif action.typ=="other" or action.typ=="costom":
                 actions+=action.data["action"](action)
@@ -716,7 +693,6 @@ class MonsterObject(PlayerObject):
         
         return PlayerObject.update(self)
 
-import items
 import monster_body
 import getitembyname
 

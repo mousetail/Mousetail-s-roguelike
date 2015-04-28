@@ -3,12 +3,33 @@ Created on 1 jan. 2015
 
 @author: Maurits
 '''
-import player_input
 import generator
 from constants import *
 
 
-
+class StaticObject(object):
+    def __init__(self,position,image, cage=None,world=None, speed=0, recieveevent=False):
+        self.position=list(position)
+        #print "-----------------------------------------------"
+        #print position
+        #print position[1]-position[0]
+        self.image=image
+        self.cage=cage
+        #if not self.image:
+        #    print "didn't get a image"
+        
+    def draw(self,screen,position):
+        if self.image and self.image.get_height()==128:
+            screen.blit(self.image,(position[0],position[1]-32))
+        elif self.image:
+            
+            screen.blit(self.image,(position[0],position[1]))
+            
+    def receiveEvent(self, event):
+        pass
+    
+    def __repr__(self):
+        return ("<"+type(self).__name__+" at "+str(self.position)+">")
 #UTILITY FUNCTION
 alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 class EventScheduler():
@@ -35,7 +56,7 @@ class Command(object):
             self.data=data
         else:
             self.data=kwargs
-class Item(player_input.StaticObject):
+class Item(StaticObject):
     '''
     A base class that all items inherit
     '''
@@ -50,7 +71,7 @@ class Item(player_input.StaticObject):
         '''
         crates a item object
         '''
-        player_input.StaticObject.__init__(self, position, image, cage, world, 0, False)
+        StaticObject.__init__(self, position, image, cage, world, 0, False)
         self.owner=None
         
         self.isflying=False
@@ -84,11 +105,11 @@ class Item(player_input.StaticObject):
             return False
     def getWeight(self):
         return self.weight;
-    def throw(self, direction):
-        assert self in self.world.objects
+    def throw(self, owner, direction):
         self.direction=direction
         self.isflying=True
         self.turnsinair=0
+        self.thrower=owner
         return 50+12*self.weight
     
     def throwEvent(self, event):
@@ -112,6 +133,11 @@ class Item(player_input.StaticObject):
                 self.isflying=False
                 
                 return 100
+            for i in self.world.objects:
+                if hasattr(i, "position") and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
+                    self.aircollision(i)
+                    break
+                    
             
             
             self.turnsinair+=1
@@ -119,6 +145,10 @@ class Item(player_input.StaticObject):
                 self.isflying=False
             
         return  100
+    def aircollision(self, other):
+        if not isinstance(other, Item):
+            self.isflying=False
+            self.position=tuple(self.position[i]-self.speed[i] for i in xrange(2))
 class Potion(Item):
     imagename="potion.png"
     name="potion"
