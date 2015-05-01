@@ -25,7 +25,7 @@ class Weapon(items.Item):
     twohanded=False
     
 
-    speed=800
+    speed=100
     
     range=8
     

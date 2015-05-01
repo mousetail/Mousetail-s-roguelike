@@ -76,7 +76,7 @@ class Item(StaticObject):
         
         self.isflying=False
         self.direction=(0,0)
-        self.action_points=0
+        #self.action_points=0
         
         if name:
             self.name=name
@@ -110,6 +110,7 @@ class Item(StaticObject):
         self.isflying=True
         self.turnsinair=0
         self.thrower=owner
+        self.action_points=10*self.range
         return 50+12*self.weight
     
     def throwEvent(self, event):
@@ -130,9 +131,9 @@ class Item(StaticObject):
             if self.world.grid.hasindex(newposition) and (not self.world.grid[newposition] in WALLS):
                 self.position=newposition
             else:
+	        del self.action_points
                 self.isflying=False
-                
-                return 100
+                return 10
             for i in self.world.objects:
                 if hasattr(i, "position") and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
                     self.aircollision(i)
@@ -143,6 +144,7 @@ class Item(StaticObject):
             self.turnsinair+=1
             if self.turnsinair >= self.range:
                 self.isflying=False
+            return 10
             
         return  100
     def aircollision(self, other):
