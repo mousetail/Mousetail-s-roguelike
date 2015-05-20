@@ -154,7 +154,7 @@ class HumanBody(object):
                     sword=self.mind.equipment[self.weapon_slots[0]]
                 else:
                     sword=weapon
-                if isinstance(sword.damage,int):
+                if isinstance(sword.damage,int) or isinstance(sword.damage,float):
                     damage[0]+=sword.damage*self.getstat("level")*random.random()
                 else:
                     for i in range(len(sword.damage)):

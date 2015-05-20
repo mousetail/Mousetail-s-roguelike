@@ -7,6 +7,7 @@ import pygame
 import random
 import generator
 import itertools
+import cheats
 from constants import *
 from sys import stderr
 
@@ -98,6 +99,8 @@ class PlayerObject(items.StaticObject):
         self.say("B}'e' to eat, 'a' to apply")
         self.say("B}'h' to repeat this message")
         self.say("B}thanks for playing!")
+        #self.say()
+        #self.say("B}A friend of me named amish has the motto: \"Sometimes things don't add up, but maybe the series diverges\"")
         self.say()
     def wear(self, item, saystuff=True, dostuff=True):
         slot=""
@@ -255,10 +258,13 @@ class PlayerObject(items.StaticObject):
         elif skill=="strength":
             self.body.updatemaxweight()
             self.say("B}You feel strong")
-    def say(self, what=""):
+    def say(self, what="", newline=True):
         """send a message to the player, to be displayed in the log"""
         self.dirty=True
-        print what
+        if newline:
+            print what
+        else:
+            print what,
     def kill(self, message):
         self.say("1}you die")
         self.say("1}you where killed by a "+message)
@@ -269,7 +275,7 @@ class PlayerObject(items.StaticObject):
         if self.events:
             self.old_postion=self.position[:]
             for event in self.events:
-                if self.input_mode=="normal":
+                if not self.input_mode or self.input_mode=="normal":
                     if event.type==pygame.KEYDOWN:
                         
                         actions+=1
@@ -307,7 +313,7 @@ class PlayerObject(items.StaticObject):
                             self.input_mode="eat"
                         elif event.key==pygame.K_o:
                             self.actions.append(Command("open"))
-                        elif event.key==pygame.K_c:
+                        elif event.unicode=="c":
                             self.actions.append(Command("close"))
                         elif event.key==pygame.K_COMMA:
                             self.actions.append(Command("pickup"))
@@ -315,6 +321,9 @@ class PlayerObject(items.StaticObject):
                             self.input_mode="throw1"
                             actions-=1
                             self.say("what would you like to throw?")
+                        elif event.unicode=="C":
+                            self.input_mode=cheats.CheatHandler(self.world,self).cheatInput
+                            
                         else:
                             actions-=1
                 elif self.input_mode=="drop":
@@ -659,7 +668,7 @@ class MonsterObject(PlayerObject):
     
     def receiveEvent(self, event):
         pass
-    def say(self, what): pass
+    def say(self, what=None, that=None): pass
     def AIturn(self):
         for letter, item in self.iterInventory():
             if isinstance(item, items.Armor) and item.slot in self.body.armor_slots and self.equipment[item.slot]==None:
