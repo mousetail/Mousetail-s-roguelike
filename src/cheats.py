@@ -5,17 +5,20 @@ class CheatHandler(object):
         self.world=world
         self.player=player
         self.tmpstring=""
-        self.player.say("r}cheating ...")
-        self.player.say("your score is invalidiated")
+        self.player.say("R}You lousy cheater!")
+        self.player.say("R}>",False)
 
     def cheatInput(self, event):
         #print "CHEATING ..."
         if event.type==KEYDOWN:
             if event.key==K_RETURN:
+                self.player.say()
                 self.cheat(self.tmpstring)
                 return "normal", None
             elif event.key==K_BACKSPACE:
                 self.tmpstring=self.tmpstring[:-1]
+                if len(self.tmpstring)>=0:
+                    self.player.say("\b",False)
             else:
                 self.tmpstring+=event.unicode
                 self.player.say(event.unicode,False)
@@ -26,6 +29,9 @@ class CheatHandler(object):
   
     def cheat(self, string):
         if string=="Doctor Nostra Quakus":
-            player.body.health=player.body.maxhealth
+            self.player.body.health=self.player.body.maxhealth
+            self.player.say("You used the cheat code \"Doctor Nostra Quakus\"")
+        else:
+            self.player.say("No cheat code \""+string+"\" is recognized")
                 
             

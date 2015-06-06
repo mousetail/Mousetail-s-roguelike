@@ -109,6 +109,7 @@ class LogWindow(BaseWindow):
         self.drawsurface=pygame.Surface(self.size)
         self.position=position
         self.wrapper=textwrap.TextWrapper(width=self.size[0]/8)
+        self.wrapper.drop_whitespace=False
         if "stdout" not in self.data:
             self.data["stdout"]=None
         else:
@@ -142,21 +143,27 @@ class LogWindow(BaseWindow):
                         [0,16*linenum])
         
     def write(self, text):
-        line=None
-        if len(self.lines)==0 or self.lines[-1].endswith("\n"):
-            line=text
+        if text=="\b":
+            try:
+                self.lines[-1]=self.lines[-1][:-1]
+            except IndexError:
+                self.data["stdout"].write("INVALID BACKSPACE")
         else:
-            line=self.lines.pop()+text
-        if len(line)>=2 and line[1]=="}":
-            splitlines=self.wrapper.wrap(line[2:])
-            color=line[0]
-        else:
-            splitlines=self.wrapper.wrap(line)
-            color="W"
-        for i in splitlines:
-            self.lines.append(color+"}"+i)
-        if text.endswith("\n"):
-            self.lines[-1]+="\n"
+            line=None
+            if len(self.lines)==0 or self.lines[-1].endswith("\n"):
+                line=text
+            else:
+                line=self.lines.pop()+text
+            if len(line)>=2 and line[1]=="}":
+                splitlines=self.wrapper.wrap(line[2:])
+                color=line[0]
+            else:
+                splitlines=self.wrapper.wrap(line)
+                color="W"
+            for i in splitlines:
+                self.lines.append(color+"}"+i)
+            if text.endswith("\n"):
+                self.lines[-1]+="\n"
 #         if len(self.lines)==0 or self.lines[-1].endswith("\n"):
 #             if len(line)>=2 and line[1]=="}":
 #                 self.lines.extend(line[:2]+i+"\n" for i in self.wrapper.wrap(line[2:]))
@@ -176,7 +183,7 @@ class LogWindow(BaseWindow):
             self.autorender.blit(self.drawsurface,self.position)
             pygame.display.flip()
             pygame.event.poll()
-        self.data["stdout"].write(text)
+        self.data["stdout"].write(text)#"(|"+text+"|$"+line+"$*"+self.lines[-1]+"*)")
 class StatWindow(BaseWindow):
     def __init__(self, size, position, font, trackmonster):
         self.size=size
@@ -289,7 +296,7 @@ class CombatDebugWindow(BaseWindow):
             #print i[:4]
             
             
-            self.drawsurface.fill([random.choice(pygame.color.THECOLORS.values()),[100,100,100],[200,200,200],[100,100,200]][j], i[:4])
+            self.drawsurface.fill([[255,0,0],[100,100,100],[200,200,200],[100,100,200]][j], i[:4])
             j+=1
             j%=4
         if hasattr(body, "lastattackspot"):

@@ -9,7 +9,7 @@ import generator
 import itertools
 import cheats
 from constants import *
-from sys import stderr
+import sys
 
 import items
 
@@ -90,6 +90,7 @@ class PlayerObject(items.StaticObject):
         else:
             self.name=self.body.name
         items.StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
+        
     def welcomeMessage(self):
         
         self.say("B}Welcome to Mousetail's roguelike")
@@ -262,9 +263,9 @@ class PlayerObject(items.StaticObject):
         """send a message to the player, to be displayed in the log"""
         self.dirty=True
         if newline:
-            print what
+            sys.stdout.write(what+"\n")
         else:
-            print what,
+            sys.stdout.write(what+"")
     def kill(self, message):
         self.say("1}you die")
         self.say("1}you where killed by a "+message)

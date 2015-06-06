@@ -9,6 +9,8 @@ import random
 import player_input
 import items
 import getitembyname
+from sys import stdout as sysstdout
+import sys
 class World(object):
     '''
     It is a level object that will change if levels change
@@ -20,7 +22,7 @@ class World(object):
     '''
 
 
-    def __init__(self, size=[100,100],cage=None,generatetype=1):
+    def __init__(self, size=[100,100],cage=None,generatetype=1,stdout=sysstdout):
         '''
         Constructor
         '''
