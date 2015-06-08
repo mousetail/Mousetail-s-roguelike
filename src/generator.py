@@ -196,7 +196,7 @@ class Generator(Grid):
             room=Room(floortype=floortype,walltype=walltype,doortype=doortype, special=roomtype[5])
             itworks=False
             tries=0
-            while tries<=250 and not itworks:
+            while tries<=MAXTRIES and not itworks:
                 tries+=1
                 rectangle=[random.randint(1,self.size[0]/2-(self.atributes["roomsizex"][1]+1))*2,
                           random.randint(1,self.size[1]/2-(self.atributes["roomsizey"][1]+1))*2,
@@ -224,7 +224,7 @@ class Generator(Grid):
                 self[position]=_type
                 room.specialobjects.append((position,_type))
                 #print "PLACED A SPECIAL OBJECT"
-            if tries>149:
+            if tries>MAXTRIES:
                 #print "3}FAILED GENERATING MORE ROOMS"
                 #print "FILLING ROOMS..."
                 break

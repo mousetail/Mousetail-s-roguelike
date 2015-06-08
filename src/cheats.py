@@ -31,6 +31,10 @@ class CheatHandler(object):
         if string=="Doctor Nostra Quakus":
             self.player.body.health=self.player.body.maxhealth
             self.player.say("You used the cheat code \"Doctor Nostra Quakus\"")
+        elif string=="#227 BLAZE IT!":
+            for i in self.player.xp.keys():
+                self.player.add_xp(i,500)
+            self.player.say("Blazed it.")
         else:
             self.player.say("No cheat code \""+string+"\" is recognized")
                 

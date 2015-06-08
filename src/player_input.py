@@ -237,7 +237,7 @@ class PlayerObject(items.StaticObject):
         self.events.append(event)
     def add_xp(self, skill, ammount):
         self.xp[skill]+=ammount
-        if self.xp[skill]>(5**self.stats[skill]):
+        while self.xp[skill]>(5**self.stats[skill]):
             self.level_up(skill, True)
     def level_up(self, skill, changexp=False):
         if changexp:

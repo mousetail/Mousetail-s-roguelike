@@ -50,7 +50,7 @@ class Displayer_3d():
         textwidget=windows.LogWindow([300,600],(0,0),self.font,self.screen,stdout=sys.stdout,antialias=False)
         sys.stdout=textwidget
         pygame.display.flip()
-        self.world=world.World(kwargs["grid_size"],cage)
+        self.world=world.World(kwargs["grid_size"],cage,)
         sys.stdout=textwidget.data["stdout"]
         #print "STDOUT ",sys.stdout
         del textwidget
