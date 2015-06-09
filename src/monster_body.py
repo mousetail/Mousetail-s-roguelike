@@ -13,6 +13,19 @@ import getitembyname, generator
 from constants import *
 
 class CombatOnlyBody(object):
+    #VARIABLES NEEDED:
+    """
+    This is a partial class that can be inherited from to get accsess to the default "Attack" method
+    self
+    self.size
+    self.max_attack_height_ratio
+    self.target
+    self.getstat
+    self.mind
+    self.weapon_slots
+    self.name
+    self.mind.name
+    """
     def attack(self, other, weapon=None):
         
         #TODO: find a inheritence safe-way to call this method when one member isn't a instance of the class
@@ -45,7 +58,7 @@ class CombatOnlyBody(object):
         if hit:
             damage=[((self.getstat("level")+random.random()
                     *self.getstat("level"))),0,0,0,0,0,0,0]
-            if self.mind.equipment[self.weapon_slots[0]]:
+            if weapon or self.mind.equipment[self.weapon_slots[0]]:
                 if weapon==None:
                     sword=self.mind.equipment[self.weapon_slots[0]]
                 else:

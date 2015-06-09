@@ -8,7 +8,16 @@ import getitembyname
 from constants import *
 import monster_body
 
-
+class FakeBodyToRepresentFlyingObject(monster_body.CombatOnlyBody):
+    max_attack_height_ratio=1.1
+    def __init__(self, size=100, target=None, mind=None, name=None, skill_ratio=1):
+        self.size=size
+        self.target=target
+        self.mind=mind
+        self.name=name
+        self.skill_ratio=skill_ratio
+    def getstat(self, stat):
+        return self.mind.getstat(stat)*self.skill_ratio
 
 class Weapon(items.Item):
     __isweapon__=True
@@ -27,7 +36,7 @@ class Weapon(items.Item):
     
     def aircollision(self, other):
         if hasattr(other, "body"):
-            monster_body.HumanBody.attack(FakeBodyToRepresentFlyingObject(100,self.thrower.body.target,self.thrower,self.name,0.5),other.body,self)
+            FakeBodyToRepresentFlyingObject(100,self.thrower.body.target,self.thrower,self.name,0.5).attack(other,self)
 
 
 
