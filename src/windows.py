@@ -146,6 +146,8 @@ class LogWindow(BaseWindow):
         if text=="\b":
             try:
                 self.lines[-1]=self.lines[-1][:-1]
+                if len(self.lines[-1])==0 or (len(self.lines[-1])==2 and self.lines[-1][1]=="}"):
+                    del self.lines[-1]
             except IndexError:
                 self.data["stdout"].write("INVALID BACKSPACE")
         else:

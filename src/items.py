@@ -151,22 +151,7 @@ class Item(StaticObject):
         if not isinstance(other, Item):
             self.isflying=False
             self.position=tuple(self.position[i]-self.speed[i] for i in xrange(2))
-class Potion(Item):
-    imagename="potion.png"
-    name="potion"
-    pname="potions"
-    weight=4
-    def __init__(self, position, world, cage):
-        Item.__init__(self, position, cage.lookup(self.imagename), cage, world, self.name, self.pname)
-    def use(self):
-        self.owner.say("you drink the "+self.name)
-        self.owner.say("nothing happens")
-        self.owner.removebyidentity(self)
-        return True
-    def eat(self):
-        return self.use()
 
-        return True
 class Armor(Item):
     def __init__(self, position, image, cage, world, name, pname=None, weight=0, slot=None, defence=None):
         Item.__init__(self, position, image, cage, world, name, pname, weight)

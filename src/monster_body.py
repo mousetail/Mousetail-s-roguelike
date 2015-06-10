@@ -190,8 +190,8 @@ class lizard(HumanBody):
     name="lizard"
     image_name="lizzard.png"
     advanced_visibility_check=False
-    attack_zones={"left foot":     [0,0,  13,9,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ), None],
-                  "right foot":    [86,0, 13,9,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ), None],
+    attack_zones={"left foot":     [0,0,  13,9,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0  ),None],
+                  "right foot":    [86,0, 13,9,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0  ),None],
                   "left leg":      [13,7, 28,17,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),None],
                   "right leg":     [71,7, 28,17,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),None],
                   "left shoulder": [25,15,9, 12,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),None],

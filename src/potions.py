@@ -7,8 +7,27 @@ import getitembyname
 import items
 from constants import *
 
+class Potion(items.Item):
+    imagename="potion.png"
+    name="potion"
+    pname="potions"
+    weight=4
+    def __init__(self, position, world, cage):
+        items.Item.__init__(self, position, cage.lookup(self.imagename), cage, world, self.name, self.pname)
+    def use(self):
+        self.owner.say("you drink the "+self.name)
+        self.owner.say("nothing happens")
+        self.owner.removebyidentity(self)
+        return True
+    def eat(self):
+        return self.use()
+
+        return True
+    #def aircollision(self):
+    #    self.owner.
+
 @getitembyname.ri("speed potion", 5, -3, 12, (ITM_ITEM, ITM_POTION))
-class SpeedPotion(items.Potion):
+class SpeedPotion(Potion):
     name="speed potion"
     pname="speed potions"
     imagename="potion_green.png"
@@ -24,7 +43,7 @@ class SpeedPotion(items.Potion):
     
 @getitembyname.ri("healing potion", 1, -3, 12,(ITM_ITEM, ITM_POTION))
         
-class HealingPotion(items.Potion):
+class HealingPotion(Potion):
     name="health potion"
     pname="heath potions"
     imagename="potion.png"
