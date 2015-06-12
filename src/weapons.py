@@ -18,6 +18,8 @@ class FakeBodyToRepresentFlyingObject(monster_body.CombatOnlyBody):
         self.skill_ratio=skill_ratio
     def getstat(self, stat):
         return self.mind.getstat(stat)*self.skill_ratio
+    def getname(self):
+        return self.name
 
 class Weapon(items.Item):
     __isweapon__=True
@@ -36,7 +38,7 @@ class Weapon(items.Item):
     
     def aircollision(self, other):
         if hasattr(other, "body"):
-            FakeBodyToRepresentFlyingObject(100,self.thrower.body.target,self.thrower,self.name,0.5).attack(other,self)
+            FakeBodyToRepresentFlyingObject(100,self.thrower.body.target,self.thrower,self.name,0.5).attack(other,self,False)
 
 
 

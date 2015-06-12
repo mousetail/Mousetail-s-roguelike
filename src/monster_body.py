@@ -26,7 +26,7 @@ class CombatOnlyBody(object):
     self.name
     self.mind.name
     """
-    def attack(self, other, weapon=None):
+    def attack(self, other, weapon=None, personal_pron=True):
         
         #TODO: find a inheritence safe-way to call this method when one member isn't a instance of the class
         #WONT RUN RIGHT NOW
@@ -70,16 +70,33 @@ class CombatOnlyBody(object):
                         damage[i]+=sword.damage[i]*self.getstat("level")*random.random()
             for i in range(len(damage)):
                 other.body.dodamage(hit,damage[i],i,self.name)
-            self.mind.say("you hit the "+other.name+"'s "+hit)
-            other.say("the "+self.mind.name+" hits your "+hit)
+            if personal_pron:
+                self.mind.say("you hit the "+other.name+"'s "+hit)
+                other.say("the "+self.getname()+" hits your "+hit)
+            else:
+                string="the "+self.getname()+" hits the "+other.name+"'s "+hit
+                self.mind.say(string)
+                other.say(string)
             if otherbody.health<0:
-                self.mind.say("you kill the "+other.name)
-                self.mind.add_xp("level",other.getstat("level"))
+                if personal_pron:
+                    self.mind.say("you kill the "+other.name)
+                    self.mind.add_xp("level",other.getstat("level"))
+                else:
+                    self.mind.say("the "+self.getname()+" kills the "+self.body.name)
             self.mind.add_xp("accuracy",1)
         else:
-            self.mind.say("you miss the "+other.name)
-            other.say("the "+self.mind.name+" misses")
+            if personal_pron:
+                self.mind.say("you miss the "+other.name)
+                other.say("the "+self.getname()+" misses")
+            else:
+                string=("the "+self.getname()+" misses the "+other.name)
+                self.mind.say(string)
+                other.say(string)
             other.add_xp("constitution",1)
+            
+    
+    def getname(self):
+        return self.mind.name
 class HumanBody(CombatOnlyBody):
     '''
     A base body that should be inherited from by all monster bodies
