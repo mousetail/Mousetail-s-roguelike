@@ -31,6 +31,12 @@ class Displayer_3d():
 
     
     def __init__(self,**kwargs):
+        """
+        This function pretty much runs the whole game,
+        calling the generate level functions, making the layout,
+        redicting standared input,
+        it also loads the sprite sheets
+        """
         cage=imagecage.ImageCage()
         self.docheckbounds=kwargs["checkbounds"]
         pygame.init()
@@ -83,19 +89,29 @@ class Displayer_3d():
         
         self.redraw()
     def redraw(self):
+        """
+        refreshes the screen
+        """
         for i in self.windows:
             i.redraw()
-    def update(self):
-        self.world.update()
-        if self.world.dirty:
-            self.redraw()
-    def draw(self):
-        self.clock.tick()
+            
         for window in self.windows:
             if hasattr(window,"drawsurface"):
                 self.screen.blit(window.drawsurface,window.position)
         pygame.display.flip()
+    def update(self):
+        """
+        calls world.update mainly, then checks if the screen needs to be redrawn
+        """
+        self.world.update()
+        if self.world.dirty:
+            self.redraw()
+        
+        self.clock.tick()
     def event(self):
+        """
+        forwards pygame events to the windows and to the world object
+        """
         for event in pygame.event.get():
             if event.type==pygame.QUIT or (event.type==pygame.KEYDOWN and event.key==pygame.K_ESCAPE):
                 #SAVE CODE HERE
@@ -117,7 +133,6 @@ if __name__=="__main__":
     pygame.USEREVENT+=1
     pygame.COLLISION=pygame.USEREVENT-1
     while x.running:
-        x.draw()
         x.event()
         x.update()
     #print x.grid.data

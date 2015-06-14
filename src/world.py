@@ -56,6 +56,11 @@ class World(object):
         self.objindex=0
         self.newround=False
     def update(self):
+        """
+        first calls update on all objects (for updating animations)
+        then calculates who'se turn it is to move, then returns to
+        3d_render
+        """
         self.dirty=False
         for i in self.objects:
             if hasattr(i, "update"):
@@ -123,11 +128,13 @@ class World(object):
                 #print "not having action points"
         
     def event(self, event):
+        """passes on events to objects"""
         for i in self.objects:
             if hasattr(i,"receiveEvent"):
                 
                 i.receiveEvent(event)
     def spawnItem(self, item):
+        """"adds a object to the world, preferable over adding it yourself"""
         item.owner=self
         self.objects.append(item)     
 

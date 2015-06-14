@@ -226,3 +226,8 @@ class Agent(HumanBody):
     drops=[(0.5,"time book"),(0.5,"key")]+HumanBody.drops
     ratios=HumanBody.ratios.copy()
     ratios["constitution"]=3
+@getitembyname.itemRandomizer.fast_register_monster("archer", 5, 0, 5, starting_inventory=("iron helmet",))
+class Archer(HumanBody):
+    name="archer"
+    image_name="archer.png"
+    advanced_visibility_check=False

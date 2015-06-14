@@ -62,9 +62,11 @@ class PlayerObject(items.StaticObject):
     name="Player"
     
     def getstat(self, stat):
+        "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
     
     def __init__(self,position,body,cage,world, speed=100, name=None):
+        
         self.speed=speed
         self.dirty=False
         self.world=world
@@ -92,7 +94,7 @@ class PlayerObject(items.StaticObject):
         items.StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
         
     def welcomeMessage(self):
-        
+        """give a help message"""
         self.say("B}Welcome to Mousetail's roguelike")
         self.say("B}Use the arrow keys to walk arround")
         self.say("B} ',' to pick up items")
@@ -104,6 +106,11 @@ class PlayerObject(items.StaticObject):
         #self.say("B}A friend of me named amish has the motto: \"Sometimes things don't add up, but maybe the series diverges\"")
         self.say()
     def wear(self, item, saystuff=True, dostuff=True):
+        """A function used by event handling. Automatically puts a item into a slot, including the weapon slot
+        is saystuff is true, it gives a message when something goes wrong, or when sucsesfull
+        if dostuff is false, the function just validiates wheter it's possible to wear something, though it could still give a message
+        annyway
+        this is used to sepperate the validiation and messages in the even handling system"""
         slot=""
         if hasattr(item, "__isweapon__"):
             slot=None
@@ -142,6 +149,10 @@ class PlayerObject(items.StaticObject):
         else:
             return False
     def eat(self, itm, saystuff=False, dostuff=True):
+        """
+        tries to eat the item,
+        see wear for documentation of the arguments
+        """
         if hasattr(itm,"eat"):
             if hasattr(itm,"nutrition"):
                 self.fullness+=itm.nutrition
@@ -161,32 +172,35 @@ class PlayerObject(items.StaticObject):
         self.update_nutrition(saystuff)
     
     def update_nutrition(self, saystuff=False):
+        """should be called when something changes the fullness,
+        updates the status messages HUNGRY, VERY HUNGRY, FULL and VERY FULL"""
         oldmsg=[]
         for i in [FLAG_HUNGRY_2,FLAG_HUNGRY,FLAG_FULL,FLAG_FULL_2]:
             if i in self.status_messages:
-                self.status_messages.remove(i)
+                self.unflag(i)
                 oldmsg.append(i)
         if self.fullness>1400:
-            self.status_messages.append(FLAG_FULL_2)
+            self.flag(FLAG_FULL_2)
             if saystuff and FLAG_FULL_2 not in oldmsg:
                 self.say("your belly feels like its bursting!")
         elif self.fullness>1000:
-            self.status_messages.append(FLAG_FULL)
+            self.flag(FLAG_FULL)
             if saystuff and FLAG_FULL not in oldmsg:
                 self.say("you feel comfortabally full")
         elif self.fullness>0:
             pass
         elif self.fullness>-400:
             
-            self.status_messages.append(FLAG_HUNGRY)
+            self.flag(FLAG_HUNGRY)
             if saystuff and FLAG_HUNGRY not in oldmsg:
                 self.say("you are starting to feel hungry")
         else:
-            self.status_messages.append(FLAG_HUNGRY_2)
+            self.flag(FLAG_HUNGRY_2)
             if saystuff and FLAG_HUNGRY_2 not in oldmsg:
                 self.say("all you can think about is food now")
     def addtoinventory(self, itm):
-        
+        """adds a item to the players inventory, correctly stacking similar items,
+        and calculating the weight"""
         itm.position=(0,0) #So they are equal in the inventory but not in the map
         if len(self.inventory)>0:
             for i in self.inventory:
@@ -204,7 +218,8 @@ class PlayerObject(items.StaticObject):
         self.update_storage_fullness()
         return True
     def getspeed(self):
-        
+        """checks if any status messages affect the speed, and checks the base speed,
+        return the value"""
         s=self.speed
         if FLAG_BURDENED in self.status_messages:
             s-=25
@@ -225,21 +240,26 @@ class PlayerObject(items.StaticObject):
             s=1
         return s
     def update_storage_fullness(self):
+        """If weapons or inventory or annything changed, 
+        this function will update burdened flags"""
         s=sum(i[1].getWeight() for i in self.iterInventory())
         s+=sum(i[2].getWeight() for i in self.iterArmor())
         if s<=self.body.maxweight:
             if FLAG_BURDENED in self.status_messages:
-                self.status_messages.remove(FLAG_BURDENED)
+                self.unflag(FLAG_BURDENED)
         else:
             if FLAG_BURDENED not in self.status_messages:
-                self.status_messages.append(FLAG_BURDENED)
+                self.flag(FLAG_BURDENED)
     def receiveEvent(self, event):
+        """called when a even is forwarded fromt the world class"""
         self.events.append(event)
     def add_xp(self, skill, ammount):
+        """adds the specified ammount of xp to a skill of choice"""
         self.xp[skill]+=ammount
         while self.xp[skill]>(5**self.stats[skill]):
             self.level_up(skill, True)
     def level_up(self, skill, changexp=False):
+        """called by add_xp, gives appropriate messages after a level increase"""
         if changexp:
             self.xp[skill]-=5**self.stats[skill]
             self.stats[skill]+=1
@@ -260,18 +280,21 @@ class PlayerObject(items.StaticObject):
             self.body.updatemaxweight()
             self.say("B}You feel strong")
     def say(self, what="", newline=True):
-        """send a message to the player, to be displayed in the log"""
+        """send a message to the player, to be displayed in the log
+        """
         self.dirty=True
         if newline:
             sys.stdout.write(what+"\n")
         else:
             sys.stdout.write(what+"")
     def kill(self, message):
+        """called when the player dies"""
         self.say("1}you die")
         self.say("1}you where killed by a "+message)
         self.body.drop()
         self.dead=True
     def update(self):
+        """handles events"""
         actions=0
         if self.events:
             self.old_postion=self.position[:]
@@ -434,11 +457,13 @@ class PlayerObject(items.StaticObject):
         
         return olddirty
     def requestmoreinfo(self, callback, infotype, **kwars):
+        """I have no idea what this function is supposed to do, as far as I can tell, it's never used"""
         if infotype is not None:
             self.input_mode=(infotype, callback)
         else:
             self.input_mode="normal"
     def removearmorbyletter(self, letter, removeitem=True, saystuff=False):
+        """takes off armor and place it into the inventory of the player"""
         if letter in self.equipment_letters:
             slot=self.equipment_letters[letter]
             itm=self.equipment[slot]
@@ -454,6 +479,8 @@ class PlayerObject(items.StaticObject):
             return False
         
     def removebyletter(self, letter, removeitem=True, saystuff=False, ammount=0):
+        """takes a inventory item out of the inventory, then returns a list, containting amount of the specified item
+        if there are less then amount items in a slot, only the amount available is returned""" 
         if letter in self.inventory:
             if ammount==0:
                 itm=self.inventory[letter]
@@ -476,6 +503,8 @@ class PlayerObject(items.StaticObject):
         
         self.update_storage_fullness()
     def removebyidentity(self, itm):
+        """removes a item from the invectory using "is" operator,
+        usefull for having items remove themselves"""
         for i in self.inventory:
             for j in range(len(self.inventory[i])):
                 if self.inventory[i][j] is itm:
@@ -487,6 +516,8 @@ class PlayerObject(items.StaticObject):
         self.update_storage_fullness()
         return False
     def drop(self, itm, saystuff=True):
+        """another internal action function, puts a specified item on the ground
+        itm can be a Item object, or a list or tuple of Item objects"""
         if isinstance(itm, list) or isinstance(itm, tuple):
             for i in itm:
                 i.position=self.position[:]
@@ -509,10 +540,22 @@ class PlayerObject(items.StaticObject):
                 self.say("dropped a "+itm.name)
             return True
     def redictInput(self, method):
+        """call the method with input data next update
+        the method should take a pygame.Event object and return
+        a tuple, first item being the next input mode ("normal" is back to normal controll,
+        function is a function under same perimeters)
+        second item is a action that has to be performed, which is a functon to be
+        executed by the world's turn time calculator, this function should return the number of
+        ticks the action should cost (average is 100)"""
         self.input_mode=method
     def AIturn(self):
+        """called when the AI has a chance to update"""
         return True
     def gameTurn(self):
+        """update function called by the worlds turn time calculator
+        this is a mirror function of update() handling the actions the world put here,
+        and for AI entities, this function handles the actions they spawned
+        use redict input method for costom behaviour"""
         actions=0
         if self.actions:
             action=self.actions.pop()
@@ -650,21 +693,25 @@ class PlayerObject(items.StaticObject):
         
         return actions
     def iterInventory(self):
+        """a iterator that iterates over the inventory, returning letter, item on each next"""
         for letter in self.inventory:
             for item in self.inventory[letter]:
                 yield letter, item
     def iterArmor(self):
+        """a iterator that iterates over the equipment, returning letter, slot, item"""
         for letter in self.equipment_letters:
             if self.equipment[self.equipment_letters[letter]]:
                 yield letter, self.equipment_letters[letter], self.equipment[self.equipment_letters[letter]]
                 #print letter, self.equipment_letters[letter], self.equipment[self.equipment_letters[letter]]
     def flag(self, flag):
+        """adds a flag to the flags"""
         self.status_messages.append(flag)
     def unflag(self, flag):
+        """removes a flag"""
         if flag in self.status_messages:
             self.status_messages.remove(flag)
         else:
-            print >>stderr, "ERROR, FLAG NOT IN STATUS MESSAGES (player_input.PlayerObject.unflag(flag))"
+            print >>sys.stderr, "ERROR, FLAG NOT IN STATUS MESSAGES (player_input.PlayerObject.unflag(flag))"
 class MonsterObject(PlayerObject):
     
     def receiveEvent(self, event):

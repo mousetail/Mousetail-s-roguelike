@@ -7,7 +7,12 @@ import pygame, textwrap, itertools, random
 from constants import *
 
 class BaseWindow(object):
+    """a type of interface documenting what you need to implement"""
     def addevent(self, event):
+        """called when 3d_render passes a event on"""
+        pass
+    def redraw(self):
+        """updates the variable drawsurface to reflect what the screen should show"""
         pass
 class RenderWindow(BaseWindow):
     '''
@@ -99,7 +104,10 @@ class RenderWindow(BaseWindow):
                     #print [(x.position[0]-x.position[1])*32-self.draw_offset[0],y*16-self.draw_offset[1]]
         pygame.display.flip()
 class LogWindow(BaseWindow):
+    """A window, to be used like a file, that creates a surface of what has been inputted into it"""
     def __init__(self, size, position, font, autorender=False, **other):
+        """Most varables are self-explanatory, but it's important to have a stdout keyword argument, refering to something to forward output to after it's been processed,
+        and autorender is a dangerous option that refreshes the screen and flushes some of pygames quires when something is writen to the file"""
         self.data=other
         self.size=size
         self.lines=[]
@@ -187,6 +195,8 @@ class LogWindow(BaseWindow):
             pygame.event.poll()
         self.data["stdout"].write(text)#"(|"+text+"|$"+line+"$*"+self.lines[-1]+"*)")
 class StatWindow(BaseWindow):
+    """A window that renders the stats of a PlayerObject or a subcass. Records stats from xp, and any status messages, converted via the constants dict
+    The messages are outlines so they are equidistant. Colored low HP may be supported in the future"""
     def __init__(self, size, position, font, trackmonster):
         self.size=size
         self.position=position
@@ -206,6 +216,7 @@ class StatWindow(BaseWindow):
             self.drawsurface.blit(self.font.render(strings[i],1,[255,255,255]),
                                   [10+sperstring*i,5])
 class InventoryWindow(StatWindow):
+    """Right now, has a list of inventory, and armor when clikced on the right side, should probably be split up later"""
     def __init__(self, *args, **kwargs):
         StatWindow.__init__(self, *args, **kwargs)
         self.scroll=0
@@ -281,6 +292,7 @@ class InventoryWindow(StatWindow):
         else:
             return False
 class CombatDebugWindow(BaseWindow):
+    """Just for debug, shows all the zones, and last hit locations"""
     def __init__(self, size, position, font, trackmonster):
         self.position=position
         self.font=font

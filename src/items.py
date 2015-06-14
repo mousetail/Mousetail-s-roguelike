@@ -8,6 +8,7 @@ from constants import *
 
 
 class StaticObject(object):
+    """A object that draws itself bu dous nothing else"""
     def __init__(self,position,image, cage=None,world=None, speed=0, recieveevent=False):
         self.position=list(position)
         #print "-----------------------------------------------"
@@ -19,6 +20,7 @@ class StaticObject(object):
         #    print "didn't get a image"
         
     def draw(self,screen,position):
+        """draws itself on the screen, at position"""
         if self.image and self.image.get_height()==128:
             screen.blit(self.image,(position[0],position[1]-32))
         elif self.image:
@@ -33,6 +35,9 @@ class StaticObject(object):
 #UTILITY FUNCTION
 alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 class EventScheduler():
+    """calls "event" after time
+    should be added to the worlds object list using spawnItem()
+    to work properly"""
     def __init__(self, world, time, event, *args):
         self.world=world
         self.speed=1
@@ -58,7 +63,7 @@ class Command(object):
             self.data=kwargs
 class Item(StaticObject):
     '''
-    A base class that all items inherit
+    A base class that all items inherit, all a item will do is being able to be picked up, dropped, thrown and weited.
     '''
     name="invalid item"
     pname="invalid items"
@@ -91,11 +96,16 @@ class Item(StaticObject):
         if world:
             self.world=world
     def use(self):
+        """called when trying to use "A" on a item"""
         self.owner.say("You don't know how to use "+self.name)
     def say(self, *args):
+        """passes on the say event to the owner"""
         return self.owner.say(*args)
     
     def __eq__(self, other):
+        """check if the names and positions are equal
+        used for stacking, so override if you have items with the same
+        name that don't stack"""
         try:
             if self.name==other.name and self.position==other.position:
                 return True
@@ -104,8 +114,11 @@ class Item(StaticObject):
         except AttributeError:
             return False
     def getWeight(self):
+        """return the weight, with any modifiers"""
         return self.weight;
     def throw(self, owner, direction):
+        """called when the player tries to throw the item, default range is one tile, so don't bother overriding if you don't want youre item to fly,
+        you can just set the range to 0"""
         self.direction=direction
         self.isflying=True
         self.turnsinair=0
@@ -114,6 +127,9 @@ class Item(StaticObject):
         return 50+12*self.weight
     
     def throwEvent(self, event):
+        """don't override! internal method used to thow the item
+        (unless, you want the throw command to work differently with this item eg. it dousn't require a direction)
+        be carefull though"""
         if event.type==KEYDOWN:
             if event.key==K_DOWN:
                 return "normal", Command("throw",item=self,direction=(-1,0))
@@ -126,6 +142,9 @@ class Item(StaticObject):
         return self.throwEvent, None
     
     def gameTurn(self):
+        """used for throwing, usually not called
+        this can be overriden for costom throwing behavior, eg bumerang
+        pretty safely"""
         if self.isflying:
             newposition=self.position[0]+self.direction[0],self.position[1]+self.direction[1]
             if self.world.grid.hasindex(newposition) and (not self.world.grid[newposition] in WALLS):
