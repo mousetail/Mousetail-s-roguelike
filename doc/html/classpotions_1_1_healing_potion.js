@@ -1,4 +1,5 @@
 var classpotions_1_1_healing_potion =
 [
-    [ "use", "classpotions_1_1_healing_potion.html#a79838a47c193d670a524f96c75108fa1", null ]
+    [ "potion_effect", "classpotions_1_1_healing_potion.html#a32ba597c3b149fba05f2eec0532b2f2d", null ],
+    [ "potion_message", "classpotions_1_1_healing_potion.html#a365d9539d194fbc08325b9010aa73abb", null ]
 ];

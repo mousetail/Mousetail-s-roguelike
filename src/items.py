@@ -154,7 +154,7 @@ class Item(StaticObject):
                 self.isflying=False
                 return 10
             for i in self.world.objects:
-                if hasattr(i, "position") and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
+                if i is not self and hasattr(i, "position") and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
                     self.aircollision(i)
                     break
                     

@@ -1,4 +1,5 @@
 var classpotions_1_1_speed_potion =
 [
-    [ "use", "classpotions_1_1_speed_potion.html#a905d6ca9456f8b3b102d1c21d6066719", null ]
+    [ "potion_effect", "classpotions_1_1_speed_potion.html#aebb1c2b45bcd48a039b1ceeedea9c14d", null ],
+    [ "potion_message", "classpotions_1_1_speed_potion.html#ad9eb0d697d01058de252d7c3b5cdd31d", null ]
 ];

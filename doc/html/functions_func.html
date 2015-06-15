@@ -95,8 +95,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_i"><span>i</span></a></li>
       <li><a href="#index_k"><span>k</span></a></li>
       <li><a href="#index_l"><span>l</span></a></li>
+      <li><a href="#index_p"><span>p</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
+      <li><a href="#index_t"><span>t</span></a></li>
       <li><a href="#index_u"><span>u</span></a></li>
       <li class="current"><a href="#index_w"><span>w</span></a></li>
     </ul>
@@ -134,6 +136,9 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 &#160;
 
 <h3><a class="anchor" id="index__"></a>- _ -</h3><ul>
+<li>__eq__()
+: <a class="el" href="classitems_1_1_item.html#a401a88231e01b131d27c410996734f6c">items.Item</a>
+</li>
 <li>__init__()
 : <a class="el" href="class3d__render_1_1_displayer__3d.html#ae40788b69bb8bba58cebe721b42107fa">3d_render.Displayer_3d</a>
 , <a class="el" href="classcontainers_1_1_container.html#a5e4d55a37e88771485d55dda31a9b706">containers.Container</a>
@@ -159,6 +164,9 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 <li>addtoinventory()
 : <a class="el" href="classplayer__input_1_1_player_object.html#ad3e88c0f8d93bc855a79a358e1aaaa23">player_input.PlayerObject</a>
 </li>
+<li>aircollision()
+: <a class="el" href="classpotions_1_1_potion.html#a6413bb332782ac6a5b084771fa19321a">potions.Potion</a>
+</li>
 <li>AIturn()
 : <a class="el" href="classplayer__input_1_1_player_object.html#a250cfcfdfe86a6eea099611fc6f0097a">player_input.PlayerObject</a>
 </li>
@@ -166,6 +174,9 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 
 
 <h3><a class="anchor" id="index_d"></a>- d -</h3><ul>
+<li>draw()
+: <a class="el" href="classitems_1_1_static_object.html#aa7627ab4f30471d813295f3b1eb8bdd2">items.StaticObject</a>
+</li>
 <li>drop()
 : <a class="el" href="classplayer__input_1_1_player_object.html#ae4ff9e1e12a38dc90816b6380f9ae675">player_input.PlayerObject</a>
 </li>
@@ -175,6 +186,7 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 <h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
 <li>eat()
 : <a class="el" href="classplayer__input_1_1_player_object.html#ad2ad0557d2b7c2225214f7f8f528325c">player_input.PlayerObject</a>
+, <a class="el" href="classpotions_1_1_potion.html#a082b478492f47aef9e5624f0d0a427c6">potions.Potion</a>
 </li>
 <li>event()
 : <a class="el" href="class3d__render_1_1_displayer__3d.html#a1a1e078e2d6fede0b4489bc8f141e788">3d_render.Displayer_3d</a>
@@ -192,10 +204,14 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 
 <h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
 <li>gameTurn()
-: <a class="el" href="classplayer__input_1_1_player_object.html#adbd3a1be0314bd02cb7f1358457c3c46">player_input.PlayerObject</a>
+: <a class="el" href="classitems_1_1_item.html#aa25d9560ac3b920b5eb77dd4a62b3cc1">items.Item</a>
+, <a class="el" href="classplayer__input_1_1_player_object.html#adbd3a1be0314bd02cb7f1358457c3c46">player_input.PlayerObject</a>
 </li>
 <li>getspeed()
 : <a class="el" href="classplayer__input_1_1_player_object.html#ac02046cfd454955a9e14f819aa0ad926">player_input.PlayerObject</a>
+</li>
+<li>getWeight()
+: <a class="el" href="classitems_1_1_item.html#a7e80e9908e2a7cfff8e8f1bb8ca060a2">items.Item</a>
 </li>
 </ul>
 
@@ -223,6 +239,16 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 </li>
 <li>lookup()
 : <a class="el" href="classimagecage_1_1_image_cage.html#a2ddd0c8a34f439d6b214a94a9e802964">imagecage.ImageCage</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_p"></a>- p -</h3><ul>
+<li>potion_effect()
+: <a class="el" href="classpotions_1_1_potion.html#a2f6adc2903e82f177569c1da57281b67">potions.Potion</a>
+</li>
+<li>potion_message()
+: <a class="el" href="classpotions_1_1_potion.html#a16aa26fa350447dcd78d6aae959ff549">potions.Potion</a>
 </li>
 </ul>
 
@@ -255,10 +281,21 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
 <li>say()
-: <a class="el" href="classplayer__input_1_1_player_object.html#a1c52f46e66007b196d9023e711c24b98">player_input.PlayerObject</a>
+: <a class="el" href="classitems_1_1_item.html#a5b4e0b576ce4dac2031c9c3b2d6140e1">items.Item</a>
+, <a class="el" href="classplayer__input_1_1_player_object.html#a1c52f46e66007b196d9023e711c24b98">player_input.PlayerObject</a>
 </li>
 <li>spawnItem()
 : <a class="el" href="classworld_1_1_world.html#adcfacaddb2803daf47361ce61c4cb6ee">world.World</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
+<li>throw()
+: <a class="el" href="classitems_1_1_item.html#aa729c1ff69df390a0564b06e498ca213">items.Item</a>
+</li>
+<li>throwEvent()
+: <a class="el" href="classitems_1_1_item.html#adaea6b467affcc07d421008bf42330a0">items.Item</a>
 </li>
 </ul>
 
@@ -278,6 +315,10 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 <li>update_storage_fullness()
 : <a class="el" href="classplayer__input_1_1_player_object.html#a704ec767ee8a39c9af2fd8d23a9047d8">player_input.PlayerObject</a>
 </li>
+<li>use()
+: <a class="el" href="classitems_1_1_item.html#adef3ba0298ba7345eadea2bb776edfe9">items.Item</a>
+, <a class="el" href="classpotions_1_1_potion.html#afaec7f50b484e87a8e2c255a8f6dc565">potions.Potion</a>
+</li>
 </ul>
 
 
@@ -294,7 +335,7 @@ $(document).ready(function(){initNavTree('functions_func.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Jun 13 2015 18:44:16 for Mousetail&#39;s rpg by
+    <li class="footer">Generated on Mon Jun 15 2015 14:55:10 for Mousetail&#39;s rpg by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

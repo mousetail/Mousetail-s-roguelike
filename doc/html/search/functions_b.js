@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['unflag',['unflag',['../classplayer__input_1_1_player_object.html#ab6a1514afa043f280109456559f64e55',1,'player_input::PlayerObject']]],
-  ['update',['update',['../class3d__render_1_1_displayer__3d.html#a8c821c26e03e20daf04b60ff06779afd',1,'3d_render.Displayer_3d.update()'],['../classplayer__input_1_1_player_object.html#aa9e35918088b9264cd87786874a37d50',1,'player_input.PlayerObject.update()'],['../classworld_1_1_world.html#aa29a26c0428a86089df77ad1969f2bea',1,'world.World.update()']]],
-  ['update_5fnutrition',['update_nutrition',['../classplayer__input_1_1_player_object.html#a4f44b910749a86fa11d4b33e79faadd8',1,'player_input::PlayerObject']]],
-  ['update_5fstorage_5ffullness',['update_storage_fullness',['../classplayer__input_1_1_player_object.html#a704ec767ee8a39c9af2fd8d23a9047d8',1,'player_input::PlayerObject']]]
+  ['say',['say',['../classitems_1_1_item.html#a5b4e0b576ce4dac2031c9c3b2d6140e1',1,'items.Item.say()'],['../classplayer__input_1_1_player_object.html#a1c52f46e66007b196d9023e711c24b98',1,'player_input.PlayerObject.say()']]],
+  ['spawnitem',['spawnItem',['../classworld_1_1_world.html#adcfacaddb2803daf47361ce61c4cb6ee',1,'world::World']]]
 ];

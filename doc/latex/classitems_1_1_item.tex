@@ -11,26 +11,19 @@ Inheritance diagram for items.\+Item\+:\begin{figure}[H]
 \item 
 def \hyperlink{classitems_1_1_item_ae3de3fd45b979ded986138a71d80441d}{\+\_\+\+\_\+init\+\_\+\+\_\+}
 \item 
-\hypertarget{classitems_1_1_item_adef3ba0298ba7345eadea2bb776edfe9}{}def {\bfseries use} (self)\label{classitems_1_1_item_adef3ba0298ba7345eadea2bb776edfe9}
-
+def \hyperlink{classitems_1_1_item_adef3ba0298ba7345eadea2bb776edfe9}{use} (self)
 \item 
-\hypertarget{classitems_1_1_item_a5b4e0b576ce4dac2031c9c3b2d6140e1}{}def {\bfseries say} (self, args)\label{classitems_1_1_item_a5b4e0b576ce4dac2031c9c3b2d6140e1}
-
+def \hyperlink{classitems_1_1_item_a5b4e0b576ce4dac2031c9c3b2d6140e1}{say} (self, args)
 \item 
-\hypertarget{classitems_1_1_item_a401a88231e01b131d27c410996734f6c}{}def {\bfseries \+\_\+\+\_\+eq\+\_\+\+\_\+} (self, other)\label{classitems_1_1_item_a401a88231e01b131d27c410996734f6c}
-
+def \hyperlink{classitems_1_1_item_a401a88231e01b131d27c410996734f6c}{\+\_\+\+\_\+eq\+\_\+\+\_\+} (self, other)
 \item 
-\hypertarget{classitems_1_1_item_a7e80e9908e2a7cfff8e8f1bb8ca060a2}{}def {\bfseries get\+Weight} (self)\label{classitems_1_1_item_a7e80e9908e2a7cfff8e8f1bb8ca060a2}
-
+def \hyperlink{classitems_1_1_item_a7e80e9908e2a7cfff8e8f1bb8ca060a2}{get\+Weight} (self)
 \item 
-\hypertarget{classitems_1_1_item_aa729c1ff69df390a0564b06e498ca213}{}def {\bfseries throw} (self, owner, direction)\label{classitems_1_1_item_aa729c1ff69df390a0564b06e498ca213}
-
+def \hyperlink{classitems_1_1_item_aa729c1ff69df390a0564b06e498ca213}{throw} (self, owner, direction)
 \item 
-\hypertarget{classitems_1_1_item_adaea6b467affcc07d421008bf42330a0}{}def {\bfseries throw\+Event} (self, event)\label{classitems_1_1_item_adaea6b467affcc07d421008bf42330a0}
-
+def \hyperlink{classitems_1_1_item_adaea6b467affcc07d421008bf42330a0}{throw\+Event} (self, event)
 \item 
-\hypertarget{classitems_1_1_item_aa25d9560ac3b920b5eb77dd4a62b3cc1}{}def {\bfseries game\+Turn} (self)\label{classitems_1_1_item_aa25d9560ac3b920b5eb77dd4a62b3cc1}
-
+def \hyperlink{classitems_1_1_item_aa25d9560ac3b920b5eb77dd4a62b3cc1}{game\+Turn} (self)
 \item 
 \hypertarget{classitems_1_1_item_ab0fd260891814b0dfce25a1566293ae9}{}def {\bfseries aircollision} (self, other)\label{classitems_1_1_item_ab0fd260891814b0dfce25a1566293ae9}
 
@@ -95,11 +88,11 @@ def \hyperlink{classitems_1_1_item_ae3de3fd45b979ded986138a71d80441d}{\+\_\+\+\_
 
 
 \subsection{Detailed Description}
-\begin{DoxyVerb}A base class that all items inherit
+\begin{DoxyVerb}A base class that all items inherit, all a item will do is being able to be picked up, dropped, thrown and weited.
 \end{DoxyVerb}
  
 
-Definition at line 59 of file items.\+py.
+Definition at line 64 of file items.\+py.
 
 
 
@@ -122,7 +115,106 @@ Definition at line 59 of file items.\+py.
 \end{DoxyVerb}
  
 
-Definition at line 70 of file items.\+py.
+Definition at line 75 of file items.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classitems_1_1_item_a401a88231e01b131d27c410996734f6c}{}\index{items\+::\+Item@{items\+::\+Item}!\+\_\+\+\_\+eq\+\_\+\+\_\+@{\+\_\+\+\_\+eq\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+eq\+\_\+\+\_\+@{\+\_\+\+\_\+eq\+\_\+\+\_\+}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{\+\_\+\+\_\+eq\+\_\+\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+\_\+\+\_\+eq\+\_\+\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{other}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_a401a88231e01b131d27c410996734f6c}
+\begin{DoxyVerb}check if the names and positions are equal
+used for stacking, so override if you have items with the same
+name that don't stack\end{DoxyVerb}
+ 
+
+Definition at line 105 of file items.\+py.
+
+\hypertarget{classitems_1_1_item_aa25d9560ac3b920b5eb77dd4a62b3cc1}{}\index{items\+::\+Item@{items\+::\+Item}!game\+Turn@{game\+Turn}}
+\index{game\+Turn@{game\+Turn}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{game\+Turn}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+game\+Turn (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_aa25d9560ac3b920b5eb77dd4a62b3cc1}
+\begin{DoxyVerb}used for throwing, usually not called
+this can be overriden for costom throwing behavior, eg bumerang
+pretty safely\end{DoxyVerb}
+ 
+
+Definition at line 144 of file items.\+py.
+
+\hypertarget{classitems_1_1_item_a7e80e9908e2a7cfff8e8f1bb8ca060a2}{}\index{items\+::\+Item@{items\+::\+Item}!get\+Weight@{get\+Weight}}
+\index{get\+Weight@{get\+Weight}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{get\+Weight}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+get\+Weight (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_a7e80e9908e2a7cfff8e8f1bb8ca060a2}
+\begin{DoxyVerb}return the weight, with any modifiers\end{DoxyVerb}
+ 
+
+Definition at line 116 of file items.\+py.
+
+\hypertarget{classitems_1_1_item_a5b4e0b576ce4dac2031c9c3b2d6140e1}{}\index{items\+::\+Item@{items\+::\+Item}!say@{say}}
+\index{say@{say}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{say}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+say (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{args}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_a5b4e0b576ce4dac2031c9c3b2d6140e1}
+\begin{DoxyVerb}passes on the say event to the owner\end{DoxyVerb}
+ 
+
+Definition at line 101 of file items.\+py.
+
+\hypertarget{classitems_1_1_item_aa729c1ff69df390a0564b06e498ca213}{}\index{items\+::\+Item@{items\+::\+Item}!throw@{throw}}
+\index{throw@{throw}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{throw}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+throw (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{owner, }
+\item[{}]{direction}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_aa729c1ff69df390a0564b06e498ca213}
+\begin{DoxyVerb}called when the player tries to throw the item, default range is one tile, so don't bother overriding if you don't want youre item to fly,
+you can just set the range to 0\end{DoxyVerb}
+ 
+
+Definition at line 119 of file items.\+py.
+
+\hypertarget{classitems_1_1_item_adaea6b467affcc07d421008bf42330a0}{}\index{items\+::\+Item@{items\+::\+Item}!throw\+Event@{throw\+Event}}
+\index{throw\+Event@{throw\+Event}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{throw\+Event}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+throw\+Event (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{event}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_adaea6b467affcc07d421008bf42330a0}
+\begin{DoxyVerb}don't override! internal method used to thow the item
+(unless, you want the throw command to work differently with this item eg. it dousn't require a direction)
+be carefull though\end{DoxyVerb}
+ 
+
+Definition at line 129 of file items.\+py.
+
+\hypertarget{classitems_1_1_item_adef3ba0298ba7345eadea2bb776edfe9}{}\index{items\+::\+Item@{items\+::\+Item}!use@{use}}
+\index{use@{use}!items\+::\+Item@{items\+::\+Item}}
+\subsubsection[{use}]{\setlength{\rightskip}{0pt plus 5cm}def items.\+Item.\+use (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classitems_1_1_item_adef3ba0298ba7345eadea2bb776edfe9}
+\begin{DoxyVerb}called when trying to use "A" on a item\end{DoxyVerb}
+ 
+
+Definition at line 98 of file items.\+py.
 
 
 
