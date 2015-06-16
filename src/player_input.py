@@ -7,7 +7,6 @@ import pygame
 import random
 import generator
 import itertools
-import cheats
 from constants import *
 import sys
 
@@ -752,5 +751,6 @@ class MonsterObject(PlayerObject):
 
 import monster_body
 import getitembyname
+import cheats
 
 Command=items.Command

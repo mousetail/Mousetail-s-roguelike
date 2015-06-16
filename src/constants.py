@@ -59,6 +59,8 @@ flag_uncode={0:"burdened",1:"full",2:"very full", 3:"hungry", 4:"very hungry", 5
 
 #SETTINGS
 MAXTRIES=100
+GRIDSIZE_X=150
+GRIDSIZE_Y=150
 
 def emergencyReturn(function, r):
     def subfunc(*args):

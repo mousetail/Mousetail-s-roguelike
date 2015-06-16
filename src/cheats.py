@@ -35,7 +35,12 @@ class CheatHandler(object):
             for i in self.player.xp.keys():
                 self.player.add_xp(i,500)
             self.player.say("Blazed it.")
+        elif string=="BinaryStew101":
+            self.player.addtoinventory(getitembyname.itemRandomizer.fastrandomitem((0,0),self.player.world,self.player.cage,1,(ITM_ITEM,)))
         else:
             self.player.say("No cheat code \""+string+"\" is recognized")
                 
             
+
+
+import getitembyname

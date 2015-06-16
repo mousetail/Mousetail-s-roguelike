@@ -11,6 +11,7 @@ import items
 import getitembyname
 from sys import stdout as sysstdout
 import sys
+import constants
 class World(object):
     '''
     It is a level object that will change if levels change
@@ -75,35 +76,6 @@ class World(object):
                     #self.player=None
                     pass
         while True:
-            i=self.objects[self.objindex]
-            if hasattr(i,"action_points") and i.action_points>0:
-                if hasattr(i,"AIturn"):
-                    i.AIturn()
-                if hasattr(i,"gameTurn"):
-                    if  (not hasattr(i,"actions") or len(i.actions)>0):
-                        change=i.gameTurn()
-                    else:
-                        change=0
-                    if change<=0:
-                        
-                        #print "waiting for player..."
-                        break
-                    else:
-                        if not isinstance(i,player_input.MonsterObject):
-                            #print "not waiting for player..."
-                            pass
-                        if hasattr(i,"body"):
-                            i.body.get_visible()
-                        if hasattr(i,"action_points"):
-			  i.action_points-=change
-                        self.newround=True
-                        #break #todo: fix this
-                else:
-                    pass
-                    #print "not having gameTurn"
-            
-            self.objindex+=1
-            #print "next object"
             if self.objindex>=len(self.objects):
                 self.objindex=0
                 if not self.newround:
@@ -126,6 +98,36 @@ class World(object):
                 #print "not having action_points",i
                 pass
                 #print "not having action points"
+            i=self.objects[self.objindex]
+            if hasattr(i,"action_points") and i.action_points>0:
+                if hasattr(i,"AIturn"):
+                    i.AIturn()
+                if hasattr(i,"gameTurn"):
+                    if  (not hasattr(i,"actions") or len(i.actions)>0):
+                        change=i.gameTurn()
+                    else:
+                        change=0
+                    if change<=0:
+                        
+                        #print "waiting for player..."
+                        break
+                    else:
+                        if not isinstance(i,player_input.MonsterObject):
+                            #print "not waiting for player..."
+                            pass
+                        if hasattr(i,"body"):
+                            i.body.get_visible()
+                        if hasattr(i,"action_points"):
+                            i.action_points-=change
+                        self.newround=True
+                        #break #todo: fix this
+                else:
+                    pass
+                    #print "not having gameTurn"
+            
+            self.objindex+=1
+            #print "next object"
+            
         
     def event(self, event):
         """passes on events to objects"""
@@ -137,7 +139,14 @@ class World(object):
         """"adds a object to the world, preferable over adding it yourself"""
         item.owner=self
         self.objects.append(item)     
-
+    def getsolid(self, position):
+        return self.grid[position] in constants.WALLS
+    def getcollisions(self, position):
+        objs=[]
+        for i in self.objects:
+            if hasattr(i, "position") and i.position[0]==position[0] and i.position[1]==position[1]:
+                objs.append(i)
+        return objs
 if __name__=="__main__":
     print "please run 3d_render.py"
     print dir(World)

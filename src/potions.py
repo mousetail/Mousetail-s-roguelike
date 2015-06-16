@@ -8,6 +8,7 @@ also, just skil it
 import getitembyname
 import items
 from constants import *
+import explosions
 
 class Potion(items.Item):
     """
@@ -19,6 +20,7 @@ class Potion(items.Item):
     name="potion"
     pname="potions"
     weight=4
+    range=5
     def __init__(self, position, world, cage):
         """Requires no special arguments, and is directly compatible with the generatior"""
         items.Item.__init__(self, position, cage.lookup(self.imagename), cage, world, self.name, self.pname)
@@ -58,10 +60,18 @@ class Potion(items.Item):
         should use obj.say
         with a discription of what happens
         """
-        obj.say("nothing happens")
+        if hasattr(obj, "say"):
+            obj.say("nothing happens")
     def aircollision(self, other):
         """Don't override, calls apropriate functions when the potion hits something in the air"""
-        self.potion_effect(other,1)
+        self.explode()
+    def land(self):
+        items.Item.land(self)
+        self.explode()
+    def explode(self):
+        explosions.Explosion.explode(self.world, self.position, self.cage, self.cage.lookup("explosion.png"), 1,
+                                      ((self.potion_effect,0.5),(self.potion_message,)))
+        self.markdead()
     #def alt_potion_message(self, obj):
     #    """called when"""
 @getitembyname.ri("speed potion", 5, -3, 12, (ITM_ITEM, ITM_POTION))
@@ -70,12 +80,14 @@ class SpeedPotion(Potion):
     pname="speed potions"
     imagename="potion_green.png"
     def potion_message(self, obj, lessen=1.0):
-        
-        obj.say("the world comes more sharply into focus")
+        if hasattr(obj,"say"):
+            obj.say("the world comes more sharply into focus")
     def potion_effect(self, obj, lessen=1.0):
-        obj.flag(FLAG_FAST)
-        self.world.spawnItem(items.EventScheduler(self.world, 8, obj.unflag,  FLAG_FAST))
-        self.world.spawnItem(items.EventScheduler(self.world, 8, obj.say, "the world speeds up around you"))
+        if hasattr(obj,"flag") and hasattr(obj,"unflag"):
+            obj.flag(FLAG_FAST)
+            self.world.spawnItem(items.EventScheduler(self.world, 8, obj.unflag,  FLAG_FAST))
+            if hasattr(obj,"say"):
+                self.world.spawnItem(items.EventScheduler(self.world, 8, obj.say, "the world speeds up around you"))
         
     
 @getitembyname.ri("healing potion", 1, -3, 12,(ITM_ITEM, ITM_POTION))
@@ -85,7 +97,12 @@ class HealingPotion(Potion):
     pname="heath potions"
     imagename="potion.png"
     def potion_message(self, obj, lessen=1.0):
-        
-        obj.say("you feel much better")
+        if hasattr(obj, "say"):
+            obj.say("you feel much better")
     def potion_effect(self, obj, lessen=1.0):
-        obj.body.health+=((obj.body.maxhealth-obj.body.health)/2)*lessen
+        if hasattr(obj,"body") and hasattr(obj.body,"health"):
+            if hasattr(obj.body,"maxhealth"):
+                obj.body.health+=((obj.body.maxhealth-obj.body.health)/2)*lessen
+            else:
+                obj.body.health+=10*lessen
+    

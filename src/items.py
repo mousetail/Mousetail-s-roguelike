@@ -32,6 +32,8 @@ class StaticObject(object):
     
     def __repr__(self):
         return ("<"+type(self).__name__+" at "+str(self.position)+">")
+    def markdead(self):
+        self.dead=True
 #UTILITY FUNCTION
 alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 class EventScheduler():
@@ -100,7 +102,8 @@ class Item(StaticObject):
         self.owner.say("You don't know how to use "+self.name)
     def say(self, *args):
         """passes on the say event to the owner"""
-        return self.owner.say(*args)
+        if hasattr(self.owner,"say"):
+            return self.owner.say(*args)
     
     def __eq__(self, other):
         """check if the names and positions are equal
@@ -150,11 +153,11 @@ class Item(StaticObject):
             if self.world.grid.hasindex(newposition) and (not self.world.grid[newposition] in WALLS):
                 self.position=newposition
             else:
-	        del self.action_points
-                self.isflying=False
-                return 10
+                self.land()
             for i in self.world.objects:
-                if i is not self and hasattr(i, "position") and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
+                if (i is not self and hasattr(i, "position") and i.position[0]==self.position[0] and i.position[1]==self.position[1]):
+                    #print i
+                    #print self
                     self.aircollision(i)
                     break
                     
@@ -162,15 +165,18 @@ class Item(StaticObject):
             
             self.turnsinair+=1
             if self.turnsinair >= self.range:
-                self.isflying=False
+                self.land()
             return 10
             
         return  100
     def aircollision(self, other):
         if not isinstance(other, Item):
             self.isflying=False
-            self.position=tuple(self.position[i]-self.speed[i] for i in xrange(2))
-
+            self.position=tuple(self.position[i]-self.direction[i] for i in xrange(2))
+    def land(self):
+        del self.action_points
+        self.isflying=False
+        return 10
 class Armor(Item):
     def __init__(self, position, image, cage, world, name, pname=None, weight=0, slot=None, defence=None):
         Item.__init__(self, position, image, cage, world, name, pname, weight)

@@ -12,6 +12,7 @@ import imagecage
 import containers
 import potions
 import weapons
+import constants
 
 #----------------------------
 def splitsprites(spritesheet, tilesize):
@@ -129,7 +130,7 @@ class Displayer_3d():
                     
 if __name__=="__main__":
     x=Displayer_3d(spritesheet="spritesheet_iso1.png",greyspritesheet="spritesheet_grey_1.png",
-    tilesize=64,checkbounds=False,grid_size=[150,150])
+    tilesize=64,checkbounds=False,grid_size=[constants.GRIDSIZE_X,constants.GRIDSIZE_Y])
     pygame.USEREVENT+=1
     pygame.COLLISION=pygame.USEREVENT-1
     while x.running:
