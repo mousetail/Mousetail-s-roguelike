@@ -1,0 +1,27 @@
+<rectangles><rectangle name="Head"><dimentions><left>32</left> <top>10</top> <width>18</width> <height>16</height></dimentions>
+<damage><phis>2</phis> <ele>1</ele> <las>2</las> <hea>1</hea> <rad>1</rad> <bio>1</bio> <gas>1</gas></damage><slot>Head</slot></rectangle>
+<rectangle name="Torso"><dimentions><left>31</left> <top>26</top> <width>18</width> <height>17</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+<rectangle name="Heart"><dimentions><left>42</left> <top>44</top> <width>6</width> <height>7</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+<rectangle name="Abdomen"><dimentions><left>30</left> <top>53</top> <width>18</width> <height>7</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+<rectangle name="Right leg"><dimentions><left>42</left> <top>62</top> <width>6</width> <height>20</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Legs</slot></rectangle>
+<rectangle name="Right foot"><dimentions><left>41</left> <top>84</top> <width>10</width> <height>4</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Feet</slot></rectangle>
+<rectangle name="Left foot"><dimentions><left>38</left> <top>84</top> <width>-10</width> <height>5</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Feet</slot></rectangle>
+<rectangle name="Left leg"><dimentions><left>32</left> <top>62</top> <width>5</width> <height>20</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Legs</slot></rectangle>
+<rectangle name="Right arm"><dimentions><left>52</left> <top>28</top> <width>4</width> <height>26</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+<rectangle name="Left arm"><dimentions><left>24</left> <top>32</top> <width>4</width> <height>21</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+<rectangle name="Hair"><dimentions><left>34</left> <top>4</top> <width>16</width> <height>5</height></dimentions>
+<damage><phis>0</phis> <ele>2</ele> <las>0</las> <hea>0</hea> <rad>0.25</rad> <bio>0</bio> <gas>0</gas></damage><slot>Head</slot></rectangle>
+<rectangle name="Right hand"><dimentions><left>52</left> <top>54</top> <width>4</width> <height>3</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
+<rectangle name="Left hand"><dimentions><left>24</left> <top>54</top> <width>4</width> <height>3</height></dimentions>
+<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
+</rectangles>

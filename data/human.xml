@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itemlist>
+    <item>
+        <basedata>
+            <frequency>0</frequency>
+            <name>Human</name>
+			<tags>
+			    <tag>ITM_MONSTER</tag>
+				<tag>ITM_HUMANOID</tag>
+			</tags>
+			<class>
+				Human
+			</class>
+        </basedata>
+		<classdata>
+			<attr name="speed">100</attr>
+			<attr name="image_name">hero.png</attr>
+			<attr name="attack_zones">
+			    <rectangle><dimentions><top>32</top> <left>28</left> <width>24</width> <height>17</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>36</top> <left>41</left> <width>15</width> <height>34</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>48</top> <left>48</left> <width>15</width> <height>5</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>37</top> <left>48</left> <width>-17</width> <height>3</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>48</top> <left>72</left> <width>5</width> <height>18</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>38</top> <left>70</left> <width>-5</width> <height>18</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>46</top> <left>86</left> <width>13</width> <height>8</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+			    <rectangle><dimentions><top>40</top> <left>85</left> <width>-16</width> <height>9</height></dimentions>
+			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
+
+			</attr>
+		</classdata>
+    </item>
+	<item base="Human">
+	    <basedata>
+			<name>CPP agent</name>
+			<frequency>1</frequency>
+		</basedata>
+		<classdata/>
+</itemlist>
