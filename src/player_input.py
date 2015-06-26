@@ -64,34 +64,43 @@ class PlayerObject(items.StaticObject):
         "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
     
-    def __init__(self,position,body,cage,world, speed=100, name=None):
+    def __init__(self,position,body,cage,world, speed=100, name=None, safemode=False):
         
         self.speed=speed
         self.dirty=False
         self.world=world
-        self.visible=generator.Grid(self.world.grid_size,False)
+        if not safemode:
+            self.visible=generator.Grid(self.world.grid_size,False)
         self.action_points=0
         self.dead=False
         self.actions=[Command("move",{"direction":(1,0)})]*2
-        self.equipment={i:None for i in body.armor_slots+body.weapon_slots}
-        self.equipment_letters={}
         self.stats={"level":1,"accuracy":1,"constitution":1,"strength":1}
         self.xp=self.stats.copy()
         self.inventory={}#"a":[items.Weapon((0,0),self.cage.lookup("shortsword.png"),self.cage,self.world,"short sword","short swords",1,1)]*2,
                         #"b":[items.Item((0,0),self.cage.lookup("shield.png"),self.cage,self.world,"shield","shields")]}
-        
         self.input_mode="normal"
         self.status_messages=[]
         self.body=body(self, world)
         self.body.updatemaxweight()
+        self.clearAndRefreshEquipment()
         self.events=[]
         self.fullness=1000 #BASE 1000
         if name:
             self.name=name
         else:
             self.name=self.body.name
-        items.StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
-        
+        if not safemode:
+            items.StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
+        else:
+            self.position=position
+    def clearAndRefreshEquipment(self):
+        if hasattr(self,"equipment") and hasattr(self, "equipment_letters"):
+            self.clearEquipment()
+        self.equipment={i:None for i in self.body.armor_slots+self.body.weapon_slots}
+        self.equipment_letters={}
+    def clearEquipment(self, saystuff=False):
+        for i in self.equipment_letters.keys():
+            self.removearmorbyletter(i, True, saystuff, True)
     def welcomeMessage(self):
         """give a help message"""
         self.say("B}Welcome to Mousetail's roguelike")
@@ -461,7 +470,8 @@ class PlayerObject(items.StaticObject):
             self.input_mode=(infotype, callback)
         else:
             self.input_mode="normal"
-    def removearmorbyletter(self, letter, removeitem=True, saystuff=False):
+    def removearmorbyletter(self, letter, removeitem=True, saystuff=False, addtoinv=True
+                            ):
         """takes off armor and place it into the inventory of the player"""
         if letter in self.equipment_letters:
             slot=self.equipment_letters[letter]
@@ -469,6 +479,8 @@ class PlayerObject(items.StaticObject):
             if removeitem:
                 self.equipment[slot]=None #Don't delete the slot, its permanent
                 del self.equipment_letters[letter]
+                if addtoinv:
+                    self.addtoinventory(itm)
             self.update_storage_fullness()
             return itm
         else:
@@ -594,8 +606,7 @@ class PlayerObject(items.StaticObject):
                 actions+=100
             elif action.typ=="remove":
                 if "letter" in action.data:
-                    itm=self.removearmorbyletter(action.data["letter"], True, False)
-                    self.addtoinventory(itm)
+                    itm=self.removearmorbyletter(action.data["letter"], True, False, True)
                 elif "item" in self.action.data:
                     raise NotImplementedError("line 523 in player input can't be fullfilled till a remove item by identity is implemented")
                 actions+=100
@@ -750,7 +761,6 @@ class MonsterObject(PlayerObject):
         return PlayerObject.update(self)
 
 import monster_body
-import getitembyname
 import cheats
 
 Command=items.Command

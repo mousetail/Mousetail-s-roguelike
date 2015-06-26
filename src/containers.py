@@ -4,7 +4,7 @@ Created on 22 apr. 2015
 @author: Maurits
 '''
 import items
-import getitembyname
+
 import pygame
 from constants import *
 
@@ -100,7 +100,7 @@ class Container(items.Item):
         return 100
     def getWeight(self):
         return self.weight+sum(i.getWeight() for i in self.inventory)
-@getitembyname.ri("sack", 5, 0,20,(ITM_ITEM, ITM_CONTAINER))
+#@getitembyname.ri("sack", 5, 0,20,(ITM_ITEM, ITM_CONTAINER))
 class Sack (Container):
     name="sack"
     pname="sacks"

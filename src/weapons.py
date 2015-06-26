@@ -4,7 +4,6 @@ Created on 25 apr. 2015
 @author: Maurits
 '''
 import items
-import getitembyname
 from constants import *
 import monster_body
 
@@ -42,10 +41,10 @@ class Weapon(items.Item):
 
 
 
-@getitembyname.ri("short sword",1,0,99,(ITM_ITEM, ITM_WEAPON))
+#@getitembyname.ri("short sword",1,0,99,(ITM_ITEM, ITM_WEAPON))
 def short_sword(position, world, cage):
     return Weapon(position,cage.lookup("shortsword.png"),cage, world, "sword","swords",5,1)
-@getitembyname.ri("dagger",5,0,99,(ITM_ITEM, ITM_WEAPON))
+#@getitembyname.ri("dagger",5,0,99,(ITM_ITEM, ITM_WEAPON))
 def dagger(position, world, cage):
     return Weapon(position,cage.lookup("dagger.png"),cage, world, "dagger","daggers",3,0.5)
 

@@ -9,7 +9,7 @@ Created on 31 dec. 2014
 #(phisical, Ellectrical, Laser, heat, cold, radioactive, bio/poison, gas)
 import random, math, itertools
 import items
-import getitembyname, generator
+import generator
 from constants import *
 
 class CombatOnlyBody(object):
@@ -28,8 +28,6 @@ class CombatOnlyBody(object):
     """
     def attack(self, other, weapon=None, personal_pron=True):
         
-        #TODO: find a inheritence safe-way to call this method when one member isn't a instance of the class
-        #WONT RUN RIGHT NOW
         
         otherbody=other.body
         max_height=self.size*self.max_attack_height_ratio
@@ -69,7 +67,8 @@ class CombatOnlyBody(object):
                     for i in range(len(sword.damage)):
                         damage[i]+=sword.damage[i]*self.getstat("level")*random.random()
             for i in range(len(damage)):
-                other.body.dodamage(hit,damage[i],i,self.name)
+                if damage[i]!=0:
+                    other.body.dodamage(hit,damage[i],i,self.name)
             if personal_pron:
                 self.mind.say("you hit the "+other.name+"'s "+hit)
                 other.say("the "+self.getname()+" hits your "+hit)
@@ -104,8 +103,8 @@ class HumanBody(CombatOnlyBody):
     speed=100
     image_name="hero.png"
     #Basic pattern: bodypart:distance from floor,left,width,height,damage_ratio,
-    #damage ration is #(phisical, Ellectrical, Laser, heat, radioactive, bio/poison, gas)
-                                                #ph  ele  l   h   c   rad   po  g,  Armor slot
+    #damage ration is #(phisical, Ellectrical, Laser, heat, cold, radioactive, bio/poison, gas)
+                                                #ph  ele  las hea col rad   po  g,  Armor slot
     
     attack_zones={"hair":          [30,96,20,4 ,(0,  0.5, 0,  0,  0,  0.25, 0,  0 ),"head"],
                   "head":          [30,79,20,16,(2,  1,   2,  1,  1,  1,    1,  1 ),"head"],
@@ -187,14 +186,21 @@ class HumanBody(CombatOnlyBody):
     
     def dodamage(self, region, damage, damagetype, message, countarmor=True):
         if self.health>0:
-            d=damage*self.attack_zones[region][4][damagetype]
-            if countarmor and self.attack_zones[region][5] and self.mind.equipment[self.attack_zones[region][5]]:
-                bl=self.mind.equipment[self.attack_zones[region][5]].defence[damagetype]
-                
-                #print "blocked "+str(bl)
-                
-                d*=bl
-        
+            try:
+                d=damage*self.attack_zones[region][4][damagetype]
+            except IndexError:
+                raise IndexError(self.attack_zones[region],damagetype)
+            try:
+                if countarmor and self.attack_zones[region][5] and self.mind.equipment[self.attack_zones[region][5]]:
+                    bl=self.mind.equipment[self.attack_zones[region][5]].defence[damagetype]
+                    
+                    #print "blocked "+str(bl)
+                    
+                    d*=bl
+            except ImportError as ex:
+                raise ex
+            except KeyError as ex:
+                raise KeyError("Found \'"+str(ex.args[0])+"\' expected one of "+str(self.mind.equipment.keys()))
             self.health-=d
             if self.health<0:
                 self.mind.kill(message)
@@ -218,16 +224,16 @@ class lizard(HumanBody):
                   }
     size=56
     max_attack_height_ratio=1.0
-@getitembyname.itemRandomizer.fast_register_monster("CPP agent", 1, 0, 5, starting_inventory=("iron helmet",))
-class Agent(HumanBody):
-    name="CPP agent"
-    image_name="agent.png"
-    advanced_visibility_check=False
-    drops=[(0.5,"time book"),(0.5,"key")]+HumanBody.drops
-    ratios=HumanBody.ratios.copy()
-    ratios["constitution"]=3
-@getitembyname.itemRandomizer.fast_register_monster("archer", 5, 0, 5, starting_inventory=("iron helmet",))
-class Archer(HumanBody):
-    name="archer"
-    image_name="archer.png"
-    advanced_visibility_check=False
+##@getitembyname.itemRandomizer.fast_register_monster("CPP agent", 1, 0, 5, starting_inventory=("iron helmet",))
+##class Agent(HumanBody):
+##    name="CPP agent"
+##    image_name="agent.png"
+##    advanced_visibility_check=False
+##    drops=[(0.5,"time book"),(0.5,"key")]+HumanBody.drops
+##    ratios=HumanBody.ratios.copy()
+##    ratios["constitution"]=3
+##@getitembyname.itemRandomizer.fast_register_monster("archer", 5, 0, 5, starting_inventory=("iron helmet",))
+##class Archer(HumanBody):
+##    name="archer"
+##    image_name="archer.png"
+##    advanced_visibility_check=False

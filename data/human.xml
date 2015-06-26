@@ -3,7 +3,7 @@
     <item>
         <basedata>
             <frequency>0</frequency>
-            <name>Human</name>
+            <name>human</name>
 			<tags>
 			    <tag>ITM_MONSTER</tag>
 				<tag>ITM_HUMANOID</tag>
@@ -16,30 +16,68 @@
 			<attr name="speed">100</attr>
 			<attr name="image_name">hero.png</attr>
 			<attr name="attack_zones">
-			    <rectangle><dimentions><top>32</top> <left>28</left> <width>24</width> <height>17</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>36</top> <left>41</left> <width>15</width> <height>34</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>48</top> <left>48</left> <width>15</width> <height>5</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>37</top> <left>48</left> <width>-17</width> <height>3</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>48</top> <left>72</left> <width>5</width> <height>18</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>38</top> <left>70</left> <width>-5</width> <height>18</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>46</top> <left>86</left> <width>13</width> <height>8</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-			    <rectangle><dimentions><top>40</top> <left>85</left> <width>-16</width> <height>9</height></dimentions>
-			    <damage><phis>0</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <rad>0</rad> <bio>0</bio> <gas>0</gas><slot>None</slot></damage></rectangle>
-
+			    <rectangle name="Head"><dimentions><left>32</left> <top>10</top> <width>18</width> <height>16</height></dimentions>
+				<damage><phis>2</phis> <ele>1</ele> <las>2</las> <hea>1</hea> <ice>0</ice> <rad>1</rad> <bio>1</bio> <gas>1</gas></damage><slot>Head</slot></rectangle>
+				<rectangle name="Torso"><dimentions><left>31</left> <top>26</top> <width>18</width> <height>17</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+				<rectangle name="Heart"><dimentions><left>42</left> <top>44</top> <width>6</width> <height>7</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+				<rectangle name="Abdomen"><dimentions><left>30</left> <top>53</top> <width>18</width> <height>7</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+				<rectangle name="Right leg"><dimentions><left>42</left> <top>62</top> <width>6</width> <height>20</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Legs</slot></rectangle>
+				<rectangle name="Right foot"><dimentions><left>41</left> <top>84</top> <width>10</width> <height>4</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Feet</slot></rectangle>
+				<rectangle name="Left foot"><dimentions><left>38</left> <top>84</top> <width>-10</width> <height>5</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>7</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Feet</slot></rectangle>
+				<rectangle name="Left leg"><dimentions><left>32</left> <top>62</top> <width>5</width> <height>20</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Legs</slot></rectangle>
+				<rectangle name="Right arm"><dimentions><left>52</left> <top>28</top> <width>4</width> <height>26</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+				<rectangle name="Left arm"><dimentions><left>24</left> <top>32</top> <width>4</width> <height>21</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Body</slot></rectangle>
+				<rectangle name="Hair"><dimentions><left>34</left> <top>4</top> <width>16</width> <height>5</height></dimentions>
+				<damage><phis>0</phis> <ele>2</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0.25</rad> <bio>0</bio> <gas>0</gas></damage><slot>Head</slot></rectangle>
+				<rectangle name="Right hand"><dimentions><left>52</left> <top>54</top> <width>4</width> <height>3</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
+				<rectangle name="Left hand"><dimentions><left>24</left> <top>54</top> <width>4</width> <height>3</height></dimentions>
+				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
+				
 			</attr>
+			<attr name="advanced visibility check">True</attr>
 		</classdata>
     </item>
-	<item base="Human">
+	<item>
 	    <basedata>
 			<name>CPP agent</name>
 			<frequency>1</frequency>
+			<tags>
+			    <tag>ITM_MONSTER</tag>
+				<tag>ITM_HUMANOID</tag>
+			</tags>
+			
+			<class>
+				Human
+			</class>
 		</basedata>
-		<classdata/>
+		<classdata base="human">
+			<attr name="speed">120</attr>
+			<attr name="advanced visibility check">False</attr>
+		</classdata>
+		
+	</item>
+	<item>
+		<basedata>
+			<name>Goku</name>
+			<frequency>4</frequency>
+			<tags/>
+			<class>
+				Teleporters</class>
+		</basedata>
+		<classdata base="human">
+			<attr name="speed" base="CPP agent"/>
+			<attr name="image_name">Goku.png</attr>
+			<attr name="advanced visibility check" base="CPP agent"/>
+		</classdata>
+	</item>
 </itemlist>

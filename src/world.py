@@ -8,7 +8,7 @@ import pygame
 import random
 import player_input
 import items
-import getitembyname
+import XMLloading
 from sys import stdout as sysstdout
 import sys
 import constants
@@ -32,6 +32,8 @@ class World(object):
         self.objects=self.grid.generate()
         tmpobjects=[]
         self.cage=cage
+        self.itemPicker=XMLloading.XMLloader()
+        self.itemPicker.loadFile("..\data\human.xml")
         
         for i in self.objects:
             if i[1]=="player":
@@ -41,7 +43,10 @@ class World(object):
                 self.player=self.focus #These are usually equal, but sometimes the screen could focus on something else
                 
             else:
-                tmpobjects.append(getitembyname.itemRandomizer.fastrandomitem(i[0], self, self.cage, 1, (i[1],)))
+                try:
+                    tmpobjects.append(self.itemPicker.fastRandomItem(i[0], self, self.cage, 1, (i[1],)))
+                except IndexError:
+                    print "r} CANT FIND OBJ FOR TAGS",i[1]
             #elif i[1]=="monster":
             #    tmpobjects.append(getitembyname.itemRandomizer.fastrandommonster(i[0],self,self.cage,1))
             #elif i[1]=="item":

@@ -5,7 +5,7 @@ Created on 28 feb. 2015
 @author: Maurits
 also, just skil it
 '''
-import getitembyname
+
 import items
 from constants import *
 import explosions
@@ -74,7 +74,7 @@ class Potion(items.Item):
         self.markdead()
     #def alt_potion_message(self, obj):
     #    """called when"""
-@getitembyname.ri("speed potion", 5, -3, 12, (ITM_ITEM, ITM_POTION))
+#@getitembyname.ri("speed potion", 5, -3, 12, (ITM_ITEM, ITM_POTION))
 class SpeedPotion(Potion):
     name="speed potion"
     pname="speed potions"
@@ -90,7 +90,7 @@ class SpeedPotion(Potion):
                 self.world.spawnItem(items.EventScheduler(self.world, 8, obj.say, "the world speeds up around you"))
         
     
-@getitembyname.ri("healing potion", 1, -3, 12,(ITM_ITEM, ITM_POTION))
+#@getitembyname.ri("healing potion", 1, -3, 12,(ITM_ITEM, ITM_POTION))
         
 class HealingPotion(Potion):
     name="health potion"

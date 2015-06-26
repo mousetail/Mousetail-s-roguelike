@@ -108,7 +108,7 @@ for i in range(100):
                 
         background.fill(color,(i*area_scale,j*area_scale,area_scale,area_scale))
 
-damage_types=("phis","ele","las","hea","rad","bio","gas")
+damage_types=("phis","ele","las","hea","ice","rad","bio","gas")
 rect_pos=("left","top","width","height")
 
 ximage=pygame.image.load("x.png")
@@ -132,7 +132,15 @@ for child in root.findall("rectangle"):
     damageX=child.find("damage")
     slotX=child.find("slot")
     square=tuple(int(squareX.find(i).text) for i in rect_pos)
-    damage=tuple(Holder((damageX.find(i).text)) for i in damage_types)
+    #damage=tuple(Holder((damageX.find(i).text)) for i in damage_types)
+    damage=[]
+    for i in damage_types:
+        t=damageX.find(i)
+        print t
+        if len(str(t))>5:
+            damage.append(Holder(t.text))
+        else:
+            damage.append(Holder("0"))
     slot=Holder(slotX.text)
     rectangles.append(Rectangle(square, damage, slot, font, name, len(rectangles)))
     
@@ -183,13 +191,13 @@ while running:
     pygame.draw.rect(screen,(255,255,255),(0,0,area_scale*100,area_scale*100),1)
     pygame.display.flip()
 pygame.quit()
-
-with open("tmpxml.xml","w") as f:
-    f.write("<rectangles>")
-    for i in rectangles:
-        f.write("<rectangle name=\""+str(i.name)+"\"><dimentions>"+
-                " ".join("<"+rect_pos[j]+">"+str(i.rect[j])+"</"+rect_pos[j]+">" for j in range(len(rect_pos)))+"</dimentions>\n")
-        f.write("<damage>"+" ".join("<"+damage_types[j]+">"+str(i.damage[j])+"</"+damage_types[j]+">" for j in range(len(damage_types))))
-        f.write("</damage><slot>"+str(i.slotname)+"</slot>")         
-        f.write("</rectangle>\n")
-    f.write("</rectangles>")
+if True:
+    with open("tmpxml.xml","w") as f:
+        f.write("<rectangles>")
+        for i in rectangles:
+            f.write("<rectangle name=\""+str(i.name)+"\"><dimentions>"+
+                    " ".join("<"+rect_pos[j]+">"+str(i.rect[j])+"</"+rect_pos[j]+">" for j in range(len(rect_pos)))+"</dimentions>\n")
+            f.write("<damage>"+" ".join("<"+damage_types[j]+">"+str(i.damage[j])+"</"+damage_types[j]+">" for j in range(len(damage_types))))
+            f.write("</damage><slot>"+str(i.slotname)+"</slot>")         
+            f.write("</rectangle>\n")
+        f.write("</rectangles>")

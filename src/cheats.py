@@ -43,4 +43,3 @@ class CheatHandler(object):
             
 
 
-import getitembyname
