@@ -27,17 +27,17 @@ class World(object):
         '''
         Constructor
         '''
+        self.itemPicker=XMLloading.XMLloader()
+        self.itemPicker.loadFile("..\data\human.xml")
         self.grid_size=size
         self.grid=generator.Generator(size)
         self.objects=self.grid.generate()
         tmpobjects=[]
         self.cage=cage
-        self.itemPicker=XMLloading.XMLloader()
-        self.itemPicker.loadFile("..\data\human.xml")
         
         for i in self.objects:
             if i[1]=="player":
-                pbody=player_input.monster_body.HumanBody
+                pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
                 tmpobjects.append(player_input.PlayerObject(i[0],pbody,self.cage,self))
                 self.focus=tmpobjects[-1]
                 self.player=self.focus #These are usually equal, but sometimes the screen could focus on something else

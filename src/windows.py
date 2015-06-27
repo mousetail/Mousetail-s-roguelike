@@ -38,6 +38,9 @@ class RenderWindow(BaseWindow):
             self.greysprites=sprites
         self.draw_offset=[98,37]
     def redraw(self):#print "SOMETHING IS MOVING"
+        if self.focus and self.focus.dead:
+            self.focus=None
+        
         for i in self.dynamicobjectsstore:
             i[:]=[]
         

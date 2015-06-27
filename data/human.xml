@@ -13,6 +13,7 @@
 			</class>
         </basedata>
 		<classdata>
+			<attr name="image">hero.png</attr>
 			<attr name="speed">100</attr>
 			<attr name="image_name">hero.png</attr>
 			<attr name="attack_zones">
@@ -61,6 +62,7 @@
 			</class>
 		</basedata>
 		<classdata base="human">
+		    <attr name="image_name">agent.png</attr>
 			<attr name="speed">120</attr>
 			<attr name="advanced visibility check">False</attr>
 		</classdata>
@@ -68,16 +70,73 @@
 	</item>
 	<item>
 		<basedata>
-			<name>Goku</name>
-			<frequency>4</frequency>
-			<tags/>
-			<class>
-				Teleporters</class>
+			<name>meat</name>
+			<frequency>0</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_FOOD</tag>
+			</tags>
+			<class>food</class>
 		</basedata>
-		<classdata base="human">
-			<attr name="speed" base="CPP agent"/>
-			<attr name="image_name">Goku.png</attr>
-			<attr name="advanced visibility check" base="CPP agent"/>
+		<classdata>
+		    <attr name="pname">droids</attr>
+			<attr name="image_name">meat.png</attr>
+			<attr name="range">1</attr>
+			<attr name="weight">2</attr>
+			<attr name="nutrition">100</attr>
+		</classdata>
+	</item>
+	<item>
+	    <basedata>
+		    <name>banana</name>
+			<frequency>2</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_FOOD</tag>
+			</tags>
+			<class>food</class>
+		</basedata>
+		<classdata base="meat">
+		    <attr name="pname">bananas</attr>
+			<attr name="image_name">banana.png</attr>
+			<attr name="nutrition">50</attr>
+		</classdata>
+	</item>
+	<item>
+		<basedata>
+		    <name>healing potion</name>
+			<frequency>3</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_POTION</tag>
+			</tags>
+			<class>healing potion</class>
+		</basedata>
+		<classdata>
+		    <attr name="pname">healing potions</attr>
+			<attr name="image_name">potion.png</attr>
+			<attr name="range">7</attr>
+			<attr name="weight">1</attr>
+		</classdata>
+	</item>
+	<item>
+	    <basedata>
+		    <name>short sword</name>
+			<frequency>2</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_WEAPON</tag>
+			</tags>
+			<class>
+			    weapon
+			</class>
+		</basedata>
+		<classdata>
+		    <attr name="pname">short swords</attr>
+			<attr name="image_name">shortsword.png</attr>
+			<attr name="range">6</attr>
+			<attr name="weight">3</attr>
+			<attr name="damage">1,0,0,0,0,0,0,0</attr>
 		</classdata>
 	</item>
 </itemlist>

@@ -31,7 +31,7 @@ class ObjectSpawner(object):
             room=random.choice(self.grid.rooms)
             if (not room.instersects(self.player.position)) and (not room.special):
                 position=random.randint(room.bounds[0],room.bounds[0]+room.bounds[2]),random.randint(room.bounds[1],room.bounds[1]+room.bounds[3])
-                self.world.objects.append(getitembyname.itemRandomizer.fastrandomitem(position, self.world, self.world.cage, 0, ITM_MONSTER))
+                self.world.spawnItem(self.world.itemPicker.fastRandomItem(position, self.world, self.world.cage, 0, (ITM_MONSTER,)))
                 print "G}you hear some noises"
                 
         return 300
@@ -64,9 +64,9 @@ class PlayerObject(items.StaticObject):
         "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
     
-    def __init__(self,position,body,cage,world, speed=100, name=None, safemode=False):
+    def __init__(self,position,body,cage,world, safemode=False):
         
-        self.speed=speed
+        self.speed=body.speed
         self.dirty=False
         self.world=world
         if not safemode:
@@ -78,19 +78,21 @@ class PlayerObject(items.StaticObject):
         self.xp=self.stats.copy()
         self.inventory={}#"a":[items.Weapon((0,0),self.cage.lookup("shortsword.png"),self.cage,self.world,"short sword","short swords",1,1)]*2,
                         #"b":[items.Item((0,0),self.cage.lookup("shield.png"),self.cage,self.world,"shield","shields")]}
+        
         self.input_mode="normal"
         self.status_messages=[]
-        self.body=body(self, world)
+        
+        self.body=body
+        self.body.mind=self
         self.body.updatemaxweight()
         self.clearAndRefreshEquipment()
+        self.body.recalculateEverything()
+        
         self.events=[]
         self.fullness=1000 #BASE 1000
-        if name:
-            self.name=name
-        else:
-            self.name=self.body.name
+        self.name=self.body.name
         if not safemode:
-            items.StaticObject.__init__(self,position,cage.lookup(self.body.image_name),cage,world.grid,speed,True)
+            items.StaticObject.__init__(self,position,cage.lookup(self.body.imagename),cage,world.grid,self.body.speed,True)
         else:
             self.position=position
     def clearAndRefreshEquipment(self):

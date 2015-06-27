@@ -5,8 +5,16 @@ Created on 17 jun. 2015
 '''
 from xml.etree import ElementTree as et
 import monster_body, constants
+#places to load types from
+#-------------------------
+placestoloadfrom=[
+    "itemClassRegistration"
+                  ]
+#-------------------------------/
 from itemloaderutilmethods import *
 import random
+import sys
+
 
 class XMLloader(object):
     '''
@@ -20,6 +28,14 @@ class XMLloader(object):
         '''
         self.objdefs={}
         self.clstypes={"Human":monsterMaker(monster_body.HumanBody)}
+        sys.path.append("../srcplug")
+        for i in placestoloadfrom:
+            mod=__import__(i)
+            defdict=mod.defs
+            for key, value in defdict.items():
+                self.clstypes[key]=value
+            placestoloadfrom.extend(mod.placestoloadfrom)
+        print self.clstypes
     def loadFile(self, filename="..\data\human.xml"):
         o=et.parse(filename)
         for itemdef in o.findall("item"):
@@ -83,9 +99,10 @@ class XMLloader(object):
             return random.choice(tmplist)
         except IndexError:
             raise IndexError("No item found with tags "+",".join(str(i) for i in tags))
-    def fastRandomItem(self, position, world, cage, dlevel, tags,safemode=False):
-        return self.findObj(self.randomItem(dlevel, tags))(position,world,cage,safemode=safemode)
-        
+    def fastRandomItem(self, position, world, cage, dlevel, tags,safemode=False,returnbody=False):
+        return self.findObj(self.randomItem(dlevel, tags))(position,world,cage,safemode=safemode,returnbody=returnbody)
+    def fastItemByName(self, name, position, world, cage,returnbody=False):
+        return self.findObj(name)(position,world,cage,returnbody=returnbody)
 if __name__=="__main__":
     bj=XMLloader()
     bj.loadFile()

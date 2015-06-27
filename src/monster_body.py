@@ -100,36 +100,14 @@ class HumanBody(CombatOnlyBody):
     '''
     A base body that should be inherited from by all monster bodies
     '''
-    speed=100
-    image_name="hero.png"
-    #Basic pattern: bodypart:distance from floor,left,width,height,damage_ratio,
-    #damage ration is #(phisical, Ellectrical, Laser, heat, cold, radioactive, bio/poison, gas)
-                                                #ph  ele  las hea col rad   po  g,  Armor slot
     
-    attack_zones={"hair":          [30,96,20,4 ,(0,  0.5, 0,  0,  0,  0.25, 0,  0 ),"head"],
-                  "head":          [30,79,20,16,(2,  1,   2,  1,  1,  1,    1,  1 ),"head"],
-                  "neck":          [37,70,7, 8, (2,  1,   2,  1,  1,  1,    0.1,0 ),"head"],
-                  "ribs":          [31,53,18,16,(1,  1,   1,  1,  1,  1,    0.1,0 ),"body"],
-                  "heart":         [44,49, 5, 5,(2,  3,   2,  1,  1,  1.5,  0,  0 ),"body"],
-                  "stomach":       [31,35,18,14,(1,  1,   1,  1,  1,  1,    0.1,0 ),"body"],
-                  "right shoulder":[28,68, 4, 3,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"body"],
-                  "left shoulder": [50,68, 4, 3,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"body"],
-                  "left arm":      [27,40, 4,27,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"body"],
-                  "right arm":     [50,40, 4,27,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"body"],
-                  "left hand":     [27,35, 4, 5,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"hands"],
-                  "right hand":    [50,35, 4, 5,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"hands"],
-                  "right foot":    [29, 0,10, 4,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"feet"],
-                  "left foot":     [43, 0,10, 4,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"feet"],
-                  "left leg":      [47, 5, 4,31,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"legs"],
-                  "right leg":     [34, 5, 4,31,(0.5,0.5, 0.5,0.5,0.5,0.5,  0,  0 ),"legs"],
-                  }
-    armor_slots=["head","body","legs","hands","feet"]
-    weapon_slots=["left hand","right hand"]
     def updatemaxhealth(self):
         
         self.maxhealth=(self.getstat("constitution")+2)**2
     
     drops=[(1,"meat")]
+    weapon_slots=["right hand"]
+    
     def drop(self):
         itms=list(itertools.chain(*self.mind.inventory.values()))
         
@@ -140,18 +118,24 @@ class HumanBody(CombatOnlyBody):
         for itm in itms:
             itm.position=self.mind.position[:]
             
-        itms.extend(getitembyname.itemRandomizer.fastitembyname(i[1], self.mind.position[:], self.world, self.mind.cage) for i in self.drops if i[0]>random.random())
+        itms.extend(self.world.itemPicker.fastItemByName(i[1], self.mind.position[:], self.world, self.mind.cage) for i in self.drops if i[0]>random.random())
         self.world.objects.extend(itms)
-    def __init__(self, mind, world):
+    def __init__(self, world, imagename="hero.png", name="human", speed=100):
         '''
         Constructor
         '''
-        self.mind=mind
         self.world=world
         self.target="ribs"
-        self.maxhealth=(self.mind.stats["constitution"]*self.ratios["constitution"]+2)**2 #I can't access the findmaxhealth method directly
+        self.maxhealth=10
         
         self.health=self.maxhealth #I can't use the other method yet
+        self.speed=speed
+        self.imagename=imagename
+        self.name=name
+    def recalculateEverything(self):
+        self.updatemaxhealth()
+        self.updatemaxweight()
+    
     ratios={"level":1,"accuracy":1,"constitution":1,"strength":1}
     size=100
     name="human"

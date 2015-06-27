@@ -59,14 +59,25 @@ FLAG_HUNGRY_2=4
 FLAG_FAST=5
 FLAG_FAST_2=6
 
+flag_uncode={0:"burdened",1:"full",2:"very full", 3:"hungry", 4:"very hungry", 5:"fast", 6: "very fast"}
+
+#Types-----------------------+
+TYPE_INT=0#                  |
+TYPE_STRING=1#               |
+TYPE_FLOAT=2#                |
+TYPE_TUPLE_INT=3#            |
+TYPE_TUPLE_STRING=4#         |
+TYPE_TUPLE_FLOAT=5         # |
+#----------------------------+
 from pygame.locals import *
 
-flag_uncode={0:"burdened",1:"full",2:"very full", 3:"hungry", 4:"very hungry", 5:"fast", 6: "very fast"}
 
 #SETTINGS
 MAXTRIES=100
 GRIDSIZE_X=150
 GRIDSIZE_Y=150
+
+
 
 def emergencyReturn(function, r):
     def subfunc(*args):

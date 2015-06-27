@@ -9,9 +9,6 @@ import imagecage
 
 #insert any other item sets here
 
-import containers
-import potions
-import weapons
 import constants
 
 #----------------------------

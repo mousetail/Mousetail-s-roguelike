@@ -67,12 +67,6 @@ class Item(StaticObject):
     '''
     A base class that all items inherit, all a item will do is being able to be picked up, dropped, thrown and weited.
     '''
-    name="invalid item"
-    pname="invalid items"
-    image=None
-    weight=0
-    range=1
-    speed=100
 
     def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None): #Assumed to be a class level attribute if not passed
         '''
@@ -89,7 +83,8 @@ class Item(StaticObject):
             self.name=name
         if pname:
             self.pname=pname
-        elif self.pname=="invalid items":
+        else:
+            print pname
             self.pname=self.name+"s"
         if image:
             self.image=image
@@ -188,12 +183,7 @@ class Armor(Item):
     defence=(1,)*8
     slot=""
 
-class Food(Item):
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, nutrition=0):
-        Item.__init__(self, position, image, cage, world, name, pname, weight)
-        self.nutrition=nutrition
-    def eat(self):
-        return "you eat the "+self.name
+
 class Key(Item):
     def __init__(self, *args, **kwargs):
         Item.__init__(self, *args, **kwargs)

@@ -16,14 +16,9 @@ class Potion(items.Item):
     \image html "Drink potion.png"
     I don't really get why this isn't showing up
     """
-    imagename="potion.png"
-    name="potion"
-    pname="potions"
-    weight=4
-    range=5
-    def __init__(self, position, world, cage):
+    def __init__(self, position, image, cage, world, name, pname, weight):
         """Requires no special arguments, and is directly compatible with the generatior"""
-        items.Item.__init__(self, position, cage.lookup(self.imagename), cage, world, self.name, self.pname)
+        items.Item.__init__(self, position, cage.lookup(self.imagename), cage, world, name, pname, weight)
     
     def use(self):
         """Don't override, for different behavior, override
