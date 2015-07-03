@@ -123,6 +123,7 @@ class World(object):
                         if hasattr(i,"body"):
                             i.body.get_visible()
                         if hasattr(i,"action_points"):
+                        
                             i.action_points-=change
                         self.newround=True
                         #break #todo: fix this

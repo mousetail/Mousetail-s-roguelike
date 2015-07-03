@@ -237,10 +237,11 @@ class InventoryWindow(StatWindow):
                     self.drawsurface.blit(tm.inventory[item][0].image,[5,ypos])
                 else:
                     self.drawsurface.blit(tm.inventory[item][0].image,[5,ypos-32])
-                if len(tm.inventory[item])==1:
-                    nm=tm.inventory[item][0].name
-                else:
-                    nm=tm.inventory[item][0].pname
+                ##if len(tm.inventory[item])==1:
+                ##    nm=tm.inventory[item][0].name
+                ##else:
+                ##    nm=tm.inventory[item][0].pname
+                nm=self.trackmonster.getitemname(tm.inventory[item][0],p=(len(tm.inventory[item])!=1))
                 weight=tm.inventory[item][0].getWeight()*len(tm.inventory[item])
                 self.drawsurface.blit(self.font.render(item+": "+str(len(tm.inventory[item]))+" "+str(nm)+" ("+str(weight)+"g)",1,[255,255,255]),
                                       [74, ypos])

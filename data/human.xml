@@ -84,6 +84,8 @@
 			<attr name="range">1</attr>
 			<attr name="weight">2</attr>
 			<attr name="nutrition">100</attr>
+			<attr name="fake name">meat</attr>
+			<attr name="fake pname">meat</attr>
 		</classdata>
 	</item>
 	<item>
@@ -100,6 +102,8 @@
 		    <attr name="pname">bananas</attr>
 			<attr name="image_name">banana.png</attr>
 			<attr name="nutrition">50</attr>
+			<attr name="fake name">yellow shape</attr>
+			<attr name="fake pname">yellow shapes</attr>
 		</classdata>
 	</item>
 	<item>
@@ -117,6 +121,8 @@
 			<attr name="image_name">potion.png</attr>
 			<attr name="range">7</attr>
 			<attr name="weight">1</attr>
+			<attr name="fake name">red potion</attr>
+			<attr name="fake pname">red potions</attr>
 		</classdata>
 	</item>
 	<item>
@@ -136,7 +142,30 @@
 			<attr name="image_name">shortsword.png</attr>
 			<attr name="range">6</attr>
 			<attr name="weight">3</attr>
+			<attr name="fake name">pointy stick</attr>
+			<attr name="fake pname">pointy sticks</attr>
 			<attr name="damage">1,0,0,0,0,0,0,0</attr>
+		</classdata>
+	</item>
+	<item>
+	    <basedata>
+		    <name>identifyer</name>
+			<frequency>5</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_UTIL</tag>
+			</tags>
+			<class>
+			    identifier
+			</class>
+		</basedata>
+		<classdata>
+		    <attr name="pname">identifyers</attr>
+			<attr name="image_name">identifyer.png</attr>
+			<attr name="range">1</attr>
+			<attr name="weight">5</attr>
+			<attr name="fake name">aluminum cube</attr>
+			<attr name="fake pname">aluminum cubes</attr>
 		</classdata>
 	</item>
 </itemlist>

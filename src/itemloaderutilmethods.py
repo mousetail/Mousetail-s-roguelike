@@ -36,7 +36,7 @@ def monsterMaker(body, pobj=player_input.MonsterObject):
                 return bdy
         return internal2
     return internal1
-def BasicitemFuncMaker(itemCls=items.Item,extrastats=(("weight",TYPE_INT),)):
+def BasicitemFuncMaker(itemCls=items.Item,extrastats=(("weight",TYPE_INT),("fake name",TYPE_STRING),("fake pname",TYPE_STRING),("range",TYPE_INT))):
     """for StaticObject and Item
     attrs used:
     "image name",
@@ -46,6 +46,9 @@ def BasicitemFuncMaker(itemCls=items.Item,extrastats=(("weight",TYPE_INT),)):
     """
     def internal1(name, stats):
         def internal2(position,world,cage,safemode=False,returnbody=False):
+            if returnbody:
+                raise ValueError("returnbody argument only for monsters, "
+                "\""+name+"\" is not a monster")
             args=[]
             for i in extrastats:
                 
@@ -64,7 +67,6 @@ def BasicitemFuncMaker(itemCls=items.Item,extrastats=(("weight",TYPE_INT),)):
                 else:
                     raise ValueError(i[1])
             obj= itemCls(position,cage.lookup(stats["image_name"]),cage,world,name,stats["pname"],*args)
-            obj.range=stats["range"]
             return obj
         return internal2
     return internal1

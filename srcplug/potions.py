@@ -16,9 +16,6 @@ class Potion(items.Item):
     \image html "Drink potion.png"
     I don't really get why this isn't showing up
     """
-    def __init__(self, position, image, cage, world, name, pname, weight):
-        """Requires no special arguments, and is directly compatible with the generatior"""
-        items.Item.__init__(self, position, cage.lookup(self.imagename), cage, world, name, pname, weight)
     
     def use(self):
         """Don't override, for different behavior, override
@@ -33,6 +30,7 @@ class Potion(items.Item):
         self.potion_effect(self.owner,1)
         self.potion_message(self.owner,1)
         self.owner.removebyidentity(self)
+        self.owner.identify(self)
         return True
     
         
@@ -65,15 +63,15 @@ class Potion(items.Item):
         self.explode()
     def explode(self):
         explosions.Explosion.explode(self.world, self.position, self.cage, self.cage.lookup("explosion.png"), 1,
-                                      ((self.potion_effect,0.5),(self.potion_message,)))
+                                      ((self.potion_effect,0.5),(self.potion_message,),(self.reverse_identify)))
         self.markdead()
+    def reverse_identify(self, towhat):
+        if hasattr(towhat, "identify"):
+            towhat.identify(self)
     #def alt_potion_message(self, obj):
     #    """called when"""
 #@getitembyname.ri("speed potion", 5, -3, 12, (ITM_ITEM, ITM_POTION))
 class SpeedPotion(Potion):
-    name="speed potion"
-    pname="speed potions"
-    imagename="potion_green.png"
     def potion_message(self, obj, lessen=1.0):
         if hasattr(obj,"say"):
             obj.say("the world comes more sharply into focus")
@@ -88,9 +86,6 @@ class SpeedPotion(Potion):
 #@getitembyname.ri("healing potion", 1, -3, 12,(ITM_ITEM, ITM_POTION))
         
 class HealingPotion(Potion):
-    name="health potion"
-    pname="heath potions"
-    imagename="potion.png"
     def potion_message(self, obj, lessen=1.0):
         if hasattr(obj, "say"):
             obj.say("you feel much better")

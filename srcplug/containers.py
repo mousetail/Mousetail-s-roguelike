@@ -13,14 +13,14 @@ class Container(items.Item):
     (ABSTRACT)
     A item that holds other items
     '''
-    item_capacity=0
-    weight_capacity=0
 
-    def __init__(self, position):
+    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, range=1
+                 ):
         '''
         Constructor
         '''
-        items.Item.__init__(self, position)
+        items.Item.__init__(self, position, image, cage, world, name, pname, weight, fakename, fakepname, range
+                            )
         
         self.inventory=[]
     def use(self):
@@ -101,15 +101,15 @@ class Container(items.Item):
     def getWeight(self):
         return self.weight+sum(i.getWeight() for i in self.inventory)
 #@getitembyname.ri("sack", 5, 0,20,(ITM_ITEM, ITM_CONTAINER))
-class Sack (Container):
-    name="sack"
-    pname="sacks"
-    weight=2
+#class Sack (Container):
+#    name="sack"
+#    pname="sacks"
+#    weight=2
     
-    item_capacity=3
-    weight_capacity=10
-    def __init__(self, position, world, cage):
-        #print "sacked"
-        Container.__init__(self, position)
-        self.image=cage.lookup("sack.png")
-        self.inventory.append(getitembyname.itemRandomizer.fastrandomitem([-1,-1],world, cage, 1, (ITM_ARMOR,)))
+#    item_capacity=3
+#    weight_capacity=10
+#    def __init__(self, position, world, cage):
+#        #print "sacked"
+#        Container.__init__(self, position)
+#        self.image=cage.lookup("sack.png")
+#        self.inventory.append(getitembyname.itemRandomizer.fastrandomitem([-1,-1],world, cage, 1, (ITM_ARMOR,)))

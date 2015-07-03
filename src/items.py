@@ -68,7 +68,7 @@ class Item(StaticObject):
     A base class that all items inherit, all a item will do is being able to be picked up, dropped, thrown and weited.
     '''
 
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None): #Assumed to be a class level attribute if not passed
+    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, mxrange=1):
         '''
         crates a item object
         '''
@@ -78,7 +78,8 @@ class Item(StaticObject):
         self.isflying=False
         self.direction=(0,0)
         #self.action_points=0
-        
+        self.range=mxrange
+        #print "name: "+repr(name)+"range: "+repr(self.range)+" type: "+repr(type(self.range))
         if name:
             self.name=name
         if pname:
@@ -92,6 +93,8 @@ class Item(StaticObject):
             self.weight=weight
         if world:
             self.world=world
+        self.fakename=fakename
+        self.fakepname=fakepname
     def use(self):
         """called when trying to use "A" on a item"""
         self.owner.say("You don't know how to use "+self.name)
@@ -113,7 +116,7 @@ class Item(StaticObject):
             return False
     def getWeight(self):
         """return the weight, with any modifiers"""
-        return self.weight;
+        return self.weight
     def throw(self, owner, direction):
         """called when the player tries to throw the item, default range is one tile, so don't bother overriding if you don't want youre item to fly,
         you can just set the range to 0"""
@@ -122,6 +125,7 @@ class Item(StaticObject):
         self.turnsinair=0
         self.thrower=owner
         self.action_points=10*self.range
+        #print repr(self.action_points)+" range: "+repr(self.range)
         return 50+12*self.weight
     
     def throwEvent(self, event):
@@ -172,6 +176,16 @@ class Item(StaticObject):
         del self.action_points
         self.isflying=False
         return 10
+    def getName(self, p=False):
+        if p:
+            return self.pname
+        else:
+            return self.name
+    def getFakeName(self, p=False):
+        if p:
+            return self.fakepname
+        else:
+            return self.fakename
 class Armor(Item):
     def __init__(self, position, image, cage, world, name, pname=None, weight=0, slot=None, defence=None):
         Item.__init__(self, position, image, cage, world, name, pname, weight)

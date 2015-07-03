@@ -88,6 +88,8 @@ class PlayerObject(items.StaticObject):
         self.clearAndRefreshEquipment()
         self.body.recalculateEverything()
         
+        self.identified_items=[]
+        
         self.events=[]
         self.fullness=1000 #BASE 1000
         self.name=self.body.name
@@ -724,6 +726,13 @@ class PlayerObject(items.StaticObject):
             self.status_messages.remove(flag)
         else:
             print >>sys.stderr, "ERROR, FLAG NOT IN STATUS MESSAGES (player_input.PlayerObject.unflag(flag))"
+    def getitemname(self, item, p=False):
+        if item.name in self.identified_items:
+            return item.getName(p)
+        else:
+            return item.getFakeName(p)
+    def identify(self, item):
+        self.identified_items.append(item.name)
 class MonsterObject(PlayerObject):
     
     def receiveEvent(self, event):
