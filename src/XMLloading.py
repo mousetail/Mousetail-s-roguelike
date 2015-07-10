@@ -15,7 +15,15 @@ from itemloaderutilmethods import *
 import random
 import sys
 
-
+class Holder(object):
+    def __init__(self, what):
+        self.what=what
+    def __getattribute__(self, attr):
+        return object.__getattribute__(self,"what")
+    def __setattr__(self, attr, value):
+        object.__setattr__(self,"what",value)
+    def __str__(self):
+        return str(self.what)
 class XMLloader(object):
     '''
     classdocs
@@ -35,6 +43,7 @@ class XMLloader(object):
             for key, value in defdict.items():
                 self.clstypes[key]=value
             placestoloadfrom.extend(mod.placestoloadfrom)
+        self.randomcats={} #categories which will be randomized into
         print self.clstypes
     def loadFile(self, filename="..\data\human.xml"):
         o=et.parse(filename)
@@ -46,22 +55,37 @@ class XMLloader(object):
                 assert 0<=frequency<=5, "frequency not within the range 0 (imposbile) to 5 (common)"
                 tags=tuple(constants.itm_name_to_number[i.text.strip()] for i in basedata.find("tags"))
                 typ=basedata.find("class").text.strip()
+                if basedata.findall("maxnum"):
+                    maxnum=int(basedata.find("maxnum").text)
+                    #print "found maxnum"
+                else:
+                    maxnum=-1
             classdata=itemdef.find("classdata")
             clsdatadict={}
             if "base" in classdata.keys():
                 for key, value in self.objdefs[classdata.attrib["base"]][3].items():
                     clsdatadict[key]=value
             for i in classdata.findall("attr"):
+                
+                attrname=i.attrib["name"]
                 if "base" in i.keys():
-                    attrname=i.attrib["name"]
                     basename=i.attrib["base"]
-                    clsdatadict[attrname]=self.objdefs[basename][3][attrname]
+                    value=self.objdefs[basename][3][attrname]
                 else:
                     if len(i)==0:
-                        clsdatadict[i.attrib["name"]]=i.text.strip()
+                        value=i.text.strip()
                     else:
-                        clsdatadict[i.attrib["name"]]=self.toDictRecursive(i)
-            self.objdefs[name]=(frequency, tags, typ, clsdatadict)
+                        value=self.toDictRecursive(i)
+                clsdatadict[attrname]=value
+                if "randomcat" in i.keys():
+                    if i.attrib["randomcat"] in self.randomcats.keys():
+                        if name in self.randomcats[i.attrib["randomcat"]].keys():
+                            self.randomcats[i.attrib["randomcat"]][name][attrname]=value
+                        else:
+                            self.randomcats[i.attrib["candomcat"]][name]={attrname:value}
+                    else:
+                        self.randomcats["randomcat"]={name:{attrname:value}}
+            self.objdefs[name]=(frequency, tags, typ, clsdatadict, Holder(maxnum))
     def toDictRecursive(self, ellement):
         tmp={}
         for child in ellement:
@@ -92,13 +116,28 @@ class XMLloader(object):
             for tag in tags:
                 if tag not in i[1]:
                     alltags=False
+            if i[4].x==0:
+                alltags=False
+                #print "TO MANY "+k+"'s"
             if alltags:
                 for s in range(i[0]):
                     tmplist.append(k)
         try:
-            return random.choice(tmplist)
+            itm= random.choice(tmplist)
+            if self.objdefs[itm][4].x>0:
+                self.objdefs[itm][4].x=self.objdefs[itm][4].x-1
+            #    print "GENERATED "+itm+" "+str(self.objdefs[itm][4].x)
+            else:
+                pass
+                #print self.objdefs[itm][4].x
+            return itm
         except IndexError:
             raise IndexError("No item found with tags "+",".join(str(i) for i in tags))
+    def flush(self):
+        """
+        Should be called at the end of loading the items so the list can be reformatted in a way better suited for loading
+        """
+        
     def fastRandomItem(self, position, world, cage, dlevel, tags,safemode=False,returnbody=False):
         return self.findObj(self.randomItem(dlevel, tags))(position,world,cage,safemode=safemode,returnbody=returnbody)
     def fastItemByName(self, name, position, world, cage,returnbody=False):

@@ -77,6 +77,8 @@ MAXTRIES=100
 GRIDSIZE_X=150
 GRIDSIZE_Y=150
 
+#Random Flags
+RE_NORMAL_ARGS=1
 
 
 def emergencyReturn(function, r):

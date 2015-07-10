@@ -14,13 +14,13 @@ class Identifier(items.Item):
     '''
 
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         '''
         Constructor
         '''
         
         
-        items.Item.__init__(self, *args)
+        items.Item.__init__(self, *args, **kwargs)
         self.charges=1
     def use(self):
         #TODO: make a event sequence to prompt for the item to identify, check the number of uses remaining etc.

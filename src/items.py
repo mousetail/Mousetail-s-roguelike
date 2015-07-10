@@ -68,7 +68,7 @@ class Item(StaticObject):
     A base class that all items inherit, all a item will do is being able to be picked up, dropped, thrown and weited.
     '''
 
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, mxrange=1):
+    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, mxrange=1, **kwargs):
         '''
         crates a item object
         '''
@@ -187,8 +187,8 @@ class Item(StaticObject):
         else:
             return self.fakename
 class Armor(Item):
-    def __init__(self, position, image, cage, world, name, pname=None, weight=0, slot=None, defence=None):
-        Item.__init__(self, position, image, cage, world, name, pname, weight)
+    def __init__(self, position, image, cage, world, name, pname=None, weight=0, slot=None, defence=None, **kwargs):
+        Item.__init__(self, position, image, cage, world, name, pname, weight, **kwargs)
         if slot:
             self.slot=slot
         if defence:

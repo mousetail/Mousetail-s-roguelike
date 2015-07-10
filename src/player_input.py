@@ -213,22 +213,26 @@ class PlayerObject(items.StaticObject):
     def addtoinventory(self, itm):
         """adds a item to the players inventory, correctly stacking similar items,
         and calculating the weight"""
-        itm.position=(0,0) #So they are equal in the inventory but not in the map
-        if len(self.inventory)>0:
-            for i in self.inventory:
-                if self.inventory[i][0]==itm:
-                    self.inventory[i].append(itm)
-                    itm.owner=self
-                    self.update_storage_fullness()
-                    return True
-            nextletter=items.getfirstemptyletter(self.inventory)
-            #print nextletter
+        if isinstance(itm,list) or isinstance(itm,tuple):
+            for i in itm:
+                self.addtoinventory(i)
         else:
-            nextletter=items.alphabet[0]
-        self.inventory[nextletter]=[itm]
-        itm.owner=self
-        self.update_storage_fullness()
-        return True
+            itm.position=(0,0) #So they are equal in the inventory but not in the map
+            if len(self.inventory)>0:
+                for i in self.inventory:
+                    if self.inventory[i][0]==itm:
+                        self.inventory[i].append(itm)
+                        itm.owner=self
+                        self.update_storage_fullness()
+                        return True
+                nextletter=items.getfirstemptyletter(self.inventory)
+                #print nextletter
+            else:
+                nextletter=items.alphabet[0]
+            self.inventory[nextletter]=[itm]
+            itm.owner=self
+            self.update_storage_fullness()
+            return True
     def getspeed(self):
         """checks if any status messages affect the speed, and checks the base speed,
         return the value"""

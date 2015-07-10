@@ -8,9 +8,10 @@ defs={"item":BasicitemFuncMaker(items.Item),
       "basic":BasicitemFuncMaker(items.StaticObject,()),
       "healing potion":BasicitemFuncMaker(potions.HealingPotion),
       "speed potion":BasicitemFuncMaker(potions.SpeedPotion),
-      "weapon":BasicitemFuncMaker(weapons.Weapon,(("weight",TYPE_INT),("fake name",TYPE_STRING),("fake pname",TYPE_STRING),("range",TYPE_INT),("damage",TYPE_TUPLE_FLOAT))),
-      "food":BasicitemFuncMaker(food.Food,(("weight",TYPE_INT),("fake name",TYPE_STRING),("fake pname",TYPE_STRING),("range",TYPE_INT),("nutrition",TYPE_INT))),
-      "identifier":BasicitemFuncMaker(identifyer.Identifier)
+      "weapon":BasicitemFuncMaker(weapons.Weapon,RE_NORMAL_ARGS,(("damage",TYPE_TUPLE_FLOAT),)),
+      "food":BasicitemFuncMaker(food.Food,RE_NORMAL_ARGS,(("nutrition",TYPE_INT,"nutrition"),)),
+      "identifier":BasicitemFuncMaker(identifyer.Identifier),
+      "container":BasicitemFuncMaker(containers.Container,RE_NORMAL_ARGS,(("item capacity",TYPE_INT,"item_capacity"),("weight capacity",TYPE_INT,"weight_capacity")))
       }
 
 placestoloadfrom=[]

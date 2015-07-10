@@ -14,14 +14,19 @@ class Container(items.Item):
     A item that holds other items
     '''
 
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, range=1
-                 ):
+    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, range=1,
+                 **kwargs):
         '''
         Constructor
         '''
-        items.Item.__init__(self, position, image, cage, world, name, pname, weight, fakename, fakepname, range
+        items.Item.__init__(self, position, image, cage, world, name, pname, weight, fakename, fakepname, range, **kwargs
                             )
-        
+        self.item_capacity=kwargs["item_capacity"]
+        self.weight_capacity=kwargs["weight_capacity"]
+        if self.item_capacity==-1:
+            self.item_capacity=None
+        if self.weight_capacity==-1:
+            self.weight_capacity=None
         self.inventory=[]
     def use(self):
         self.owner.say("do you want to a) put something in the "+self.name+" b) take something out or c) see what is in the "+self.name)
@@ -66,18 +71,22 @@ class Container(items.Item):
                 return True
         return False
     def putIn(self, command):
+        sc=True
         if self.item_capacity and len(self.inventory)>=self.item_capacity:
             self.say("R}the "+self.name+" can't hold any more items!")
-            return 1
+            sc=False
         if self.weight_capacity and self.getWeight()-self.weight+sum(i.getWeight() for i in command.data["item"])>self.weight_capacity:
             self.say("R}the "+self.name+" can't hold any more weight!")
-            return 1
+            sc=False
+        if sc:
         
-        self.inventory.extend(command.data["item"])
-        
-        self.say("put the "+command.data["item"][0].name+" in the "+self.name)
-        self.inventory.sort()
-        return 50+int(12*(len(command.data["item"])**0.5))
+            self.inventory.extend(command.data["item"])
+            
+            self.say("put the "+command.data["item"][0].name+" in the "+self.name)
+            self.inventory.sort()
+            return 50+int(12*(len(command.data["item"])**0.5))
+        else:
+            self.owner.addtoinventory(command.data["item"])
     def takeOutEvent(self, event):
         
         if event.type==pygame.KEYDOWN:

@@ -96,6 +96,7 @@
 			    <tag>ITM_ITEM</tag>
 				<tag>ITM_FOOD</tag>
 			</tags>
+			<maxnum>2</maxnum>
 			<class>food</class>
 		</basedata>
 		<classdata base="meat">
@@ -118,11 +119,28 @@
 		</basedata>
 		<classdata>
 		    <attr name="pname">healing potions</attr>
-			<attr name="image_name">potion.png</attr>
+			<attr name="image_name" randomcat="potions">potion.png</attr>
 			<attr name="range">7</attr>
 			<attr name="weight">1</attr>
-			<attr name="fake name">red potion</attr>
-			<attr name="fake pname">red potions</attr>
+			<attr name="fake name" randomcat="potions">red potion</attr>
+			<attr name="fake pname" randomcat="potions">red potions</attr>
+		</classdata>
+	</item>
+	<item>
+	    <basedata>
+		    <name>speed potion</name>
+			<frequency>3</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_POTION</tag>
+			</tags>
+			<class>speed potion</class>
+		</basedata>
+		<classdata base="healing potion">
+		    <attr name="pname">speed potions</attr>
+			<attr name="image_name" randomcat="potions">potion_green.png</attr>
+			<attr name="fake name" randomcat="potions">green potion</attr>
+			<attr name="fake pname" randomcat="potions">green potions</attr>
 		</classdata>
 	</item>
 	<item>
@@ -150,7 +168,7 @@
 	<item>
 	    <basedata>
 		    <name>identifyer</name>
-			<frequency>5</frequency>
+			<frequency>2</frequency>
 			<tags>
 			    <tag>ITM_ITEM</tag>
 				<tag>ITM_UTIL</tag>
@@ -166,6 +184,27 @@
 			<attr name="weight">5</attr>
 			<attr name="fake name">aluminum cube</attr>
 			<attr name="fake pname">aluminum cubes</attr>
+		</classdata>
+	</item>
+	<item>
+	    <basedata>
+		    <name>sack</name>
+			<frequency>5</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_CONTAINER</tag>
+			</tags>
+			<class>
+			    container
+			</class>
+		</basedata>
+		<classdata base="identifyer">
+		    <attr name="pname">sacks</attr>
+			<attr name="image_name">sack.png</attr>
+			<attr name="fake name">sack</attr>
+			<attr name="fake pname">sacks</attr>
+			<attr name="item capacity">2</attr>
+			<attr name="weight capacity">-1</attr>
 		</classdata>
 	</item>
 </itemlist>

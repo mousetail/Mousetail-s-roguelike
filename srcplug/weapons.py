@@ -30,8 +30,8 @@ class Weapon(items.Item):
     
     range=8
     
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fake_name=None, fake_pname=None, range=1, damage=None):
-        items.Item.__init__(self, position, image, cage, world, name, pname, weight, fake_name, fake_pname, range)
+    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fake_name=None, fake_pname=None, range=1, damage=None, **kwargs):
+        items.Item.__init__(self, position, image, cage, world, name, pname, weight, fake_name, fake_pname, range, **kwargs)
         if damage:
             self.damage=damage
     
