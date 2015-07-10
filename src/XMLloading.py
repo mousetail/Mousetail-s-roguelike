@@ -78,13 +78,18 @@ class XMLloader(object):
                         value=self.toDictRecursive(i)
                 clsdatadict[attrname]=value
                 if "randomcat" in i.keys():
+                    print "item: "+name+" randomcat "+i.attrib["randomcat"]+" keys "+str(self.randomcats.keys())
+                    
                     if i.attrib["randomcat"] in self.randomcats.keys():
                         if name in self.randomcats[i.attrib["randomcat"]].keys():
                             self.randomcats[i.attrib["randomcat"]][name][attrname]=value
+                            print "category exists, item exists"
                         else:
-                            self.randomcats[i.attrib["candomcat"]][name]={attrname:value}
+                            self.randomcats[i.attrib["randomcat"]][name]={attrname:value}
+                            print "category exists, item dousn't exist"
                     else:
-                        self.randomcats["randomcat"]={name:{attrname:value}}
+                        self.randomcats[i.attrib["randomcat"]]={name:{attrname:value}}
+                        print "category dousn't exist, item dousn't exits"
             self.objdefs[name]=(frequency, tags, typ, clsdatadict, Holder(maxnum))
     def toDictRecursive(self, ellement):
         tmp={}
@@ -137,7 +142,18 @@ class XMLloader(object):
         """
         Should be called at the end of loading the items so the list can be reformatted in a way better suited for loading
         """
+        print "RANDOMCATS:"
+        print self.randomcats
+        print "------------"
         
+        for shufcat in self.randomcats.values():
+            items=list(shufcat.values())
+            random.shuffle(items)
+            i=0
+            for itmname in shufcat.keys():
+                for j in items[i].items():
+                    self.objdefs[itmname][3][j[0]]=j[1]
+                i+=1
     def fastRandomItem(self, position, world, cage, dlevel, tags,safemode=False,returnbody=False):
         return self.findObj(self.randomItem(dlevel, tags))(position,world,cage,safemode=safemode,returnbody=returnbody)
     def fastItemByName(self, name, position, world, cage,returnbody=False):

@@ -29,6 +29,7 @@ class World(object):
         '''
         self.itemPicker=XMLloading.XMLloader()
         self.itemPicker.loadFile("..\data\human.xml")
+        self.itemPicker.flush()
         self.grid_size=size
         self.grid=generator.Generator(size)
         self.objects=self.grid.generate()
