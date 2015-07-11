@@ -120,14 +120,20 @@ class HumanBody(CombatOnlyBody):
             
         itms.extend(self.world.itemPicker.fastItemByName(i[1], self.mind.position[:], self.world, self.mind.cage) for i in self.drops if i[0]>random.random())
         self.world.objects.extend(itms)
-    def __init__(self, world, imagename="hero.png", name="human", speed=100):
+    def __init__(self, world, imagename="hero.png", name="human", speed=100, combatMap={}
+                 ):
         '''
         Constructor
         '''
         self.world=world
         self.target="ribs"
         self.maxhealth=10
+        self.attack_zones=combatMap
+        self.armor_slots=set()
+        for i in self.attack_zones.values():
+            self.armor_slots.add(i[5])
         
+        print "self.armor_slots",self.armor_slots
         self.health=self.maxhealth #I can't use the other method yet
         self.speed=speed
         self.imagename=imagename
@@ -140,9 +146,8 @@ class HumanBody(CombatOnlyBody):
     size=100
     name="human"
     max_attack_height_ratio=1.25
-    advanced_visibility_check=True
     def get_visible(self):
-        if self.advanced_visibility_check:
+        if self.mind.advanced_visibility_check:
             for i in self.mind.visible:
                 if self.mind.visible[i]==2:
                     self.mind.visible[i]=1
@@ -184,6 +189,7 @@ class HumanBody(CombatOnlyBody):
             except ImportError as ex:
                 raise ex
             except KeyError as ex:
+                print region,damage,damagetype,message,countarmor
                 raise KeyError("Found \'"+str(ex.args[0])+"\' expected one of "+str(self.mind.equipment.keys()))
             self.health-=d
             if self.health<0:

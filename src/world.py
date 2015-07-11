@@ -39,7 +39,7 @@ class World(object):
         for i in self.objects:
             if i[1]=="player":
                 pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
-                tmpobjects.append(player_input.PlayerObject(i[0],pbody,self.cage,self))
+                tmpobjects.append(player_input.PlayerObject(i[0],pbody,self.cage,self,True))
                 self.focus=tmpobjects[-1]
                 self.player=self.focus #These are usually equal, but sometimes the screen could focus on something else
                 

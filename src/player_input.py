@@ -64,14 +64,15 @@ class PlayerObject(items.StaticObject):
         "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
     
-    def __init__(self,position,body,cage,world, safemode=False):
-        
+    def __init__(self,position,body,cage,world, advanced_visibility_check=False, safemode=False):
+        #print position,body,cage,world
         self.speed=body.speed
         self.dirty=False
         self.world=world
         if not safemode:
             self.visible=generator.Grid(self.world.grid_size,False)
         self.action_points=0
+        self.advanced_visibility_check=advanced_visibility_check
         self.dead=False
         self.actions=[Command("move",{"direction":(1,0)})]*2
         self.stats={"level":1,"accuracy":1,"constitution":1,"strength":1}
@@ -97,10 +98,11 @@ class PlayerObject(items.StaticObject):
             items.StaticObject.__init__(self,position,cage.lookup(self.body.imagename),cage,world.grid,self.body.speed,True)
         else:
             self.position=position
+        
     def clearAndRefreshEquipment(self):
         if hasattr(self,"equipment") and hasattr(self, "equipment_letters"):
             self.clearEquipment()
-        self.equipment={i:None for i in self.body.armor_slots+self.body.weapon_slots}
+        self.equipment={i:None for i in itertools.chain(self.body.armor_slots,self.body.weapon_slots)}
         self.equipment_letters={}
     def clearEquipment(self, saystuff=False):
         for i in self.equipment_letters.keys():

@@ -15,15 +15,7 @@ from itemloaderutilmethods import *
 import random
 import sys
 
-class Holder(object):
-    def __init__(self, what):
-        self.what=what
-    def __getattribute__(self, attr):
-        return object.__getattribute__(self,"what")
-    def __setattr__(self, attr, value):
-        object.__setattr__(self,"what",value)
-    def __str__(self):
-        return str(self.what)
+
 class XMLloader(object):
     '''
     classdocs
@@ -75,7 +67,7 @@ class XMLloader(object):
                     if len(i)==0:
                         value=i.text.strip()
                     else:
-                        value=self.toDictRecursive(i)
+                        value=i
                 clsdatadict[attrname]=value
                 if "randomcat" in i.keys():
                     print "item: "+name+" randomcat "+i.attrib["randomcat"]+" keys "+str(self.randomcats.keys())
@@ -90,7 +82,7 @@ class XMLloader(object):
                     else:
                         self.randomcats[i.attrib["randomcat"]]={name:{attrname:value}}
                         print "category dousn't exist, item dousn't exits"
-            self.objdefs[name]=(frequency, tags, typ, clsdatadict, Holder(maxnum))
+            self.objdefs[name]=(frequency, tags, typ, clsdatadict, constants.Holder(maxnum))
     def toDictRecursive(self, ellement):
         tmp={}
         for child in ellement:

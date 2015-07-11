@@ -62,12 +62,21 @@ FLAG_FAST_2=6
 flag_uncode={0:"burdened",1:"full",2:"very full", 3:"hungry", 4:"very hungry", 5:"fast", 6: "very fast"}
 
 #Types-----------------------+
+TYPE_RAW=0#                  |
 TYPE_INT=0#                  |
 TYPE_STRING=1#               |
 TYPE_FLOAT=2#                |
-TYPE_TUPLE_INT=3#            |
-TYPE_TUPLE_STRING=4#         |
-TYPE_TUPLE_FLOAT=5         # |
+TYPE_BOOL=3
+TYPE_TUPLE_INT=4#            |
+TYPE_TUPLE_STRING=5#         |
+TYPE_TUPLE_FLOAT=6         # |
+TYPE_COMBAT_MAP=7          # |
+TYPE_VAR_NAME=8            # |
+TYPE_VAR_WORLD=9           # |
+TYPE_VAR_CAGE=10            # |
+TYPE_VAR_POSITION=11       # |
+TYPE_IMAGE=12              # |
+TYPE_ATTRNAME_AS_HOLDER=13  #|
 #----------------------------+
 from pygame.locals import *
 
@@ -79,6 +88,7 @@ GRIDSIZE_Y=150
 
 #Random Flags
 RE_NORMAL_ARGS=1
+RE_STATIC_ARGS=2
 
 
 def emergencyReturn(function, r):
@@ -92,3 +102,12 @@ def emergencyReturn(function, r):
 
 class RandomError (ValueError):
     pass
+class Holder(object):
+    def __init__(self, what):
+        self.what=what
+    def __getattribute__(self, attr):
+        return object.__getattribute__(self,"what")
+    def __setattr__(self, attr, value):
+        object.__setattr__(self,"what",value)
+    def __str__(self):
+        return str(self.what)
