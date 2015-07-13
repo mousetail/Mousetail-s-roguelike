@@ -297,14 +297,20 @@ class PlayerObject(items.StaticObject):
         elif skill=="strength":
             self.body.updatemaxweight()
             self.say("B}You feel strong")
-    def say(self, what="", newline=True):
+    def say(self, *what, **kwargs):
         """send a message to the player, to be displayed in the log
         """
         self.dirty=True
-        if newline:
-            sys.stdout.write(what+"\n")
+        text=""
+        for i in what:
+            if hasattr(i,"getName") and hasattr(i,"getFakeName"):
+                text+=self.getitemname(i)
+            else:
+                text+=str(i)
+        if "newline" not in kwargs or kwargs["newline"]:
+            sys.stdout.write(text+"\n")
         else:
-            sys.stdout.write(what+"")
+            sys.stdout.write(text+"")
     def kill(self, message):
         """called when the player dies"""
         self.say("1}you die")

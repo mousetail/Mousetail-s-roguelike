@@ -29,7 +29,7 @@ class Container(items.Item):
             self.weight_capacity=None
         self.inventory=[]
     def use(self):
-        self.owner.say("do you want to a) put something in the "+self.name+" b) take something out or c) see what is in the "+self.name)
+        self.owner.say("do you want to a) put something in the ",self," b) take something out or c) see what is in the ", self)
         self.owner.redictInput(self.interpretEvent)
     def interpretEvent(self, event):
         if event.type==pygame.KEYDOWN:
@@ -37,26 +37,28 @@ class Container(items.Item):
                 return ("normal", None)
             elif event.key==pygame.K_a:
             
-                self.say("what would you like to put in the "+self.name+"?")
+                self.say("what would you like to put in the ",self,"?")
                 return (self.putInEvent, None)
             elif event.key==pygame.K_b:
             
-                self.owner.say("the "+self.name+"contains: ")
-                for i in range(len(self.inventory)):
-                    self.owner.say("g}"+items.alphabet[i]+": "+self.inventory[i].name)
+                self.listItems()
                     
                 
                 return (self.takeOutEvent, None)
             elif event.key==pygame.K_c:
-                self.owner.say("the "+self.name+"contains: ")
-                for i in range(len(self.inventory)):
-                    self.owner.say("g}"+items.alphabet[i]+": "+self.inventory[i].name)
-                 
+                self.listItems()
                 return ("normal", None)
             else:
                 return (self.interpretEvent, None)
         else:
             return (self.interpretEvent, None)
+    def listItems(self):
+        if len(self.inventory)==0:
+            self.owner.say("the ",self," is empty")
+        else:
+            self.owner.say("the ",self," contains: ")
+            for i in range(len(self.inventory)):
+                self.owner.say("g}"+items.alphabet[i]+": ",self.inventory[i])
     def putInEvent(self, event):
         if event.type==pygame.KEYDOWN:
             
@@ -73,16 +75,16 @@ class Container(items.Item):
     def putIn(self, command):
         sc=True
         if self.item_capacity and len(self.inventory)>=self.item_capacity:
-            self.say("R}the "+self.name+" can't hold any more items!")
+            self.say("R}the ",self," can't hold any more items!")
             sc=False
         if self.weight_capacity and self.getWeight()-self.weight+sum(i.getWeight() for i in command.data["item"])>self.weight_capacity:
-            self.say("R}the "+self.name+" can't hold any more weight!")
+            self.say("R}the",self," can't hold any more weight!")
             sc=False
         if sc:
         
             self.inventory.extend(command.data["item"])
             
-            self.say("put the "+command.data["item"][0].name+" in the "+self.name)
+            self.say("put the ",command.data["item"][0]," in the ",self)
             self.inventory.sort()
             return 50+int(12*(len(command.data["item"])**0.5))
         else:
@@ -105,7 +107,7 @@ class Container(items.Item):
         self.owner.addtoinventory(itm)
         self.inventory.remove(itm)
         itm.owner=self.owner
-        self.say("took a "+itm.name+" out of the "+self.name)
+        self.say("took a ",itm," out of the",self)
         return 100
     def getWeight(self):
         return self.weight+sum(i.getWeight() for i in self.inventory)

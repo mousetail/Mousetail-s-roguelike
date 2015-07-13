@@ -10,4 +10,4 @@ class Food(items.Item):
         items.Item.__init__(self, position, image, cage, world, name, pname, weight, fake_name, fake_pname, range, **kwargs)
         self.nutrition=nutrition
     def eat(self):
-        return "you eat the "+self.name
+        self.owner.say("you eat the ",self)

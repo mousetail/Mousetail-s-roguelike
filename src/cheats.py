@@ -6,7 +6,7 @@ class CheatHandler(object):
         self.player=player
         self.tmpstring=""
         self.player.say("R}You lousy cheater!")
-        self.player.say("R}>",False)
+        self.player.say("R}>",newline=False)
 
     def cheatInput(self, event):
         #print "CHEATING ..."
@@ -18,10 +18,10 @@ class CheatHandler(object):
             elif event.key==K_BACKSPACE:
                 self.tmpstring=self.tmpstring[:-1]
                 if len(self.tmpstring)>=0:
-                    self.player.say("\b",False)
+                    self.player.say("\b",newline=False)
             else:
                 self.tmpstring+=event.unicode
-                self.player.say(event.unicode,False)
+                self.player.say(event.unicode,newline=False)
                 return self.cheatInput, None
             
         

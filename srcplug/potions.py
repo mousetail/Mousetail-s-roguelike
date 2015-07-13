@@ -26,7 +26,7 @@ class Potion(items.Item):
         
         \image html "Drink potion.png"
         """
-        self.owner.say("you drink the "+self.name)
+        self.owner.say("you drink the ",self)
         self.potion_effect(self.owner,1)
         self.potion_message(self.owner,1)
         self.owner.removebyidentity(self)

@@ -133,7 +133,7 @@ class HumanBody(CombatOnlyBody):
         for i in self.attack_zones.values():
             self.armor_slots.add(i[5])
         
-        print "self.armor_slots",self.armor_slots
+        #print "self.armor_slots",self.armor_slots
         self.health=self.maxhealth #I can't use the other method yet
         self.speed=speed
         self.imagename=imagename

@@ -97,11 +97,11 @@ class Item(StaticObject):
         self.fakepname=fakepname
     def use(self):
         """called when trying to use "A" on a item"""
-        self.owner.say("You don't know how to use "+self.name)
-    def say(self, *args):
+        self.owner.say("You don't know how to use",self)
+    def say(self, *args, **kwargs):
         """passes on the say event to the owner"""
         if hasattr(self.owner,"say"):
-            return self.owner.say(*args)
+            return self.owner.say(*args, **kwargs)
     
     def __eq__(self, other):
         """check if the names and positions are equal

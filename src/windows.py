@@ -254,7 +254,7 @@ class InventoryWindow(StatWindow):
             for letter in self.trackmonster.equipment_letters:
                 item=self.trackmonster.equipment_letters[letter]
                 self.drawsurface.blit(tm.equipment[item].image, [5,ypos])
-                nm=tm.equipment[item].name
+                nm=self.trackmonster.getitemname(tm.equipment[item])
                 self.drawsurface.blit(self.font.render(item+": ("+letter+") "+str(nm),1,[255,255,255]),(74,ypos))
                 ypos+=65
             ypos+=30
