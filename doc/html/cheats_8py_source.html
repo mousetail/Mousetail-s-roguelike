@@ -117,7 +117,7 @@ $(document).ready(function(){initNavTree('cheats_8py_source.html','');});
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        self.<a class="code" href="classcheats_1_1_cheat_handler.html#a390a6ad4dd4fc97d214b60c710b5952c">player</a>=player</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        self.<a class="code" href="classcheats_1_1_cheat_handler.html#a78842c953cb208ad3e7c3b3a26a1224b">tmpstring</a>=<span class="stringliteral">&quot;&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        self.player.say(<span class="stringliteral">&quot;R}You lousy cheater!&quot;</span>)</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        self.player.say(<span class="stringliteral">&quot;R}&gt;&quot;</span>,<span class="keyword">False</span>)</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        self.player.say(<span class="stringliteral">&quot;R}&gt;&quot;</span>,newline=<span class="keyword">False</span>)</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">def </span>cheatInput(self, event):</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="comment">#print &quot;CHEATING ...&quot;</span></div>
@@ -129,10 +129,10 @@ $(document).ready(function(){initNavTree('cheats_8py_source.html','');});
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="keywordflow">elif</span> event.key==K_BACKSPACE:</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                self.<a class="code" href="classcheats_1_1_cheat_handler.html#a78842c953cb208ad3e7c3b3a26a1224b">tmpstring</a>=self.<a class="code" href="classcheats_1_1_cheat_handler.html#a78842c953cb208ad3e7c3b3a26a1224b">tmpstring</a>[:-1]</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                <span class="keywordflow">if</span> len(self.<a class="code" href="classcheats_1_1_cheat_handler.html#a78842c953cb208ad3e7c3b3a26a1224b">tmpstring</a>)&gt;=0:</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                    self.player.say(<span class="stringliteral">&quot;\b&quot;</span>,<span class="keyword">False</span>)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                    self.player.say(<span class="stringliteral">&quot;\b&quot;</span>,newline=<span class="keyword">False</span>)</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            <span class="keywordflow">else</span>:</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                self.<a class="code" href="classcheats_1_1_cheat_handler.html#a78842c953cb208ad3e7c3b3a26a1224b">tmpstring</a>+=event.unicode</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                self.player.say(event.unicode,<span class="keyword">False</span>)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                self.player.say(event.unicode,newline=<span class="keyword">False</span>)</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                <span class="keywordflow">return</span> self.<a class="code" href="classcheats_1_1_cheat_handler.html#ab054d1be1c71b1707670913a966be223">cheatInput</a>, <span class="keywordtype">None</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        </div>
@@ -146,10 +146,14 @@ $(document).ready(function(){initNavTree('cheats_8py_source.html','');});
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">for</span> i <span class="keywordflow">in</span> self.player.xp.keys():</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                self.player.add_xp(i,500)</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            self.player.say(<span class="stringliteral">&quot;Blazed it.&quot;</span>)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            self.player.say(<span class="stringliteral">&quot;No cheat code \&quot;&quot;</span>+string+<span class="stringliteral">&quot;\&quot; is recognized&quot;</span>)</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordflow">elif</span> string==<span class="stringliteral">&quot;BinaryStew101&quot;</span>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            self.player.addtoinventory(self.world.itemPicker.fastRandomItem((0,0),self.player.world,self.player.cage,1,(ITM_ITEM,)))</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            self.player.say(<span class="stringliteral">&quot;No cheat code \&quot;&quot;</span>+string+<span class="stringliteral">&quot;\&quot; is recognized&quot;</span>)</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
 <div class="ttc" id="classcheats_1_1_cheat_handler_html_ab054d1be1c71b1707670913a966be223"><div class="ttname"><a href="classcheats_1_1_cheat_handler.html#ab054d1be1c71b1707670913a966be223">cheats.CheatHandler.cheatInput</a></div><div class="ttdeci">def cheatInput(self, event)</div><div class="ttdef"><b>Definition:</b> <a href="cheats_8py_source.html#l00011">cheats.py:11</a></div></div>
 <div class="ttc" id="classcheats_1_1_cheat_handler_html_a390a6ad4dd4fc97d214b60c710b5952c"><div class="ttname"><a href="classcheats_1_1_cheat_handler.html#a390a6ad4dd4fc97d214b60c710b5952c">cheats.CheatHandler.player</a></div><div class="ttdeci">player</div><div class="ttdef"><b>Definition:</b> <a href="cheats_8py_source.html#l00006">cheats.py:6</a></div></div>
 <div class="ttc" id="classcheats_1_1_cheat_handler_html_a9afd5f3dbdecdda1d0334916bb3abdd8"><div class="ttname"><a href="classcheats_1_1_cheat_handler.html#a9afd5f3dbdecdda1d0334916bb3abdd8">cheats.CheatHandler.world</a></div><div class="ttdeci">world</div><div class="ttdef"><b>Definition:</b> <a href="cheats_8py_source.html#l00005">cheats.py:5</a></div></div>
@@ -162,7 +166,7 @@ $(document).ready(function(){initNavTree('cheats_8py_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><b>cheats.py</b></li>
-    <li class="footer">Generated on Mon Jun 15 2015 16:00:00 for Mousetail&#39;s rpg by
+    <li class="footer">Generated on Tue Jul 14 2015 16:34:40 for Mousetail&#39;s rpg by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

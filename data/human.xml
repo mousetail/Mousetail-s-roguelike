@@ -46,6 +46,13 @@
 				
 			</attr>
 			<attr name="advanced visibility check">True</attr>
+			<attr name="drops">
+			    <itm prob="0.5" amount="3">meat</itm>
+				<itm prob="1" amount="2">sack</itm>
+			</attr>
+			<attr name="starting inventory">
+			    <itm prob="1" amount="1">banana</itm>
+			</attr>
 		</classdata>
     </item>
 	<item>
@@ -205,6 +212,11 @@
 			<attr name="fake pname">sacks</attr>
 			<attr name="item capacity">2</attr>
 			<attr name="weight capacity">-1</attr>
+			<attr name="starting items">
+			    <itm prob="1" amount="7" type="tag">
+				    <tag>ITM_POTION</tag>
+				</itm>
+			</attr>
 		</classdata>
 	</item>
 </itemlist>

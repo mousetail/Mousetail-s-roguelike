@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['kill',['kill',['../classplayer__input_1_1_player_object.html#aa78048d727b94561070090562e0b6989',1,'player_input::PlayerObject']]]
+  ['iterarmor',['iterArmor',['../classplayer__input_1_1_player_object.html#a530c17a6be67e1cd08ab344a303a9ab6',1,'player_input::PlayerObject']]],
+  ['iterinventory',['iterInventory',['../classplayer__input_1_1_player_object.html#abdd1804f5bf6020b43498019aae9f232',1,'player_input::PlayerObject']]]
 ];

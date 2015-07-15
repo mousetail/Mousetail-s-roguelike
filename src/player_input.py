@@ -9,7 +9,7 @@ import generator
 import itertools
 from constants import *
 import sys
-
+import drops_calculator
 import items
 
 
@@ -64,7 +64,10 @@ class PlayerObject(items.StaticObject):
         "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
     
-    def __init__(self,position,body,cage,world, advanced_visibility_check=False, safemode=False):
+    def __init__(self,position,body,cage,world, advanced_visibility_check=False, startinginv=(), safemode=False):
+        """
+        note that startinginv is in (prob, ammount, name) format. 
+        """
         #print position,body,cage,world
         self.speed=body.speed
         self.dirty=False
@@ -98,7 +101,9 @@ class PlayerObject(items.StaticObject):
             items.StaticObject.__init__(self,position,cage.lookup(self.body.imagename),cage,world.grid,self.body.speed,True)
         else:
             self.position=position
-        
+        invitems=drops_calculator.calculateDrops(self.world, self.cage, startinginv, self.position[:], False)
+        for i in invitems:
+            self.addtoinventory(i)
     def clearAndRefreshEquipment(self):
         if hasattr(self,"equipment") and hasattr(self, "equipment_letters"):
             self.clearEquipment()

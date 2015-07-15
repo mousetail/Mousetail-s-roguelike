@@ -117,6 +117,8 @@ $(document).ready(function(){initNavTree('namespaceconstants.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classconstants_1_1_holder.html">Holder</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classconstants_1_1_random_error.html">RandomError</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -232,6 +234,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>ITM_CONTAINER</b> = 6<
 <tr class="memitem:a11c357b9a819e84a45622df5d121eb47"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11c357b9a819e84a45622df5d121eb47"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>ITM_UTIL</b> = 7</td></tr>
 <tr class="separator:a11c357b9a819e84a45622df5d121eb47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7f659bc14a7a3d13856a61dcf8d6517"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af7f659bc14a7a3d13856a61dcf8d6517"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ITM_HUMANOID</b> = 8</td></tr>
+<tr class="separator:af7f659bc14a7a3d13856a61dcf8d6517"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fad82b0f423bb020e3eb5110139e377"><td class="memItemLeft" align="right" valign="top">dictionary&#160;</td><td class="memItemRight" valign="bottom"><b>itm_name_to_number</b></td></tr>
+<tr class="separator:a3fad82b0f423bb020e3eb5110139e377"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab50bbb24fb0b8f5d2b62cf97c8ae3f95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab50bbb24fb0b8f5d2b62cf97c8ae3f95"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>FLAG_BURDENED</b> = 0</td></tr>
 <tr class="separator:ab50bbb24fb0b8f5d2b62cf97c8ae3f95"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,15 +263,91 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>FLAG_FAST_2</b> = 6</t
 <tr class="memitem:a8bee061f30ac8275372eb00d04fbe980"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8bee061f30ac8275372eb00d04fbe980"></a>
 dictionary&#160;</td><td class="memItemRight" valign="bottom"><b>flag_uncode</b> = {0:&quot;burdened&quot;,1:&quot;full&quot;,2:&quot;very full&quot;, 3:&quot;hungry&quot;, 4:&quot;very hungry&quot;, 5:&quot;fast&quot;, 6: &quot;very fast&quot;}</td></tr>
 <tr class="separator:a8bee061f30ac8275372eb00d04fbe980"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac79afa61dbaefe4a66034c9be7ee6b4f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac79afa61dbaefe4a66034c9be7ee6b4f"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_RAW</b> = 0</td></tr>
+<tr class="separator:ac79afa61dbaefe4a66034c9be7ee6b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a305d206c19daa8dfe94361fd420631dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a305d206c19daa8dfe94361fd420631dc"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_INT</b> = 0</td></tr>
+<tr class="separator:a305d206c19daa8dfe94361fd420631dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5703a58036b1fc8c5c7017450b1415ea"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5703a58036b1fc8c5c7017450b1415ea"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_STRING</b> = 1</td></tr>
+<tr class="separator:a5703a58036b1fc8c5c7017450b1415ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa71bf9c02c44fb65d2daec64ce61ca9c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa71bf9c02c44fb65d2daec64ce61ca9c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_FLOAT</b> = 2</td></tr>
+<tr class="separator:aa71bf9c02c44fb65d2daec64ce61ca9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3ccf9f8b80b7e60e0d465e5af7b9b98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa3ccf9f8b80b7e60e0d465e5af7b9b98"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_BOOL</b> = 3</td></tr>
+<tr class="separator:aa3ccf9f8b80b7e60e0d465e5af7b9b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87f8402dd3278e34dad42ae3ce6a5f0e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87f8402dd3278e34dad42ae3ce6a5f0e"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_TUPLE_INT</b> = 4</td></tr>
+<tr class="separator:a87f8402dd3278e34dad42ae3ce6a5f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa21877dff02407f2d6285eab296f3b6f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa21877dff02407f2d6285eab296f3b6f"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_TUPLE_STRING</b> = 5</td></tr>
+<tr class="separator:aa21877dff02407f2d6285eab296f3b6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f1123b24dd18d51473fa3a3873584d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f1123b24dd18d51473fa3a3873584d2"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_TUPLE_FLOAT</b> = 6</td></tr>
+<tr class="separator:a8f1123b24dd18d51473fa3a3873584d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae667b17f711a346343800c4e36b41d2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae667b17f711a346343800c4e36b41d2f"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_COMBAT_MAP</b> = 7</td></tr>
+<tr class="separator:ae667b17f711a346343800c4e36b41d2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cf292698668866a66db5934f086d99c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8cf292698668866a66db5934f086d99c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_VAR_NAME</b> = 8</td></tr>
+<tr class="separator:a8cf292698668866a66db5934f086d99c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a468366a9ac64bfba2548f347d64b6502"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a468366a9ac64bfba2548f347d64b6502"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_VAR_WORLD</b> = 9</td></tr>
+<tr class="separator:a468366a9ac64bfba2548f347d64b6502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7c84505d0b77010a9080d16270032ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7c84505d0b77010a9080d16270032ee"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_VAR_CAGE</b> = 10</td></tr>
+<tr class="separator:ac7c84505d0b77010a9080d16270032ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b0f96facd33f07128dbe1b8dccaa4f2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b0f96facd33f07128dbe1b8dccaa4f2"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_VAR_POSITION</b> = 11</td></tr>
+<tr class="separator:a9b0f96facd33f07128dbe1b8dccaa4f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d0a1587dca825743b8762142dbdda01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d0a1587dca825743b8762142dbdda01"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_IMAGE</b> = 12</td></tr>
+<tr class="separator:a5d0a1587dca825743b8762142dbdda01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3465f3a0e532e65606b27e40be0cbbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3465f3a0e532e65606b27e40be0cbbb"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_ATTRNAME_AS_HOLDER</b> = 13</td></tr>
+<tr class="separator:ae3465f3a0e532e65606b27e40be0cbbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a665fc3f24f82f5049ccb007d61fda9b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a665fc3f24f82f5049ccb007d61fda9b4"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>TYPE_ITEM_PROB</b> = 14</td></tr>
+<tr class="separator:a665fc3f24f82f5049ccb007d61fda9b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1dc8e7ed710dde3bc77e165417976351"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1dc8e7ed710dde3bc77e165417976351"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>MAXTRIES</b> = 100</td></tr>
 <tr class="separator:a1dc8e7ed710dde3bc77e165417976351"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25213323d4d0c26ffc418053d65a7ed2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25213323d4d0c26ffc418053d65a7ed2"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>GRIDSIZE_X</b> = 150</td></tr>
+<tr class="separator:a25213323d4d0c26ffc418053d65a7ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0b902b2948d3665c995d9e0584babe2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0b902b2948d3665c995d9e0584babe2"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>GRIDSIZE_Y</b> = 150</td></tr>
+<tr class="separator:ac0b902b2948d3665c995d9e0584babe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5e267cb7a87752bfa4b90174e0e2d76"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5e267cb7a87752bfa4b90174e0e2d76"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>RE_NORMAL_ARGS</b> = 1</td></tr>
+<tr class="separator:aa5e267cb7a87752bfa4b90174e0e2d76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10cf60e643872d9d83689d52a43d3037"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10cf60e643872d9d83689d52a43d3037"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>RE_STATIC_ARGS</b> = 2</td></tr>
+<tr class="separator:a10cf60e643872d9d83689d52a43d3037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><pre class="fragment">Created on 26 jan. 2015
 
 @author: Maurits
 </pre> </div><h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="a3fad82b0f423bb020e3eb5110139e377"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dictionary constants.itm_name_to_number</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="namespaceconstants.html">    1</a></span>&#160;= {<span class="stringliteral">&quot;ITM_MONSTER&quot;</span>:ITM_MONSTER,<span class="stringliteral">&quot;ITM_ITEM&quot;</span>:ITM_ITEM,<span class="stringliteral">&quot;ITM_FOOD&quot;</span>:ITM_FOOD,<span class="stringliteral">&quot;ITM_WEAPON&quot;</span>:ITM_WEAPON,<span class="stringliteral">&quot;ITM_ARMOR&quot;</span>:ITM_ARMOR,<span class="stringliteral">&quot;ITM_POTION&quot;</span>:ITM_POTION,</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;                <span class="stringliteral">&quot;ITM_CONTAINER&quot;</span>:ITM_CONTAINER,<span class="stringliteral">&quot;ITM_UTIL&quot;</span>:ITM_UTIL,<span class="stringliteral">&quot;ITM_HUMANOID&quot;</span>:ITM_HUMANOID}</div>
+</div><!-- fragment -->
+<p>Definition at line <a class="el" href="constants_8py_source.html#l00049">49</a> of file <a class="el" href="constants_8py_source.html">constants.py</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ab7975d0e5ba674989e909d1881c6f7ae"></a>
 <div class="memitem">
 <div class="memproto">
@@ -287,7 +370,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>MAXTRIES</b> = 100</td
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceconstants.html">constants</a></li>
-    <li class="footer">Generated on Mon Jun 15 2015 14:55:06 for Mousetail&#39;s rpg by
+    <li class="footer">Generated on Tue Jul 14 2015 16:34:41 for Mousetail&#39;s rpg by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

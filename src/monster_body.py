@@ -11,6 +11,7 @@ import random, math, itertools
 import items
 import generator
 from constants import *
+import drops_calculator
 
 class CombatOnlyBody(object):
     #VARIABLES NEEDED:
@@ -105,7 +106,6 @@ class HumanBody(CombatOnlyBody):
         
         self.maxhealth=(self.getstat("constitution")+2)**2
     
-    drops=[(1,"meat")]
     weapon_slots=["right hand"]
     
     def drop(self):
@@ -118,10 +118,9 @@ class HumanBody(CombatOnlyBody):
         for itm in itms:
             itm.position=self.mind.position[:]
             
-        itms.extend(self.world.itemPicker.fastItemByName(i[1], self.mind.position[:], self.world, self.mind.cage) for i in self.drops if i[0]>random.random())
-        self.world.objects.extend(itms)
-    def __init__(self, world, imagename="hero.png", name="human", speed=100, combatMap={}
-                 ):
+        itms.extend(drops_calculator.calculateDrops(self.world, self.mind.cage, self.drops, self.mind.position[:]))
+        self.world.spawnItem(*itms)
+    def __init__(self, world, imagename="hero.png", name="human", speed=100, combatMap={}, drops=()):
         '''
         Constructor
         '''
@@ -138,6 +137,7 @@ class HumanBody(CombatOnlyBody):
         self.speed=speed
         self.imagename=imagename
         self.name=name
+        self.drops=drops
     def recalculateEverything(self):
         self.updatemaxhealth()
         self.updatemaxweight()

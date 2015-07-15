@@ -5,6 +5,7 @@ var NAVTREE =
       [ "Namespace List", "namespaces.html", "namespaces" ],
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ]
       ] ]
     ] ],
@@ -14,7 +15,8 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -26,7 +28,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"classplayer__input_1_1_player_object.html#ad3afc9d7ed9ce3f7724b320a6c23a85c"
+"classplayer__input_1_1_player_object.html#a9d9a7f4b5ea2e72c86372ae8d4217b82"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

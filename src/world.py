@@ -142,10 +142,11 @@ class World(object):
             if hasattr(i,"receiveEvent"):
                 
                 i.receiveEvent(event)
-    def spawnItem(self, item):
+    def spawnItem(self, *items):
         """"adds a object to the world, preferable over adding it yourself"""
-        item.owner=self
-        self.objects.append(item)     
+        for item in items:
+            item.owner=self
+            self.objects.append(item)     
     def getsolid(self, position):
         return self.grid[position] in constants.WALLS
     def getcollisions(self, position):

@@ -5,7 +5,5 @@ var searchData=
   ['combatonlybody',['CombatOnlyBody',['../classmonster__body_1_1_combat_only_body.html',1,'monster_body']]],
   ['command',['Command',['../classitems_1_1_command.html',1,'items']]],
   ['constants',['constants',['../namespaceconstants.html',1,'']]],
-  ['container',['Container',['../classcontainers_1_1_container.html',1,'containers']]],
-  ['containers',['containers',['../namespacecontainers.html',1,'']]],
   ['copy',['Copy',['../namespace_copy.html',1,'']]]
 ];

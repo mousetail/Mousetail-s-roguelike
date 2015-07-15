@@ -7,6 +7,7 @@ import items
 
 import pygame
 from constants import *
+import drops_calculator
 
 class Container(items.Item):
     '''
@@ -14,7 +15,7 @@ class Container(items.Item):
     A item that holds other items
     '''
 
-    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, range=1,
+    def __init__(self, position, image=None, cage=None, world=None, name=None, pname=None, weight=None, fakename=None, fakepname=None, range=1, startinginv=(),
                  **kwargs):
         '''
         Constructor
@@ -27,7 +28,7 @@ class Container(items.Item):
             self.item_capacity=None
         if self.weight_capacity==-1:
             self.weight_capacity=None
-        self.inventory=[]
+        self.inventory=drops_calculator.calculateDrops(world, cage, startinginv)
     def use(self):
         self.owner.say("do you want to a) put something in the ",self," b) take something out or c) see what is in the ", self)
         self.owner.redictInput(self.interpretEvent)
@@ -89,6 +90,7 @@ class Container(items.Item):
             return 50+int(12*(len(command.data["item"])**0.5))
         else:
             self.owner.addtoinventory(command.data["item"])
+            return 0
     def takeOutEvent(self, event):
         
         if event.type==pygame.KEYDOWN:
