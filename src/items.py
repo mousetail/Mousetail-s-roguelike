@@ -209,6 +209,7 @@ class Key(Item):
             if self.world.grid[i] in self.replace_dict:
                 self.world.grid[i]=self.replace_dict[self.world.grid[i]]
                 self.owner.say(self.pmessage)
+                self.owner.identify(self)
                 #if False:
                 #    if True:
                 #        if True and False and True is not False:
@@ -225,5 +226,6 @@ class Key(Item):
                 #             self.owner.say("you don't have a minion")
                 return True
         self.owner.say(self.nmessage)
+        self.owner.identify(self)
         return False
         

@@ -12,7 +12,8 @@ defs={"item":BasicitemFuncMaker(items.Item),
       "food":BasicitemFuncMaker(food.Food,RE_STATIC_ARGS,RE_NORMAL_ARGS,(("nutrition",TYPE_INT,"nutrition"),)),
       "identifier":BasicitemFuncMaker(identifyer.Identifier),
       "container":BasicitemFuncMaker(containers.Container,RE_STATIC_ARGS,RE_NORMAL_ARGS,(("item capacity",TYPE_INT,"item_capacity"),("weight capacity",TYPE_INT,"weight_capacity"),
-                                                                                         ("starting items",TYPE_ITEM_PROB,"startinginv")))
+                                                                                         ("starting items",TYPE_ITEM_PROB,"startinginv"))),
+      "key":BasicitemFuncMaker(items.Key)
       }
 
 placestoloadfrom=[]

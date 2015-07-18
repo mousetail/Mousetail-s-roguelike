@@ -75,17 +75,20 @@ class Container(items.Item):
         return False
     def putIn(self, command):
         sc=True
-        if self.item_capacity and len(self.inventory)>=self.item_capacity:
+        if isinstance(command.data["item"], Container) or command.data["item"] is self:
+            self.say("R}you can't put a container into another container")
+            sc=False
+        elif self.item_capacity and len(self.inventory)>=self.item_capacity:
             self.say("R}the ",self," can't hold any more items!")
             sc=False
-        if self.weight_capacity and self.getWeight()-self.weight+sum(i.getWeight() for i in command.data["item"])>self.weight_capacity:
+        elif self.weight_capacity and self.getWeight()-self.weight+sum(i.getWeight() for i in command.data["item"])>self.weight_capacity:
             self.say("R}the",self," can't hold any more weight!")
             sc=False
         if sc:
         
             self.inventory.extend(command.data["item"])
             
-            self.say("put the ",command.data["item"][0]," in the ",self)
+            self.say("you put the ",command.data["item"][0]," in the ",self)
             self.inventory.sort()
             return 50+int(12*(len(command.data["item"])**0.5))
         else:

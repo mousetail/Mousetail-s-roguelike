@@ -47,8 +47,7 @@
 			</attr>
 			<attr name="advanced visibility check">True</attr>
 			<attr name="drops">
-			    <itm prob="0.5" amount="3">meat</itm>
-				<itm prob="1" amount="2">sack</itm>
+			    <itm prob="0.8" amount="1">meat</itm>
 			</attr>
 			<attr name="starting inventory">
 			    <itm prob="1" amount="1">banana</itm>
@@ -72,6 +71,9 @@
 		    <attr name="image_name">agent.png</attr>
 			<attr name="speed">120</attr>
 			<attr name="advanced visibility check">False</attr>
+			<attr name="starting inventory">
+			    <itm prob="0.8" amount="2">key</itm>
+			</attr>
 		</classdata>
 		
 	</item>
@@ -217,6 +219,23 @@
 				    <tag>ITM_POTION</tag>
 				</itm>
 			</attr>
+		</classdata>
+	</item>
+	<item>
+	    <basedata>
+		    <name>key</name>
+			<frequency>0</frequency>
+			<tags>
+			    <tag>ITM_ITEM</tag>
+				<tag>ITM_UTIL</tag>
+			</tags>
+			<class>key</class>
+		</basedata>
+		<classdata base="identifyer">
+		    <attr name="pname">keys</attr>
+			<attr name="image_name">twisted_key.png</attr>
+			<attr name="fake name">key</attr>
+			<attr name="fake pname">keys</attr>
 		</classdata>
 	</item>
 </itemlist>

@@ -788,7 +788,6 @@ class MonsterObject(PlayerObject):
         
         return PlayerObject.update(self)
 
-import monster_body
 import cheats
 
 Command=items.Command

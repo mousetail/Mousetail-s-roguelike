@@ -5,12 +5,10 @@ Created on 29 dec. 2014
 '''
 import generator
 import pygame
-import random
 import player_input
-import items
+#import items
 import XMLloading
 from sys import stdout as sysstdout
-import sys
 import constants
 class World(object):
     '''

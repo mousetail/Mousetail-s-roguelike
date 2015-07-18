@@ -3,7 +3,7 @@ Created on 29 dec. 2014
 
 @author: Maurits
 '''
-import pygame, textwrap, itertools, random
+import pygame, textwrap
 from constants import *
 
 class BaseWindow(object):
