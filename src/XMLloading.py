@@ -5,6 +5,9 @@ Created on 17 jun. 2015
 '''
 from xml.etree import ElementTree as et
 import monster_body, constants
+
+import os
+
 #places to load types from
 #-------------------------
 placestoloadfrom=[
@@ -28,7 +31,7 @@ class XMLloader(object):
         '''
         self.objdefs={}
         self.clstypes={"Human":monsterMaker(monster_body.HumanBody)}
-        sys.path.append("../srcplug")
+        sys.path.append(os.path.join("..","srcplug"))
         for i in placestoloadfrom:
             mod=__import__(i)
             defdict=mod.defs
@@ -37,7 +40,7 @@ class XMLloader(object):
             placestoloadfrom.extend(mod.placestoloadfrom)
         self.randomcats={} #categories which will be randomized into
         print self.clstypes
-    def loadFile(self, filename="..\data\human.xml"):
+    def loadFile(self, filename=os.path.join("..","data","human.xml")):
         o=et.parse(filename)
         for itemdef in o.findall("item"):
             basedata=itemdef.find("basedata")

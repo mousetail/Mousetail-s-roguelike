@@ -10,6 +10,7 @@ import player_input
 import XMLloading
 from sys import stdout as sysstdout
 import constants
+import os
 class World(object):
     '''
     It is a level object that will change if levels change
@@ -26,7 +27,7 @@ class World(object):
         Constructor
         '''
         self.itemPicker=XMLloading.XMLloader()
-        self.itemPicker.loadFile("..\data\human.xml")
+        self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
         self.grid_size=size
         self.grid=generator.Generator(size)
