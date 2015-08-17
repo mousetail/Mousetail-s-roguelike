@@ -25,6 +25,7 @@ class World(object):
         '''
         Constructor
         '''
+        self.dungeon_level=1
         self.itemPicker=XMLloading.XMLloader()
         self.itemPicker.loadFile("..\data\human.xml")
         self.itemPicker.flush()

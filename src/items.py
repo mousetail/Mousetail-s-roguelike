@@ -11,6 +11,7 @@ class StaticObject(object):
     """A object that draws itself bu dous nothing else"""
     def __init__(self,position,image, cage=None,world=None, speed=0, recieveevent=False):
         self.position=list(position)
+        assert len(self.position)==3, "position seems to be missing a dungeon level value [2]"
         #print "-----------------------------------------------"
         #print position
         #print position[1]-position[0]

@@ -95,4 +95,3 @@ class HealingPotion(Potion):
                 obj.body.health+=((obj.body.maxhealth-obj.body.health)/2)*lessen
             else:
                 obj.body.health+=10*lessen
-    

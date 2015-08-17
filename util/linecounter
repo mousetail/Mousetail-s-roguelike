@@ -1,0 +1,7 @@
+import itertools
+
+files=(itertools.chain((i for i in os.listdir(j)) for j in ("../src","../srcplug")))
+totallines=0
+
+for j in files:
+    print j
