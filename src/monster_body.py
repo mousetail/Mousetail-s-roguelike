@@ -152,7 +152,7 @@ class HumanBody(CombatOnlyBody):
                 if self.mind.visible[i]==2:
                     self.mind.visible[i]=1
         for room in self.world.grid.rooms:
-            if room.instersects(self.mind.position):
+            if room.instersects(self.mind.position[:-1]):
                 for x in range(room.bounds[0],room.bounds[0]+room.bounds[2]+1):
                     for y in range(room.bounds[1],room.bounds[1]+room.bounds[3]+1):
                         self.mind.visible[x,y]=2

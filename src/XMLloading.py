@@ -150,8 +150,11 @@ class XMLloader(object):
                     self.objdefs[itmname][3][j[0]]=j[1]
                 i+=1
     def fastRandomItem(self, position, world, cage, dlevel, tags,safemode=False,returnbody=False):
+        assert len(position)==3
         return self.findObj(self.randomItem(dlevel, tags))(position,world,cage,safemode=safemode,returnbody=returnbody)
+    
     def fastItemByName(self, name, position, world, cage,returnbody=False):
+        assert len(position)==3
         return self.findObj(name)(position,world,cage,returnbody=returnbody)
 if __name__=="__main__":
     bj=XMLloader()

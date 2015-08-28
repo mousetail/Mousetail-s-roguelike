@@ -31,7 +31,7 @@ class World(object):
         self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
         self.grid_size=size
-        self.grid=generator.Generator(size)
+        self.grid=generator.Generator(size, self.dungeon_level)
         self.objects=self.grid.generate()
         tmpobjects=[]
         self.cage=cage
@@ -45,6 +45,7 @@ class World(object):
                 
             else:
                 try:
+                    assert len(i[0])==3
                     tmpobjects.append(self.itemPicker.fastRandomItem(i[0], self, self.cage, 1, (i[1],)))
                 except IndexError:
                     print "r} CANT FIND OBJ FOR TAGS",i[1]

@@ -152,15 +152,21 @@ class Generator(Grid):
     '''
     generates levels by first placing a room and then tracing the path to the closest room that already exists
     TODO: look at http://journal.stuffwithstuff.com/2014/12/21/rooms-and-mazes/
+    Objectdefinitions: Keys:
+    Roomtype: 0: ? 1:walltypes, 2: floortypes, 3:? 4: doortypes, 5:special
+    Walltypes: Key: id, Value: Tuple/list of possible types, 1 item: type of wall. 4 items: Bottom, right, left, top. Each item is a tuple of possible values
+    froortypes: Key: id, Value: indexes of types of floor, use constants
+    paths: tuple of possible paths used between rooms. Random path is selected each tile.
+    1perdungeon: tuple of tuples, of "value","type": value is tile index or category ID for generator, type="OBJ" for object, "TYPE" for type
     '''
-    def __init__(self, size, objectdefinitions=None,atributes=None):
+    def __init__(self, size, dlevel=0, objectdefinitions=None,atributes=None):
         if objectdefinitions is None:
             self.objectdefinitions={"empty":TS_EMPTY,
                                "roomtypes":((7,(1,),(1,),(12,),((TS_DOOR_LEFT,TS_DOOR_OPEN_LEFT),(TS_DOOR_RIGHT,TS_DOOR_OPEN_RIGHT,)),False),
                                             (1,(2,),(3,),(),((TS_LOCKED_DOOR_LEFT,),(TS_LOCKED_DOOR_RIGHT,)),True)
                                             ), #frequency,(walltypes,),(floortypes,),(specialobjects,),(doors,),spawnsobjects
                                "walltypes":{1:((TS_WALL_BOTTOM,),(TS_WALL_RIGHT,),(TS_WALL_LEFT,),(TS_WALL_TOP,)),2:((TS_GREEN_WALL_1,TS_GREEN_WALL_2),)},
-                               "floortypes":{1:(5,6),2:(7,8),3:(TS_GREEN_FLOOR_1,TS_GREEN_FLOOR_2,TS_GREEN_FLOOR_3)},
+                               "floortypes":{1:(TS_FLOOR_NORMAL,TS_FLOOR_SPECIAL),3:(TS_GREEN_FLOOR_1,TS_GREEN_FLOOR_2,TS_GREEN_FLOOR_3)},
                                "specialobjectclasses":{1:14},
                                "paths":(11,12,13),
                                "1perdungeon":(("player","OBJ"),(TS_PAPRI,"TILE"))+((ITM_MONSTER,"OBJ"),)*12+((ITM_ITEM,"OBJ"),)*48
@@ -179,6 +185,7 @@ class Generator(Grid):
                             "roomsizey":(4,8)}
         else:
             self.atributes=atributes
+        self.dlevel=dlevel
         #print self.objectdefinitions
         Grid.__init__(self, size, self.objectdefinitions["empty"])
 
@@ -308,11 +315,13 @@ class Generator(Grid):
         for i in self.objectdefinitions["1perdungeon"]:
             room=random.choice(tuple(i for i in self.rooms if not i.special))
             position=(random.randint(room.bounds[0]+1,room.bounds[0]+room.bounds[2]-1),
-                      random.randint(room.bounds[1]+1,room.bounds[1]+room.bounds[3]-1))
+                      random.randint(room.bounds[1]+1,room.bounds[1]+room.bounds[3]-1),
+                      self.dlevel)
             if i[1]=="TILE":
-                self[position]=i[0]
+                self[position[:-1]]=i[0]
             elif i[1]=="OBJ":
                 objects.append((position,i[0]))
+                assert len(position)==3
                 #self[position]=5
             else:
                 raise ValueError("member 1perdungeon in objectdefinitions has a invalid value: ",str(i[1])," should be TILE or OBJ")
