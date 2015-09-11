@@ -17,20 +17,21 @@ class FakeList(object):
     def append(self,what):
         pass
 class ObjectSpawner(object):
-    def __init__(self, world, chance=12):
+    def __init__(self, world, dlevel, chance=12):
         self.world=world
         self.grid=world.grid
         self.player=world.player
         self.chance=chance
         self.speed=100
         self.action_points=0
+        self.dlevel=dlevel
     def gameTurn(self):
         #print "generating object..."
         if random.randint(0,self.chance*len(self.world.objects)+2)==1:
             #print "Good chance..."
             room=random.choice(self.grid.rooms)
-            if (not room.instersects(self.player.position)) and (not room.special):
-                position=random.randint(room.bounds[0],room.bounds[0]+room.bounds[2]),random.randint(room.bounds[1],room.bounds[1]+room.bounds[3])
+            if (not room.instersects(self.player.position[:2])) and (not room.special):
+                position=random.randint(room.bounds[0],room.bounds[0]+room.bounds[2]),random.randint(room.bounds[1],room.bounds[1]+room.bounds[3]),self.dlevel
                 self.world.spawnItem(self.world.itemPicker.fastRandomItem(position, self.world, self.world.cage, 0, (ITM_MONSTER,)))
                 print "G}you hear some noises"
                 
@@ -766,7 +767,7 @@ class MonsterObject(PlayerObject):
         
         target=None
         for obj in self.world.objects:
-            if (isinstance(obj, PlayerObject) and tuple(obj.position) in adjpositions and self.visible[obj.position] and
+            if (isinstance(obj, PlayerObject) and tuple(obj.position[:2]) in adjpositions and self.visible[obj.position[:2]] and
                     type(obj).__name__!=type(self).__name__):
                 target=obj
         if not target:

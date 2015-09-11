@@ -22,7 +22,7 @@ class World(object):
     '''
 
 
-    def __init__(self, size=[100,100],cage=None,generatetype=1,stdout=sysstdout):
+    def __init__(self, size=[50,50],cage=None,generatetype=1,stdout=sysstdout):
         '''
         Constructor
         '''
@@ -58,7 +58,7 @@ class World(object):
         #print getitembyname.itemRandomizer.items
         
         self.objects=tmpobjects
-        self.objects.append(player_input.ObjectSpawner(self,2))
+        self.objects.append(player_input.ObjectSpawner(self,2,self.dungeon_level))
         #self.objects.append(player_input.EventScheduler(self,10))
         self.dirty=True
         self.objindex=0

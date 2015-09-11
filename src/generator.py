@@ -169,7 +169,7 @@ class Generator(Grid):
                                "floortypes":{1:(TS_FLOOR_NORMAL,TS_FLOOR_SPECIAL),3:(TS_GREEN_FLOOR_1,TS_GREEN_FLOOR_2,TS_GREEN_FLOOR_3)},
                                "specialobjectclasses":{1:14},
                                "paths":(11,12,13),
-                               "1perdungeon":(("player","OBJ"),(TS_PAPRI,"TILE"))+((ITM_MONSTER,"OBJ"),)*12+((ITM_ITEM,"OBJ"),)*48
+                               "1perdungeon":(("player","OBJ"),(TS_PAPRI,"TILE"),(TS_STAIRS_UP,"TILE"),(TS_STAIRS_DOWN,"TILE"))+((ITM_MONSTER,"OBJ"),)*12+((ITM_ITEM,"OBJ"),)*48
                                
                                }
             
