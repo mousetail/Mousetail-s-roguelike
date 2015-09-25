@@ -6,6 +6,9 @@ Created on 29 dec. 2014
 import generator
 import pygame
 import player_input
+import generator_controller
+import multiprocessing
+
 #import items
 import XMLloading
 from sys import stdout as sysstdout
@@ -26,15 +29,23 @@ class World(object):
         '''
         Constructor
         '''
+        pipe=multiprocessing.Pipe()
+        proc=multiprocessing.Process(target=generator_controller.generate,args=(pipe[1],))
+        pipe[0].send("gener")
+        
         self.dungeon_level=1
+        pipe[0].send(self.dungeon_level)
+        pipe[0].send(size)
         self.itemPicker=XMLloading.XMLloader()
         self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
         self.grid_size=size
-        self.grid=generator.Generator(size, self.dungeon_level)
-        self.objects=self.grid.generate()
+        #self.grid=generator.Generator(size, self.dungeon_level)
+        #self.objects=self.grid.generate()
         tmpobjects=[]
         self.cage=cage
+
+        self.generator=pipe[0].recv()
         
         for i in self.objects:
             if i[1]=="player":
