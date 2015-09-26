@@ -29,13 +29,15 @@ class World(object):
         '''
         Constructor
         '''
-        pipe=multiprocessing.Pipe()
-        proc=multiprocessing.Process(target=generator_controller.generate,args=(pipe[1],))
-        pipe[0].send("gener")
+        self.pipe=multiprocessing.Pipe()
+        self.proc=multiprocessing.Process(target=generator_controller.generate,args=(self.pipe[1],))
+        self.proc.start()
+        self.pipe[0].send("gener")
+        print self.pipe[0].recv()
         
         self.dungeon_level=1
-        pipe[0].send(self.dungeon_level)
-        pipe[0].send(size)
+        self.pipe[0].send(self.dungeon_level)
+        self.pipe[0].send(size)
         self.itemPicker=XMLloading.XMLloader()
         self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
@@ -44,8 +46,16 @@ class World(object):
         #self.objects=self.grid.generate()
         tmpobjects=[]
         self.cage=cage
-
-        self.generator=pipe[0].recv()
+        print ("Waiting for level to generate...")
+        print self.pipe[0].recv()
+        print ("...")
+        while not self.pipe[0].poll():
+            pygame.event.pump()
+        
+        print self.pipe[0].recv()
+        self.grid=self.pipe[0].recv()
+        self.objects=self.pipe[0].recv()
+        print ("level generated")
         
         for i in self.objects:
             if i[1]=="player":
@@ -167,6 +177,14 @@ class World(object):
             if hasattr(i, "position") and i.position[0]==position[0] and i.position[1]==position[1]:
                 objs.append(i)
         return objs
+    def quit(self):
+        for i in self.objects:
+            if hasattr(i,"quit"):
+                i.quit()
+        self.pipe[0].send("quit")
+        self.proc.join(None)
+        self.pipe[0].close()
+            
 if __name__=="__main__":
     print "please run 3d_render.py"
     print dir(World)

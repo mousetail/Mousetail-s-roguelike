@@ -114,6 +114,7 @@ class Displayer_3d():
             if event.type==pygame.QUIT or (event.type==pygame.KEYDOWN and event.key==pygame.K_ESCAPE):
                 #SAVE CODE HERE
                 self.running=False
+                self.world.quit()
             else:
                 
                 self.world.event(event)
@@ -126,12 +127,15 @@ class Displayer_3d():
                 self.redraw()
                     
 if __name__=="__main__":
-    x=Displayer_3d(spritesheet="spritesheet_iso1.png",greyspritesheet="spritesheet_grey_1.png",
-    tilesize=64,checkbounds=False,grid_size=[constants.GRIDSIZE_X,constants.GRIDSIZE_Y])
-    pygame.USEREVENT+=1
-    pygame.COLLISION=pygame.USEREVENT-1
-    while x.running:
-        x.event()
-        x.update()
-    #print x.grid.data
-    pygame.quit()     
+    try:
+        x=Displayer_3d(spritesheet="spritesheet_iso1.png",greyspritesheet="spritesheet_grey_1.png",
+                       tilesize=64,checkbounds=False,grid_size=[constants.GRIDSIZE_X,constants.GRIDSIZE_Y])
+        pygame.USEREVENT+=1
+        pygame.COLLISION=pygame.USEREVENT-1
+        while x.running:
+            x.event()
+            x.update()
+        #print x.grid.data
+    finally:
+        pygame.quit()
+        sys.exit()

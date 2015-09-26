@@ -195,7 +195,7 @@ class LogWindow(BaseWindow):
             self.redraw()
             self.autorender.blit(self.drawsurface,self.position)
             pygame.display.flip()
-            pygame.event.poll()
+            pygame.event.pump()
         self.data["stdout"].write(text)#"(|"+text+"|$"+line+"$*"+self.lines[-1]+"*)")
 class StatWindow(BaseWindow):
     """A window that renders the stats of a PlayerObject or a subcass. Records stats from xp, and any status messages, converted via the constants dict
