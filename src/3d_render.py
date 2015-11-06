@@ -35,10 +35,11 @@ class Displayer_3d():
         redicting standared input,
         it also loads the sprite sheets
         """
+        print "starting init"
         cage=imagecage.ImageCage()
         self.docheckbounds=kwargs["checkbounds"]
         pygame.init()
-        self.screen=pygame.display.set_mode((0,0),pygame.FULLSCREEN)#[1000,600])
+        self.screen=pygame.display.set_mode((1000,600))#,pygame.FULLSCREEN)#[1000,600])
         self.screen.fill([0,0,0])
         #LOAD SPRITES ------------------------------------------------------------------
         spritesheet=cage.lookup(kwargs["spritesheet"]).convert_alpha()
@@ -54,6 +55,7 @@ class Displayer_3d():
         textwidget=windows.LogWindow([300,600],(0,0),self.font,self.screen,stdout=sys.stdout,antialias=False)
         sys.stdout=textwidget
         pygame.display.flip()
+        print "world is starting..."
         self.world=world.World(kwargs["grid_size"],cage,)
         sys.stdout=textwidget.data["stdout"]
         #print "STDOUT ",sys.stdout
@@ -125,17 +127,27 @@ class Displayer_3d():
                 rd=i.addevent(event) or rd
             if rd:
                 self.redraw()
-                    
+    def finalize():
+        self.world.finalize()
 if __name__=="__main__":
     try:
+        print "starting..."
         x=Displayer_3d(spritesheet="spritesheet_iso1.png",greyspritesheet="spritesheet_grey_1.png",
                        tilesize=64,checkbounds=False,grid_size=[constants.GRIDSIZE_X,constants.GRIDSIZE_Y])
+        print "stage 2"
         pygame.USEREVENT+=1
         pygame.COLLISION=pygame.USEREVENT-1
         while x.running:
             x.event()
             x.update()
+        print "done!"
         #print x.grid.data
+    except Exception as ex:
+        print ex;
+        print ex.__dict__
+        raise ex;
     finally:
+        x.finalize()
+        print "finally"
         pygame.quit()
         sys.exit()

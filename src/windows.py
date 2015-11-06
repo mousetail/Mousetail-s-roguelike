@@ -128,6 +128,10 @@ class LogWindow(BaseWindow):
             pass
         if "antialias" not in self.data:
             self.data["antialias"]=True
+    def flush(self):
+        self.data["stdout"].flush()
+    def getpid(self):
+        self.data["stdout"].getpid()
     def redraw(self):
         self.drawsurface.fill([0,0,0])
         linenum=0

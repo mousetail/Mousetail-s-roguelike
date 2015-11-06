@@ -159,7 +159,9 @@ class Generator(Grid):
     paths: tuple of possible paths used between rooms. Random path is selected each tile.
     1perdungeon: tuple of tuples, of "value","type": value is tile index or category ID for generator, type="OBJ" for object, "TYPE" for type
     '''
-    def __init__(self, size, dlevel=0, objectdefinitions=None,atributes=None):
+    def __init__(self, size, dlevel=0, objectdefinitions=None,atributes=None,pipe=None):
+	if pipe:
+		pipe.send("In func")
         if objectdefinitions is None:
             self.objectdefinitions={"empty":TS_EMPTY,
                                "roomtypes":((7,(1,),(1,),(12,),((TS_DOOR_LEFT,TS_DOOR_OPEN_LEFT),(TS_DOOR_RIGHT,TS_DOOR_OPEN_RIGHT,)),False),
@@ -185,9 +187,13 @@ class Generator(Grid):
                             "roomsizey":(4,8)}
         else:
             self.atributes=atributes
+        if pipe:
+		pipe.send("End func")
         self.dlevel=dlevel
         #print self.objectdefinitions
         Grid.__init__(self, size, self.objectdefinitions["empty"])
+        if pipe:
+		pipe.send("End func")
 
     def generate(self):
         startime=datetime.datetime.now()

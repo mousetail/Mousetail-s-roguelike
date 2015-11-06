@@ -29,19 +29,26 @@ class World(object):
         '''
         Constructor
         '''
+        self.grid_size=size
+        print "pipe starting..."
         self.pipe=multiprocessing.Pipe()
+        print "process starting..."
         self.proc=multiprocessing.Process(target=generator_controller.generate,args=(self.pipe[1],))
-        self.proc.start()
-        self.pipe[0].send("gener")
-        print self.pipe[0].recv()
+        print "stage 2 process starting..."
+        print self.proc.start()
+        self.startgenerlevel(1)
+        print "waiting..."
         
+        print self.pipe[0].recv()
+        print self.pipe[0].recv()
+        print self.pipe[0].recv()
+        print self.pipe[0].recv()
+        print self.pipe[0].recv()
+        print self.pipe[0].recv()
         self.dungeon_level=1
-        self.pipe[0].send(self.dungeon_level)
-        self.pipe[0].send(size)
         self.itemPicker=XMLloading.XMLloader()
         self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
-        self.grid_size=size
         #self.grid=generator.Generator(size, self.dungeon_level)
         #self.objects=self.grid.generate()
         tmpobjects=[]
@@ -56,7 +63,7 @@ class World(object):
         self.grid=self.pipe[0].recv()
         self.objects=self.pipe[0].recv()
         print ("level generated")
-        
+        pipe[0].send("gener")
         for i in self.objects:
             if i[1]=="player":
                 pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
@@ -84,6 +91,15 @@ class World(object):
         self.dirty=True
         self.objindex=0
         self.newround=False
+    def finalize():
+        print(dir(self.proc))
+        self.proc.terminate()
+    def startgenerlevel(self, level):
+        self.pipe[0].send("gener")
+        print ("sent gener")
+        self.pipe[0].send(level)
+        print ("sent dungeon level...")
+        self.pipe[0].send(self.grid_size)
     def update(self):
         """
         first calls update on all objects (for updating animations)
