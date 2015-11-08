@@ -63,7 +63,7 @@ class World(object):
         self.grid=self.pipe[0].recv()
         self.objects=self.pipe[0].recv()
         print ("level generated")
-        pipe[0].send("gener")
+        self.pipe[0].send("gener")
         for i in self.objects:
             if i[1]=="player":
                 pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
@@ -91,7 +91,7 @@ class World(object):
         self.dirty=True
         self.objindex=0
         self.newround=False
-    def finalize():
+    def finalize(self):
         print(dir(self.proc))
         self.proc.terminate()
     def startgenerlevel(self, level):
@@ -198,7 +198,7 @@ class World(object):
             if hasattr(i,"quit"):
                 i.quit()
         self.pipe[0].send("quit")
-        self.proc.join(None)
+        self.proc.join(5)
         self.pipe[0].close()
             
 if __name__=="__main__":
