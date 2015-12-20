@@ -150,6 +150,8 @@ class XMLloader(object):
                     self.objdefs[itmname][3][j[0]]=j[1]
                 i+=1
     def fastRandomItem(self, position, world, cage, dlevel, tags,safemode=False,returnbody=False):
+        """A faster way to get a random item, with all things on one place.
+        Usage: fastRandomItem(position, world, cage, dlevel, tags, safemode, returnbody)"""
         assert len(position)==3
         return self.findObj(self.randomItem(dlevel, tags))(position,world,cage,safemode=safemode,returnbody=returnbody)
     

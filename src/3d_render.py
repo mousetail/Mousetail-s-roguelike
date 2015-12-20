@@ -3,7 +3,7 @@ Created on 12 nov. 2014
 
 @author: Maurits
 '''
-import pygame, sys
+import pygame, sys, traceback
 import windows, world
 import imagecage
 
@@ -115,19 +115,21 @@ class Displayer_3d():
         for event in pygame.event.get():
             if event.type==pygame.QUIT or (event.type==pygame.KEYDOWN and event.key==pygame.K_ESCAPE):
                 #SAVE CODE HERE
+                print "I assume the quit code is here... "
+                pygame.quit()
                 self.running=False
                 self.world.quit()
             else:
-                
                 self.world.event(event)
-                
-                
             rd=False
             for i in self.windows:
                 rd=i.addevent(event) or rd
             if rd:
                 self.redraw()
-    def finalize():
+    def finalize(self):
+        print "Quiting pygame..."
+        pygame.quit();
+        print "QUIT!"
         self.world.finalize()
 if __name__=="__main__":
     try:
@@ -143,9 +145,16 @@ if __name__=="__main__":
         print "done!"
         #print x.grid.data
     except Exception as ex:
-        print ex;
-        print ex.__dict__
-        raise ex;
+        print "-"*30
+        print "|",type(ex).__name__+":"+str(ex);
+        print "|",ex.__dict__
+        #trace=sys.exc_info()[2]
+        line=traceback.print_exc(None, None)
+        if len(line)==0:
+            print "|NO traceback"
+        else:
+            print line
+    
     finally:
         x.finalize()
         print "finally"

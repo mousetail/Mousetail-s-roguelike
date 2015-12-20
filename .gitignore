@@ -1,6 +1,13 @@
 #gitignore
+
+
 # Byte-compiled / optimized / DLL files
 doc/
+*.html
+doc/*html
+*.tmp
+*.tex
+doc/*tex
 
 __pycache__/
 *.py[cod]

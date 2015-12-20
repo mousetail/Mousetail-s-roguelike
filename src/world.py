@@ -5,6 +5,7 @@ Created on 29 dec. 2014
 '''
 import generator
 import pygame
+import time
 import player_input
 import generator_controller
 import multiprocessing
@@ -29,6 +30,9 @@ class World(object):
         '''
         Constructor
         '''
+        self.level=-1
+        self.player=None
+        self.focus=None
         self.grid_size=size
         print "pipe starting..."
         self.pipe=multiprocessing.Pipe()
@@ -36,57 +40,21 @@ class World(object):
         self.proc=multiprocessing.Process(target=generator_controller.generate,args=(self.pipe[1],))
         print "stage 2 process starting..."
         print self.proc.start()
-        self.startgenerlevel(1)
+        print self.pipe[0].recv()
+        self.startGenerLevel(1)
         print "waiting..."
-        
-        print self.pipe[0].recv()
-        print self.pipe[0].recv()
-        print self.pipe[0].recv()
-        print self.pipe[0].recv()
-        print self.pipe[0].recv()
-        print self.pipe[0].recv()
         self.dungeon_level=1
         self.itemPicker=XMLloading.XMLloader()
         self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
-        #self.grid=generator.Generator(size, self.dungeon_level)
-        #self.objects=self.grid.generate()
-        tmpobjects=[]
         self.cage=cage
         print ("Waiting for level to generate...")
-        print self.pipe[0].recv()
+        #print self.pipe[0].recv()
         print ("...")
-        while not self.pipe[0].poll():
-            pygame.event.pump()
         
-        print self.pipe[0].recv()
-        self.grid=self.pipe[0].recv()
-        self.objects=self.pipe[0].recv()
-        print ("level generated")
-        self.pipe[0].send("gener")
-        for i in self.objects:
-            if i[1]=="player":
-                pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
-                tmpobjects.append(player_input.PlayerObject(i[0],pbody,self.cage,self,True))
-                self.focus=tmpobjects[-1]
-                self.player=self.focus #These are usually equal, but sometimes the screen could focus on something else
-                
-            else:
-                try:
-                    assert len(i[0])==3
-                    tmpobjects.append(self.itemPicker.fastRandomItem(i[0], self, self.cage, 1, (i[1],)))
-                except IndexError:
-                    print "r} CANT FIND OBJ FOR TAGS",i[1]
-            #elif i[1]=="monster":
-            #    tmpobjects.append(getitembyname.itemRandomizer.fastrandommonster(i[0],self,self.cage,1))
-            #elif i[1]=="item":
-            #    tmpobjects.append(getitembyname.itemRandomizer.fastrandomitem(i[0],self,self.cage,1))
-            
-        
-        #print getitembyname.itemRandomizer.items
-        
-        self.objects=tmpobjects
-        self.objects.append(player_input.ObjectSpawner(self,2,self.dungeon_level))
+        self.loadLevel(1)
+         
+        print "Finished finding objects"
         #self.objects.append(player_input.EventScheduler(self,10))
         self.dirty=True
         self.objindex=0
@@ -94,12 +62,71 @@ class World(object):
     def finalize(self):
         print(dir(self.proc))
         self.proc.terminate()
-    def startgenerlevel(self, level):
+    def startGenerLevel(self, level):
         self.pipe[0].send("gener")
         print ("sent gener")
         self.pipe[0].send(level)
         print ("sent dungeon level...")
         self.pipe[0].send(self.grid_size)
+        self.levelBeingGenerated=level
+    
+    def loadLevel(self, level):
+        if self.level==level:
+            return
+        elif self.levelBeingGenerated==level:
+            #CHECK IF EVERYTHING IS DONE
+            print "R}loading level..."
+            assert not self.pipe[0].poll(), "Some leftover information got stuck before loop"
+            numstats=0
+            status=1
+            
+            #SHOW PROGRESS...
+            
+            while status:
+                self.pipe[0].send("stat")
+                numstats+=1
+                print "G}not yet got back from stat..."
+                status=self.pipe[0].recv()
+                print "(outside) status="+repr(status)+" numstats="+repr(numstats)
+                assert not self.pipe[0].poll(), "Halfway loop, extra stuff got stuck"
+                #time.sleep(0.1)
+            
+            assert not self.pipe[0].poll(), "Some leftover information got stuck"
+            #if self.pipe[0].poll:
+            #    self.pipe[0].recv()
+            print "G}Ready to receive..."
+            self.pipe[0].send("retu")
+            
+            self.grid=self.pipe[0].recv()
+            print "receivd grid"
+            print "the grid is:",self.grid
+            objects=self.pipe[0].recv()
+            self.objects=[]
+            print "the objects are:",self.objects
+            print ("level generated")
+            for i in objects:
+                if i[1]=="player":
+                    if self.player is None:
+                        pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
+                        self.objects.append(player_input.PlayerObject(i[0],pbody,self.cage,self,True))
+                        self.focus=self.objects[-1]
+                        self.player=self.focus #These are usually equal, but sometimes the screen could focus on something else
+                        self.grid[self.player.position]=constants.TS_STAIRS_DOWN
+                    else:
+                        self.player.position=list(i[0])
+                        self.objects.append(self.player)
+                    
+                else:
+                    try:
+                        assert len(i[0])==3
+                        self.objects.append(self.itemPicker.fastRandomItem(i[0], self, self.cage, level, (i[1],)))
+                    except IndexError:
+                        print "r} CANT FIND OBJ FOR TAGS",i[1]
+            
+            self.objects.append(player_input.ObjectSpawner(self,2,self.dungeon_level))
+            
+            self.startGenerLevel(level+1)
+            
     def update(self):
         """
         first calls update on all objects (for updating animations)
@@ -181,7 +208,7 @@ class World(object):
                 
                 i.receiveEvent(event)
     def spawnItem(self, *items):
-        """"adds a object to the world, preferable over adding it yourself"""
+        """adds one or more object to the world, preferable over adding it yourself"""
         for item in items:
             item.owner=self
             self.objects.append(item)     
@@ -198,7 +225,7 @@ class World(object):
             if hasattr(i,"quit"):
                 i.quit()
         self.pipe[0].send("quit")
-        self.proc.join(5)
+        self.proc.join(1)
         self.pipe[0].close()
             
 if __name__=="__main__":

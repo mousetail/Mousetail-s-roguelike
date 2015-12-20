@@ -65,6 +65,10 @@ class PlayerObject(items.StaticObject):
         "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
     
+    def moveToLevel(self, level):
+        self.world.loadLevel(level)
+        self.position[2]=level
+    
     def __init__(self,position,body,cage,world, advanced_visibility_check=False, startinginv=(), safemode=False):
         """
         note that startinginv is in (prob, ammount, name) format. 
@@ -604,9 +608,12 @@ class PlayerObject(items.StaticObject):
                             self.old_position=self.position
                             self.body.attack(i)
                 if self.world.grid.hasindex(self.position) and (not self.world.grid[self.old_position] in WALLS):
-                    #self.say("you walk from "+str(self.position)+" to "+str(self.old_position))
-                    self.position[:]=self.old_position
-                    actions-=1
+                    if self.world.grid[self.old_position] in STAIRS:
+                        self.moveToLevel(self.position[2]+STAIRS[self.world.grid[self.old_position]])
+                    else:
+                        #self.say("you walk from "+str(self.position)+" to "+str(self.old_position))
+                        self.position[:]=self.old_position
+                        actions-=1
             elif action.typ=="help":
                 self.welcomeMessage()
             elif action.typ=="wait":
@@ -756,6 +763,8 @@ class MonsterObject(PlayerObject):
     def receiveEvent(self, event):
         pass
     def say(self, what=None, that=None): pass
+    def moveToLevel(self, level):
+        self.dead=True
     def AIturn(self):
         for letter, item in self.iterInventory():
             if isinstance(item, items.Armor) and item.slot in self.body.armor_slots and self.equipment[item.slot]==None:

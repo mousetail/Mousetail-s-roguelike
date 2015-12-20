@@ -159,9 +159,7 @@ class Generator(Grid):
     paths: tuple of possible paths used between rooms. Random path is selected each tile.
     1perdungeon: tuple of tuples, of "value","type": value is tile index or category ID for generator, type="OBJ" for object, "TYPE" for type
     '''
-    def __init__(self, size, dlevel=0, objectdefinitions=None,atributes=None,pipe=None):
-        if pipe:
-            pipe.send("In func")
+    def __init__(self, size, dlevel=0, objectdefinitions=None,atributes=None):
         if objectdefinitions is None:
             self.objectdefinitions={"empty":TS_EMPTY,
                                "roomtypes":((7,(1,),(1,),(12,),((TS_DOOR_LEFT,TS_DOOR_OPEN_LEFT),(TS_DOOR_RIGHT,TS_DOOR_OPEN_RIGHT,)),False),
@@ -187,20 +185,16 @@ class Generator(Grid):
                             "roomsizey":(4,8)}
         else:
             self.atributes=atributes
-        if pipe:
-            pipe.send("End func")
         self.dlevel=dlevel
         #print self.objectdefinitions
         Grid.__init__(self, size, self.objectdefinitions["empty"])
-        if pipe:
-            pipe.send("End func")
 
-    def generate(self):
-        startime=datetime.datetime.now()
-        numrooms=len(self.data)//self.atributes["roomfactor"]
+    def start(self):
+        self.startime=datetime.datetime.now()
+        self.numrooms=len(self.data)//self.atributes["roomfactor"]
         self.rooms=[]
         self.allpaths=[]
-        for roomnumber in range(numrooms):
+    def step(self):
             roomtype=random.choice(tuple(itertoolschain(*((i,)*i[0] for i in self.objectdefinitions["roomtypes"]))))
             #print roomtype
             walltype=self.objectdefinitions["walltypes"][random.choice(roomtype[1])]
@@ -240,8 +234,8 @@ class Generator(Grid):
             if tries>MAXTRIES:
                 #print "3}FAILED GENERATING MORE ROOMS"
                 #print "FILLING ROOMS..."
-                break
-            print "FOUND LOCATION FOR A ROOM ("+str(roomnumber)+"/"+str(numrooms)+")"
+                return False
+
             thispath=[]
             if len(self.rooms)>0:
                 minroom=min(self.rooms,key=lambda r2: room.distance(r2))
@@ -251,6 +245,8 @@ class Generator(Grid):
             if isinstance(thispath,list):
                 self.rooms.append(room)
                 self.allpaths.extend(thispath)
+            return True
+    def finish(self):
         for i in self.allpaths:
             self[i]=random.choice(self.objectdefinitions["paths"])
         for room in self.rooms:
@@ -333,8 +329,7 @@ class Generator(Grid):
                 raise ValueError("member 1perdungeon in objectdefinitions has a invalid value: ",str(i[1])," should be TILE or OBJ")
             #print "GENERATED SPECIAL OBECT",i[0]
         #print "FINISHED GENERATING ROOM!"
-        dif=datetime.datetime.now()-startime
-        print "took {0:02g}s, {1:03g}ms".format(dif.seconds,dif.microseconds//1000)
+        print "THE OBJECTS ARE",objects
         return objects
                     
     def findpath(self,pointa,pointb,ignorerooms=[],cleanup=True):
