@@ -7,12 +7,13 @@ A function to calculate number of drops
 '''
 import random
 
-def calculateDrops(world, cage, drops, position=(0,0,0), addtoworld=False):
-    gen=world.itemPicker
-    itms=[]
-    #print drops
+
+def calculateDrops(world, cage, drops, position=(0, 0, 0), addtoworld=False):
+    gen = world.itemPicker
+    itms = []
+    # print drops
     for i in drops:
-        #print i, len(i)
+        # print i, len(i)
         if random.random()<i[0]:
             for k in range(i[1]):
                 if isinstance(i[2],str):
@@ -24,5 +25,4 @@ def calculateDrops(world, cage, drops, position=(0,0,0), addtoworld=False):
     if addtoworld:
         for i in itms:
             world.spawnItem(i)
-    #print "len(itms)",len(itms),itms
     return itms
