@@ -41,9 +41,7 @@ class Displayer_3d(object):
         self.docheckbounds = kwargs["checkbounds"]
         pygame.init()
         if fullscreen:
-            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN);
-
-
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode((1000, 600))
         self.screen.fill([0, 0, 0])
@@ -56,18 +54,14 @@ class Displayer_3d(object):
 
         self.state = "loading"
         self.draw_offset = 0
-        textwidget = windows.LogWindow([300, 600], (0, 0), self.font, self.screen, stdout=sys.stdout, antialias=False)
-        sys.stdout = textwidget
         pygame.display.flip()
         print "world is starting..."
         self.world = world.World(kwargs["grid_size"], cage)
-        sys.stdout = textwidget.data["stdout"]
         self.state = "game"
         self.draw_offset = [0, 0]
         self.running = True
         self.clock = pygame.time.Clock()
         self.focus = None
-        self.windows = []
         #
         #
         # stat displayer
@@ -77,35 +71,26 @@ class Displayer_3d(object):
         #        m             |--------------
         #                      |Inventory window
         #                      \
-        self.windows.append(windows.StatWindow([self.screen.get_width(),32],[0,0],self.font,self.world.player))
-        self.windows.append(
-            windows.RenderWindow(self.world, [self.screen.get_width() - 300, self.screen.get_height() - 32],
-                                 [0, 32], self.sprites, self.greysprites, self.world.player))
-        self.windows.append(
-            windows.LogWindow([300, (self.screen.get_height() - 32) / 2], [self.screen.get_width() - 300, 32],
-                              self.font, False, stdout=sys.stdout))
-        
-        sys.stdout=self.windows[-1]
-        self.windows.append(windows.InventoryWindow([300, (self.screen.get_height() - 32) / 2],
-                                                    [self.screen.get_width() - 300,
-                                                     (self.screen.get_height() - 32) / 2 + 32],
-                                                    self.font, self.world.player))
-        self.windows.append(windows.CombatDebugWindow([100, 200], [50, 50], self.font, self.world.player))
-        
-        self.world.player.welcomeMessage()
-        
-        self.redraw()
 
-    def redraw(self):
+        inventoryWindow = windows.InventoryWindow(self.font, self.world.cage, self.world.player)
+        logWindow = windows.LogWindow(self.font, self.world.cage)
+        sys.stdout = logWindow
+        mainWindow = windows.RenderWindow(self.world.cage, self.world,
+                                          self.sprites, self.greysprites, self.world.player)
+        statWindow = windows.StatWindow(self.world.cage, self.font, self.world.player)
+        self.window = windows.PairWindow(0.1, 1, statWindow,
+                                         windows.PairWindow(0.75, 0, mainWindow,
+                                                            windows.PairWindow(0.5, 1, logWindow, inventoryWindow)))
+        self.window.setSize(self.screen.get_size())
+
+        self.world.player.welcomeMessage()
+        self.draw()
+
+    def draw(self):
         """
         refreshes the screen
         """
-        for i in self.windows:
-            i.redraw()
-            
-        for window in self.windows:
-            if hasattr(window, "drawsurface"):
-                self.screen.blit(window.drawsurface,window.position)
+        self.window.draw(self.screen)
         pygame.display.flip()
 
     def update(self):
@@ -113,9 +98,7 @@ class Displayer_3d(object):
         calls world.update mainly, then checks if the screen needs to be redrawn
         """
         self.world.update()
-        if self.world.dirty:
-            self.redraw()
-        
+        self.draw()
         self.clock.tick()
 
     def event(self):
@@ -124,30 +107,23 @@ class Displayer_3d(object):
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                self.running=False
+                self.running = False
                 self.world.quit()
             else:
                 self.world.event(event)
-            rd=False
-            for i in self.windows:
-                rd=i.addevent(event) or rd
-            if rd:
-                self.redraw()
+            self.window.addEvent(event)
 
     def finalize(self):
-        print "Quiting pygame..."
-        pygame.quit()
-        print "QUIT!"
         self.world.finalize()
 
 
 if __name__=="__main__":
+    x = None
     try:
         print "starting..."
-        x=Displayer_3d(spritesheet="spritesheet_iso1.png", greyspritesheet="spritesheet_grey_1.png",
-                       tilesize=64, checkbounds=False, grid_size=[constants.GRIDSIZE_X, constants.GRIDSIZE_Y],
-                       fullscreen="window" not in sys.argv)
+        x = Displayer_3d(spritesheet="spritesheet_iso1.png", greyspritesheet="spritesheet_grey_1.png",
+                         tilesize=64, checkbounds=False, grid_size=[constants.GRIDSIZE_X, constants.GRIDSIZE_Y],
+                         fullscreen="window" not in sys.argv)
         print "stage 2"
         while x.running:
             x.event()
@@ -155,7 +131,7 @@ if __name__=="__main__":
         print "done!"
     except Exception as ex:
         print "-"*30
-        print "|",type(ex).__name__+":"+str(ex);
+        print "|", type(ex).__name__ + ":" + str(ex)
         print "|",ex.__dict__
         line=traceback.print_exc(None, None)
         if len(line)==0:
@@ -164,7 +140,8 @@ if __name__=="__main__":
             print line
     
     finally:
-        x.finalize()
+        if x is not None:
+            x.finalize()
         print "finally"
         pygame.quit()
         sys.exit()

@@ -38,7 +38,3 @@ class CheatHandler(object):
             self.player.addtoinventory(self.world.itemPicker.fastRandomItem((0,0,0),self.player.world,self.player.cage,1,(ITM_ITEM,)))
         else:
             self.player.say("No cheat code \""+string+"\" is recognized")
-                
-            
-
-

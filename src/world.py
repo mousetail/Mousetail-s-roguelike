@@ -3,16 +3,13 @@ Created on 29 dec. 2014
 
 @author: Maurits
 '''
-import generator
 import pygame
-import time
 import player_input
 import generator_controller
 import multiprocessing
 
 #import items
 import XMLloading
-from sys import stdout as sysstdout
 import constants
 import os
 class World(object):
@@ -25,40 +22,31 @@ class World(object):
     *Level generation
     '''
 
-
-    def __init__(self, size=[50,50],cage=None,generatetype=1,stdout=sysstdout):
+    def __init__(self, size=(50, 50), cage=None):
         '''
         Constructor
         '''
-        self.level=-1
-        self.player=None
-        self.focus=None
-        self.grid_size=size
-        print "pipe starting..."
-        self.pipe=multiprocessing.Pipe()
-        print "process starting..."
-        self.proc=multiprocessing.Process(target=generator_controller.generate,args=(self.pipe[1],))
-        print "stage 2 process starting..."
+        self.level = -1
+        self.player = None
+        self.focus = None
+        self.grid_size = size
+        self.pipe = multiprocessing.Pipe()
+        self.proc = multiprocessing.Process(target=generator_controller.generate, args=(self.pipe[1],))
         print self.proc.start()
         print self.pipe[0].recv()
         self.startGenerLevel(1)
-        print "waiting..."
-        self.dungeon_level=1
-        self.itemPicker=XMLloading.XMLloader()
+        self.dungeon_level = 1
+        self.itemPicker = XMLloading.XMLloader()
         self.itemPicker.loadFile(os.path.join("..","data","human.xml"))
         self.itemPicker.flush()
         self.cage=cage
         print ("Waiting for level to generate...")
-        #print self.pipe[0].recv()
-        print ("...")
         
         self.loadLevel(1)
-         
-        print "Finished finding objects"
-        #self.objects.append(player_input.EventScheduler(self,10))
-        self.dirty=True
-        self.objindex=0
-        self.newround=False
+
+        self.dirty = True
+        self.objindex = 0
+        self.newround = False
     def finalize(self):
         print(dir(self.proc))
         self.proc.terminate()
@@ -158,68 +146,62 @@ class World(object):
                             else:
                                 i.action_points+=i.speed
                 else:
-                    
-                    self.dirty=True
-                    self.newround=False
-                    
+
+                    self.dirty = True
+                    self.newround = False
                     break
-                
-                self.newround=False
+
+                self.newround = False
             elif isinstance(i,player_input.PlayerObject):
-                #print "not having action_points",i
                 pass
-                #print "not having action points"
-            i=self.objects[self.objindex]
+            i = self.objects[self.objindex]
             if hasattr(i,"action_points") and i.action_points>0:
                 if hasattr(i,"AIturn"):
                     i.AIturn()
                 if hasattr(i,"gameTurn"):
                     if  (not hasattr(i,"actions") or len(i.actions)>0):
-                        change=i.gameTurn()
+                        change = i.gameTurn()
                     else:
-                        change=0
-                    if change<=0:
-                        
-                        #print "waiting for player..."
+                        change = 0
+                    if change <= 0:
                         break
                     else:
                         if not isinstance(i,player_input.MonsterObject):
-                            #print "not waiting for player..."
                             pass
-                        if hasattr(i,"body"):
+                        if hasattr(i, "body"):
                             i.body.get_visible()
-                        if hasattr(i,"action_points"):
-                        
-                            i.action_points-=change
-                        self.newround=True
-                        #break #todo: fix this
+                        if hasattr(i, "action_points"):
+                            i.action_points -= change
+                        self.newround = True
+
                 else:
                     pass
-                    #print "not having gameTurn"
-            
-            self.objindex+=1
-            #print "next object"
-            
-        
+
+            self.objindex += 1
+
     def event(self, event):
         """passes on events to objects"""
         for i in self.objects:
             if hasattr(i,"receiveEvent"):
                 
                 i.receiveEvent(event)
+
     def spawnItem(self, *items):
         """adds one or more object to the world, preferable over adding it yourself"""
         for item in items:
             item.owner=self
-            self.objects.append(item)     
+            self.objects.append(item)
+
     def getsolid(self, position):
         return self.grid[position] in constants.WALLS
+
     def getcollisions(self, position):
         objs=[]
         for i in self.objects:
             if hasattr(i, "position") and i.position[0]==position[0] and i.position[1]==position[1]:
                 objs.append(i)
         return objs
+
     def quit(self):
         for i in self.objects:
             if hasattr(i,"quit"):
@@ -227,6 +209,9 @@ class World(object):
         self.pipe[0].send("quit")
         self.proc.join(1)
         self.pipe[0].close()
+
+    def getDirty(self):
+        return self.dirty
             
 if __name__=="__main__":
     print "please run 3d_render.py"
