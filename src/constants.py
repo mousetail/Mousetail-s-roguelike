@@ -38,7 +38,7 @@ door_pair_lock = {TS_LOCKED_DOOR_RIGHT: TS_DOOR_RIGHT, TS_LOCKED_DOOR_LEFT: TS_D
 WALLS = [TS_EMPTY, TS_WALL_BOTTOM, TS_WALL_RIGHT, TS_WALL_LEFT, TS_WALL_TOP, TS_DOOR_LEFT,
          TS_DOOR_RIGHT, TS_GREEN_WALL_1, TS_GREEN_WALL_2, TS_LOCKED_DOOR_LEFT, TS_LOCKED_DOOR_RIGHT]
 
-STAIRS = {TS_STAIRS_UP: -1, TS_STAIRS_DOWN: 1}
+STAIRS = {TS_STAIRS_UP: (-1, "UP"), TS_STAIRS_DOWN: (1, "DOWN")}
 
 DOORS = [TS_DOOR_LEFT, TS_DOOR_RIGHT, TS_LOCKED_DOOR_LEFT, TS_LOCKED_DOOR_RIGHT]
 # GENERAL
@@ -56,7 +56,7 @@ ITM_HUMANOID = 8
 
 itm_name_to_number = {"ITM_MONSTER": ITM_MONSTER, "ITM_ITEM": ITM_ITEM, "ITM_FOOD": ITM_FOOD, "ITM_WEAPON": ITM_WEAPON,
                       "ITM_ARMOR": ITM_ARMOR, "ITM_POTION": ITM_POTION,
-                "ITM_CONTAINER":ITM_CONTAINER,"ITM_UTIL":ITM_UTIL,"ITM_HUMANOID":ITM_HUMANOID}
+                      "ITM_CONTAINER": ITM_CONTAINER, "ITM_UTIL": ITM_UTIL, "ITM_HUMANOID": ITM_HUMANOID}
 
 # REMEMBER TO ADD TO REVERSE DICTONARY
 FLAG_BURDENED = 0
@@ -106,19 +106,23 @@ def emergencyReturn(function, r):
             return o
         else:
             return r
+
     return subfunc
 
-class RandomError (ValueError):
+
+class RandomError(ValueError):
     pass
+
+
 class Holder(object):
     def __init__(self, what):
         self.what = what
 
     def __getattribute__(self, attr):
-        return object.__getattribute__(self,"what")
+        return object.__getattribute__(self, "what")
 
     def __setattr__(self, attr, value):
-        object.__setattr__(self,"what",value)
+        object.__setattr__(self, "what", value)
 
     def __str__(self):
         return str(self.what)

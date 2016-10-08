@@ -62,10 +62,10 @@ class PlayerObject(items.StaticObject):
     def getstat(self, stat):
         "get experience level, depending on monster type"
         return self.body.ratios[stat]*self.stats[stat]
-    
-    def moveToLevel(self, level):
-        self.world.loadLevel(level)
-        self.position[2]=level
+
+    def moveToLevel(self, level, direction):
+        self.world.loadLevel(level, direction)
+        self.position[2] = level
     
     def __init__(self,position,body,cage,world, advanced_visibility_check=False, startinginv=(), safemode=False):
         """
@@ -607,60 +607,63 @@ class PlayerObject(items.StaticObject):
         if self.actions:
             action = self.actions.pop()
             if action.typ == "move":
-                self.old_position=self.position[:]
+                old_position = self.position[:]
 
                 actions += 100
-                self.old_position[0] += action.data["direction"][0]
-                self.old_position[1] += action.data["direction"][1]
+                old_position[0] += action.data["direction"][0]
+                old_position[1] += action.data["direction"][1]
                 for i in self.world.objects:
-                    if hasattr(i, "position") and i is not self and i.position == self.old_position:
-                        if isinstance(i,PlayerObject):
-                            self.old_position=self.position
+                    if (hasattr(i, "position") and i is not self and i.position[0] == old_position[0] and
+                                i.position[1] == old_position[1]):
+                        if isinstance(i, PlayerObject):
+                            old_position = self.position[:]
                             self.body.attack(i)
-                if self.world.grid.hasindex(self.position) and (not self.world.grid[self.old_position] in WALLS):
-                    if self.world.grid[self.old_position] in STAIRS:
-                        self.moveToLevel(self.position[2]+STAIRS[self.world.grid[self.old_position]])
+                if self.world.grid.hasindex(self.position) and (not self.world.grid[old_position] in WALLS):
+                    if self.world.grid[old_position] in STAIRS:
+                        print "Is stair"
+                        self.moveToLevel(self.position[2] + STAIRS[self.world.grid[old_position]][0],
+                                         STAIRS[self.world.grid[old_position]][1])
                     else:
-                        #self.say("you walk from "+str(self.position)+" to "+str(self.old_position))
-                        self.position[:]=self.old_position
-                        actions-=1
-            elif action.typ=="help":
+                        self.position[:] = old_position
+                        actions -= 1
+            elif action.typ == "help":
                 self.welcomeMessage()
-            elif action.typ=="wait":
-                actions+=100
-            elif action.typ=="drop": #------------------------
+            elif action.typ == "wait":
+                actions += 100
+            elif action.typ == "drop":
                 if "letter" in action.data:
-                    itm=self.removebyletter(action.data["letter"], True, False, 1)
+                    itm = self.removebyletter(action.data["letter"], True, False, 1)
                     self.drop(itm)
                 elif "item" in action.data:
                     self.drop(action.data["item"])
-                actions+=100
-            elif action.typ=="wear":
+                actions += 100
+            elif action.typ == "wear":
                 if "letter" in action.data:
-                    itm=self.removebyletter(action.data["letter"],True, False, 1)
+                    itm = self.removebyletter(action.data["letter"], True, False, 1)
                     if itm:
                         self.wear(itm[0], False)
                 elif "item" in action.data:
                     self.wear(action.data["item"], False)
-                actions+=100
-            elif action.typ=="remove":
+                actions += 100
+            elif action.typ == "remove":
                 if "letter" in action.data:
-                    itm=self.removearmorbyletter(action.data["letter"], True, False, True)
+                    self.removearmorbyletter(action.data["letter"], True, False, True)
                 elif "item" in self.action.data:
-                    raise NotImplementedError("line 523 in player input can't be fullfilled till a remove item by identity is implemented")
-                actions+=100
+                    raise NotImplementedError("line 523 in player input can't be fullfilled till a remove item by"
+                                              "identity is implemented")
+                actions += 100
                
             elif action.typ=="use":
                 if "letter" in action.data:
-                    itm=self.removebyletter(action.data["letter"],False, True, 1)
-                    itm.owner=self
+                    itm = self.removebyletter(action.data["letter"], False, True, 1)
+                    itm.owner = self
                     itm[0].use()
                 elif "item" in action.data:
-                    itm=action.data["item"]
-                    itm.owner=self
+                    itm = action.data["item"]
+                    itm.owner = self
                     itm.use()
-                actions+=100
-            elif action.typ=="eat":
+                actions += 100
+            elif action.typ == "eat":
                 if "letter" in action.data:
                     itm=self.removebyletter(action.data["letter"], True, False, 1)
                     if itm and itm[0]:
@@ -668,11 +671,11 @@ class PlayerObject(items.StaticObject):
                             self.addtoinventory(itm[0])
                             
                 elif "item" in action.data:
-                    itm=self.removebyidentity(action.data["item"])
-                    self.eat(action.data["item"],False)
+                    self.removebyidentity(action.data["item"])
+                    self.eat(action.data["item"], False)
                 actions+=300
-            elif action.typ=="open":
-                #This one should work without intervention
+            elif action.typ == "open":
+                # This one should work without intervention
                 wk=False
                 for i in generator.getadjacent(self.position, self.world.grid_size, 0, 0, 1):
                     if self.world.grid[i] in generator.door_pair_reverse:
@@ -683,43 +686,43 @@ class PlayerObject(items.StaticObject):
                         break
                     elif self.world.grid[i] in generator.door_pair_lock:
                         self.say("that door is locked")
-                        wk=True
+                        wk = True
                 if not wk:
                     
                     self.say("There is no door here")
-                actions+=100
-            elif action.typ=="close":
+                actions += 100
+            elif action.typ == " close":
                 wk=False
                 for i in generator.getadjacent(self.position, self.world.grid_size, 0, 0, 1):
                     if self.world.grid[i] in generator.door_pairs:
                         self.world.grid[i]=generator.door_pairs[self.world.grid[i]]
                         self.say("you close the door")
-                        actions+=100
-                        wk=True
+                        actions += 100
+                        wk = True
                         break
                 if not wk:
                     self.say("There is no door here")
-                    actions-=1
-            elif action.typ=="pickup":
+                    actions -= 1
+            elif action.typ == "pickup":
                 f=False
                 for i in self.world.objects:
                     if hasattr(i,"position") and i is not self and i.position[0]==self.position[0] and i.position[1]==self.position[1]:
                         if isinstance(i,items.Item):
                             self.world.objects.remove(i)
                             self.addtoinventory(i)
-                            f=True
+                            f = True
                             break
                     
                 if not f:
                     
                     self.say("there is nothing to pick up!")
-                actions+=100
-            elif action.typ=="throw":
+                actions += 100
+            elif action.typ == "throw":
                 
                 if "letter" in action.data:
                     itm=self.removebyletter(action.data["letter"],False, True, 1)
                     self.drop(itm, False)
-                    actions+=itm[0].throw(self,action.data["direction"])
+                    actions += itm[0].throw(self, action.data["direction"])
                 elif "item" in action.data:
                     itm = action.data["item"]
                     self.drop(itm, False)
@@ -791,8 +794,8 @@ class MonsterObject(PlayerObject):
 
     def say(self, what=None, that=None): pass
 
-    def moveToLevel(self, level):
-        self.dead=True
+    def moveToLevel(self, level, type):
+        self.dead = True
 
     def AIturn(self):
         for letter, item in self.iterInventory():

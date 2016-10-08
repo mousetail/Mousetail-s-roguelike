@@ -26,6 +26,7 @@ class World(object):
         '''
         Constructor
         '''
+        self.grid = None
         self.level = -1
         self.player = None
         self.focus = None
@@ -47,9 +48,11 @@ class World(object):
         self.dirty = True
         self.objindex = 0
         self.newround = False
+
     def finalize(self):
         print(dir(self.proc))
         self.proc.terminate()
+
     def startGenerLevel(self, level):
         self.pipe[0].send("gener")
         print ("sent gener")
@@ -57,63 +60,52 @@ class World(object):
         print ("sent dungeon level...")
         self.pipe[0].send(self.grid_size)
         self.levelBeingGenerated=level
-    
-    def loadLevel(self, level):
-        if self.level==level:
+
+    def loadLevel(self, level, direction="DOWN"):
+        if self.level == level:
             return
         elif self.levelBeingGenerated==level:
-            #CHECK IF EVERYTHING IS DONE
             print "R}loading level..."
             assert not self.pipe[0].poll(), "Some leftover information got stuck before loop"
-            numstats=0
-            status=1
-            
-            #SHOW PROGRESS...
-            
+            numstats = 0
+            status = 1
+
             while status:
                 self.pipe[0].send("stat")
                 numstats+=1
-                print "G}not yet got back from stat..."
                 status=self.pipe[0].recv()
                 print "(outside) status="+repr(status)+" numstats="+repr(numstats)
                 assert not self.pipe[0].poll(), "Halfway loop, extra stuff got stuck"
-                #time.sleep(0.1)
             
             assert not self.pipe[0].poll(), "Some leftover information got stuck"
-            #if self.pipe[0].poll:
-            #    self.pipe[0].recv()
-            print "G}Ready to receive..."
             self.pipe[0].send("retu")
-            
-            self.grid=self.pipe[0].recv()
-            print "receivd grid"
-            print "the grid is:",self.grid
-            objects=self.pipe[0].recv()
-            self.objects=[]
-            print "the objects are:",self.objects
-            print ("level generated")
+
+            self.grid = self.pipe[0].recv()
+            objects = self.pipe[0].recv()
+            self.objects = []
+
+            playerPos = self.grid.exits[direction]
+            if self.player is None:
+                pbody = self.itemPicker.fastItemByName("human", playerPos, self, self.cage, returnbody=True)
+                self.objects.append(player_input.PlayerObject(playerPos, pbody, self.cage, self, True))
+                self.focus = self.objects[-1]
+                self.player = self.focus
+            else:
+                self.player.position = list(playerPos)
+                self.objects.append(self.player)
+
+
             for i in objects:
-                if i[1]=="player":
-                    if self.player is None:
-                        pbody=self.itemPicker.fastItemByName("human",i[0],self,self.cage,returnbody=True)
-                        self.objects.append(player_input.PlayerObject(i[0],pbody,self.cage,self,True))
-                        self.focus=self.objects[-1]
-                        self.player=self.focus #These are usually equal, but sometimes the screen could focus on something else
-                        self.grid[self.player.position]=constants.TS_STAIRS_DOWN
-                    else:
-                        self.player.position=list(i[0])
-                        self.objects.append(self.player)
-                    
-                else:
-                    try:
-                        assert len(i[0])==3
-                        self.objects.append(self.itemPicker.fastRandomItem(i[0], self, self.cage, level, (i[1],)))
-                    except IndexError:
-                        print "r} CANT FIND OBJ FOR TAGS",i[1]
-            
-            self.objects.append(player_input.ObjectSpawner(self,2,self.dungeon_level))
-            
+                try:
+                    assert len(i[0]) == 3
+                    self.objects.append(self.itemPicker.fastRandomItem(i[0], self, self.cage, level, (i[1],)))
+                except IndexError:
+                    print "r} CANT FIND OBJ FOR TAGS", i[1]
+
+            self.objects.append(player_input.ObjectSpawner(self, 2, self.dungeon_level))
             self.startGenerLevel(level+1)
+        else:
+            pass  # stuff to reload a level from disc
             
     def update(self):
         """
@@ -131,12 +123,12 @@ class World(object):
                 deadobj.append(obj)
         for obj in deadobj:
                 self.objects.remove(obj)
-                if self.player==deadobj:
+                if self.player == deadobj:
                     #self.player=None
                     pass
         while True:
-            if self.objindex>=len(self.objects):
-                self.objindex=0
+            if self.objindex >= len(self.objects):
+                self.objindex = 0
                 if not self.newround:
                     
                     for i in self.objects:

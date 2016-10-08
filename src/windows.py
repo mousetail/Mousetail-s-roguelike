@@ -381,7 +381,6 @@ class InventoryWindow(Window):
                 if totaldist > 0:
                     self.scroll = int(event.pos[1] / float(self.size[1]) * totaldist)
                     self.dirty = True
-                    print "scrolled"
                     return True
             return False
         elif event.type == pygame.MOUSEBUTTONUP:
