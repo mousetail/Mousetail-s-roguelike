@@ -133,7 +133,7 @@ class TabWindow(BaseWindow):
                 self.tab = event.pos[0] * len(self.windows) / self.size[0]
                 self.windows[self.tab].dirty = True
             else:
-                event.pos = (event.pos[0], 64)
+                event.pos = (event.pos[0], event.pos[1] - 64)
                 self.windows[self.tab].addEvent(event)
         else:
             self.windows[self.tab].addEvent(event)
@@ -351,7 +351,8 @@ class LogWindow(Window):
 
 
 class StatWindow(Window):
-    """A window that renders the stats of a PlayerObject or a subcass. Records stats from xp, and any status messages, converted via the constants dict
+    """A window that renders the stats of a PlayerObject or a subcass. Records stats from xp, and any status messages,
+    converted via the constants dict
     The messages are outlines so they are equidistant. Colored low HP may be supported in the future"""
 
     def __init__(self, cage, font, trackmonster):
@@ -380,13 +381,51 @@ class StatWindow(Window):
         return "Statistics"
 
 
-class InventoryWindow(Window):
-    def __init__(self, font, imageCage, trackmonster):
+class ScrollingWindow(Window):
+    def __init__(self, imageCage):
         Window.__init__(self, imageCage)
+        self.scrollBar = imageCage.getProxy("GUI/scrollBar.png", True)
+        self.scrollWheel = imageCage.getProxy("GUI/scrollWheel.png", True)
+        self.scrollPos = 0
+
+    def addEvent(self, event):
+        if ((event.type == pygame.MOUSEBUTTONDOWN or (
+                event.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0]))
+            and event.pos[0] > (self.size[0] - 64)):
+            size = self.getTotalSize()
+            barsize = self.size[1] * self.size[1] / size
+            self.scrollPos = size * (event.pos[1] - barsize / 2) / (self.size[1] - barsize / 2)
+            if self.scrollPos < 0:
+                self.scrollPos = 0
+            elif size > self.size[1] and self.scrollPos > size - self.size[1]:
+                self.scrollPos = size - self.size[1]
+            self.dirty = True
+
+    def draw(self, surface):
+        if self.dirty:
+            surface.blit(self.scrollBar.toSurf(), (self.size[0] - 64, 0), (0, 0, 64, 32))
+            surface.blit(pygame.transform.scale(self.scrollBar.subsurface((0, 32, 64, 64)), (64, self.size[1] - 64)),
+                         (self.size[0] - 64, 32))
+            surface.blit(self.scrollBar.toSurf(), (self.size[0] - 64, self.size[1] - 32), (0, 96, 64, 32))
+            size = self.getTotalSize()
+            if size > self.size[1]:
+                barsize = max(self.size[1] * self.size[1] / size, 65)  # make sure at least one pixel between top
+                height = (self.scrollPos * (self.size[1])) / size
+                # print "barsize: "+str(barsize)+" my size: "+str(self.size[1])+"height: "+str(height)
+                surface.blit(self.scrollWheel.toSurf(), (self.size[0] - 64, height), (0, 0, 64, 16))
+                surface.blit(pygame.transform.scale(self.scrollWheel.subsurface((0, 16, 64, 32)), (64, barsize - 32)),
+                             (self.size[0] - 64, 16 + height))
+                surface.blit(self.scrollWheel.toSurf(), (self.size[0] - 64, height + barsize - 16), (0, 48, 64, 16))
+
+            Window.draw(self, surface)
+
+
+class InventoryWindow(ScrollingWindow):
+    def __init__(self, font, imageCage, trackmonster):
+        ScrollingWindow.__init__(self, imageCage)
         self.font = font
         self.imageCage = imageCage
         self.trackmonster = trackmonster
-        self.scrollPos = 0
 
     def draw(self, surface):
         if self.dirty or self.trackmonster.getInvDirty():
@@ -395,14 +434,20 @@ class InventoryWindow(Window):
             for item in self.trackmonster.inventory:
                 drawer = self.trackmonster.inventory[item][0].getGui()
                 if y - self.scrollPos < self.size[1] and y - self.scrollPos + drawer.getHeight() > 0:
-                    drawer.draw(self.font, surface, y, self.size[0], self.trackmonster, item,
+                    drawer.draw(self.font, surface, y - self.scrollPos, self.size[0], self.trackmonster, item,
                                 self.trackmonster.inventory[item])
                 y += drawer.getHeight()
             self.dirty = True
-            Window.draw(self, surface)
+            ScrollingWindow.draw(self, surface)
 
     def getName(self):
         return "Inventory"
+
+    def getTotalSize(self):
+        s = 0
+        for i in self.trackmonster.inventory:
+            s += self.trackmonster.inventory[i][0].getGui().getHeight()
+        return s
 
     def getImageName(self):
         return "Icons/inventory.png"
@@ -424,80 +469,3 @@ class EquipmentWindow(Window):
     def draw(self, surface):
         surface.fill((0, 100, 255))
         Window.draw(self, surface)
-
-
-class OldInventoryWindow(Window):
-    def __init__(self, font, imageCage, trackmonster):
-        Window.__init__(self, imageCage)
-        self.scroll = 0
-        self.selected = None
-        self.tab = "inv"
-        self.font = font
-        self.trackmonster = trackmonster
-
-    def draw(self, surface):
-        if self.trackmonster.getInvDirty() or self.dirty:
-            self.dirty = True
-            surface.fill((0, 0, 0))
-            tm = self.trackmonster
-            ypos = -self.scroll
-            if self.tab == "inv":
-                for item in self.trackmonster.inventory:
-                    if tm.inventory[item][0].image.get_height() == 64:
-                        surface.blit(tm.inventory[item][0].image.toSurf(), [5, ypos])
-                    else:
-                        surface.blit(tm.inventory[item][0].image.toSurf(), [5, ypos - 32])
-                    nm = self.trackmonster.getitemname(tm.inventory[item][0], p=(len(tm.inventory[item]) != 1))
-                    weight = tm.inventory[item][0].getWeight() * len(tm.inventory[item])
-                    surface.blit(self.font.render(
-                        item + ": " + str(len(tm.inventory[item])) + " " + str(nm) + " (" + str(weight) + "g)", 1,
-                        [255, 255, 255]),
-                        [74, ypos])
-
-                    ypos += 65
-            elif self.tab == "arm":
-                ypos += 30
-                surface.blit(self.font.render("Active slots: ", 1, [255, 255, 255]), (74, ypos))
-                ypos += 60
-                for letter in self.trackmonster.equipment_letters:
-                    item = self.trackmonster.equipment_letters[letter]
-                    surface.blit(tm.equipment[item].image.toSurf(), [5, ypos])
-                    nm = self.trackmonster.getitemname(tm.equipment[item])
-                    surface.blit(self.font.render(item + ": (" + letter + ") " + str(nm), 1, [255, 255, 255]),
-                                 (74, ypos))
-                    ypos += 65
-                ypos += 30
-                surface.blit(self.font.render("all slots: ", 1, [255, 255, 255]), (74, ypos))
-                ypos += 60
-                for item in self.trackmonster.equipment:
-                    if not self.trackmonster.equipment[item]:
-                        surface.blit(self.font.render(item + ": Nothing", 1, [255, 255, 255]), (74, ypos))
-                        ypos += 65
-            Window.draw(self, surface)
-
-    def addEvent(self, event):
-        if event.type == pygame.MOUSEMOTION:
-            if event.pos[0] > self.size[0] - 50:
-                if self.tab == "inv":
-                    totaldist = len(self.trackmonster.inventory) * 64 - self.size[1]
-                else:
-                    totaldist = len(self.trackmonster.equipment) * 64 - self.size[1] + 90  # 90 compensates for header
-                if totaldist > 0:
-                    self.scroll = int(event.pos[1] / float(self.size[1]) * totaldist)
-                    self.dirty = True
-                    return True
-            return False
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if self.size[1] - event.pos[1] > 20:
-                if event.pos[0] > (self.size[0] / 2):
-                    self.tab = "inv"
-                    self.scroll = 0
-                else:
-                    self.tab = "arm"
-                    self.scroll = 0
-                self.dirty = True
-                return True
-            else:
-                return False
-        else:
-            return False
