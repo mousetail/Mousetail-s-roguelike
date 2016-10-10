@@ -45,8 +45,8 @@ class Displayer_3d(object):
         else:
             self.screen = pygame.display.set_mode((1000, 600))
         self.screen.fill([0, 0, 0])
-        spritesheet = cage.lookup(kwargs["spritesheet"]).convert_alpha()
-        greyspritesheet = cage.lookup(kwargs["greyspritesheet"]).convert_alpha()
+        spritesheet = cage.lookup(kwargs["spritesheet"], True)
+        greyspritesheet = cage.lookup(kwargs["greyspritesheet"], True)
         self.font = pygame.font.SysFont('Tahoma', 14)
         tilesize = kwargs["tilesize"]
         self.sprites = splitsprites(spritesheet, tilesize)
@@ -98,7 +98,8 @@ class Displayer_3d(object):
         calls world.update mainly, then checks if the screen needs to be redrawn
         """
         self.world.update()
-        self.draw()
+        if pygame.display.get_init():
+            self.draw()
         self.clock.tick()
 
     def event(self):
@@ -130,16 +131,16 @@ if __name__=="__main__":
             x.update()
         print "done!"
     except Exception as ex:
+        sys.stdout = sys.__stdout__
         print "-"*30
-        print "|", type(ex).__name__ + ":" + str(ex)
-        print "|",ex.__dict__
-        line=traceback.print_exc(None, None)
-        if len(line)==0:
+        line = traceback.print_exc(None, None)
+        if len(line) == 0:
             print "|NO traceback"
         else:
-            print line
+            print >> sys.stderr, line
     
     finally:
+        sys.stdout = sys.__stdout__
         if x is not None:
             x.finalize()
         print "finally"

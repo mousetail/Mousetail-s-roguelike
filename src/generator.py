@@ -214,7 +214,7 @@ class Generator(Grid):
         doortype = roomtype[4]
         room = Room(floortype=floortype, walltype=walltype, doortype=doortype, special=roomtype[5])
         itworks = False
-            tries=0
+        tries = 0
         while tries <= MAXTRIES and not itworks:
             tries += 1
             rectangle = [random.randint(1, self.size[0] / 2 - (self.atributes["roomsizex"][1] + 1)) * 2,
@@ -224,31 +224,31 @@ class Generator(Grid):
             itworks = True
 
             room.bounds = rectangle
-                for room2 in self.rooms:
-                    if room2.instersects(rectangle):
+            for room2 in self.rooms:
+                if room2.instersects(rectangle):
+                    itworks = False
+            for point in self.allpaths:
+                if point is not None:
+                    if room.instersects(point):
                         itworks = False
-                for point in self.allpaths:
-                    if point is not None:
-                        if room.instersects(point):
-                            itworks = False
-                    else:
-                        print self.allpaths
-            if len(roomtype[2]) and random.randint(0,4)==0:
-                position=random.randint(room.bounds[0]+1,room.bounds[0]+room.bounds[2]-1), \
-                         random.randint(room.bounds[1]+1,room.bounds[1]+room.bounds[3]-1)
+                else:
+                    print self.allpaths
+            if len(roomtype[2]) and random.randint(0, 4) == 0:
+                position = random.randint(room.bounds[0] + 1, room.bounds[0] + room.bounds[2] - 1), \
+                           random.randint(room.bounds[1] + 1, room.bounds[1] + room.bounds[3] - 1)
                 _type=random.choice(roomtype[2])
                 self[position]=_type
-                room.specialobjects.append((position,_type))
+                room.specialobjects.append((position, _type))
             if tries>MAXTRIES:
                 return False
 
             thispath=[]
             if len(self.rooms)>0:
-                minroom=min(self.rooms,key=lambda r2: room.distance(r2))
+                minroom = min(self.rooms, key=lambda r2: room.distance(r2))
                 thispath = self.findpath(room.center(), minroom.center(), (room, minroom))
         if isinstance(thispath, list):
-                self.rooms.append(room)
-                self.allpaths.extend(thispath)
+            self.rooms.append(room)
+            self.allpaths.extend(thispath)
             return True
 
     def finish(self):
@@ -333,7 +333,6 @@ class Generator(Grid):
                 raise ValueError("member 1perdungeon in objectdefinitions has a invalid value: ",
                                  str(i[1]), " should be TILE or OBJ")
 
-        print "THE OBJECTS ARE",objects
         return objects
 
     def findpath(self, pointa, pointb, cleanup=True):

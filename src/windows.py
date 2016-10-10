@@ -92,7 +92,7 @@ class Window(BaseWindow):
     def __init__(self, imagecage):
         self.size = (0, 0)
         self.dirty = True
-        self.image = imagecage.lookup("GUI/frame.png")
+        self.image = imagecage.getProxy("GUI/frame.png", True)
         self.frameSize = 32  # Hardcoded for now, size of border
         self.borderWidth = 127 - self.frameSize * 2  # The longest side of the borders
 
@@ -189,8 +189,8 @@ class RenderWindow(Window):
                     else:
                         pos = [(x - y // 2 + 1), (x + y // 2)]
                         ad = 32
-                    if pos[0] > 0 and pos[1] > 0 and pos[0] < self.world.grid_size[0] and pos[1] < self.world.grid_size[
-                        1]:
+                    if (pos[0] > 0 and pos[1] > 0 and pos[0] < self.world.grid_size[0]
+                        and pos[1] < self.world.grid_size[1]):
                         if self.world.grid[pos] and (not self.focus or self.focus.visible[pos]):
                             if not self.focus or self.focus.visible[pos]==2:
                                 surface.blit(self.sprites[self.world.grid[pos]],
@@ -199,7 +199,7 @@ class RenderWindow(Window):
                                 surface.blit(self.greysprites[self.world.grid[pos]],
                                              ((x * 64 - self.draw_offset[0]) + ad, (y * 16 - self.draw_offset[1])))
                 if 0 < (y + self.world.grid_size[0]) < len(self.dynamicobjectsstore):
-
+                    assert pygame.display.get_init()
                     for x in self.dynamicobjectsstore[y + self.world.grid_size[0]]:
                         if not self.focus or self.focus.visible[x.position] == 2:
                             x.draw(surface, ((x.position[0] + x.position[1]) * 32 - self.draw_offset[0],
@@ -340,9 +340,9 @@ class InventoryWindow(Window):
             if self.tab == "inv":
                 for item in self.trackmonster.inventory:
                     if tm.inventory[item][0].image.get_height() == 64:
-                        surface.blit(tm.inventory[item][0].image, [5, ypos])
+                        surface.blit(tm.inventory[item][0].image.toSurf(), [5, ypos])
                     else:
-                        surface.blit(tm.inventory[item][0].image, [5, ypos - 32])
+                        surface.blit(tm.inventory[item][0].image.toSurf(), [5, ypos - 32])
                     nm = self.trackmonster.getitemname(tm.inventory[item][0], p=(len(tm.inventory[item]) != 1))
                     weight = tm.inventory[item][0].getWeight() * len(tm.inventory[item])
                     surface.blit(self.font.render(
@@ -357,7 +357,7 @@ class InventoryWindow(Window):
                 ypos += 60
                 for letter in self.trackmonster.equipment_letters:
                     item = self.trackmonster.equipment_letters[letter]
-                    surface.blit(tm.equipment[item].image, [5, ypos])
+                    surface.blit(tm.equipment[item].image.toSurf(), [5, ypos])
                     nm = self.trackmonster.getitemname(tm.equipment[item])
                     surface.blit(self.font.render(item + ": (" + letter + ") " + str(nm), 1, [255, 255, 255]),
                                  (74, ypos))
