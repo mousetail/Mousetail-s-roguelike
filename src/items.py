@@ -4,6 +4,7 @@ Created on 1 jan. 2015
 @author: Maurits
 '''
 import generator
+import itemGui
 from constants import *
 
 
@@ -89,7 +90,7 @@ class Item(StaticObject):
         '''
         StaticObject.__init__(self, position, image, cage, world, 0, False)
         self.owner = None
-
+        self.guiInterface = itemGui.ItemGui()
         self.isflying = False
         self.direction = (0, 0)
         # self.action_points=0
@@ -110,6 +111,9 @@ class Item(StaticObject):
             self.world = world
         self.fakename = fakename
         self.fakepname = fakepname
+
+    def getGui(self):
+        return self.guiInterface
 
     def use(self):
         """called when trying to use "A" on a item"""

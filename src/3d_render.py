@@ -73,6 +73,7 @@ class Displayer_3d(object):
         #                      \
 
         inventoryWindow = windows.InventoryWindow(self.font, self.world.cage, self.world.player)
+        equipmentWindow = windows.EquipmentWindow(self.font, self.world.cage, self.world.player)
         logWindow = windows.LogWindow(self.font, self.world.cage)
         sys.stdout = logWindow
         mainWindow = windows.RenderWindow(self.world.cage, self.world,
@@ -80,7 +81,11 @@ class Displayer_3d(object):
         statWindow = windows.StatWindow(self.world.cage, self.font, self.world.player)
         self.window = windows.PairWindow(0.1, 1, statWindow,
                                          windows.PairWindow(0.75, 0, mainWindow,
-                                                            windows.PairWindow(0.5, 1, logWindow, inventoryWindow)))
+                                                            windows.PairWindow(0.5, 1, logWindow,
+                                                                               windows.TabWindow(self.world.cage,
+                                                                                                 self.font,
+                                                                                                 inventoryWindow,
+                                                                                                 equipmentWindow))))
         self.window.setSize(self.screen.get_size())
 
         self.world.player.welcomeMessage()

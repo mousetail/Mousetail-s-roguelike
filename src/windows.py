@@ -6,6 +6,7 @@ Created on 29 dec. 2014
 import pygame, textwrap
 from constants import *
 
+
 class BaseWindow(object):
     """a type of interface documenting what you need to implement.
     It's kinda an interface, mostly inherited by Window
@@ -27,6 +28,13 @@ class BaseWindow(object):
 
     def addEvent(self, event):
         pass
+
+    def getName(self):
+        return "?"
+
+    def getImageName(self):
+        """Should be a 32 by 32 icon for the image"""
+        return "GUI/error32.png"
 
 
 class PairWindow(BaseWindow):
@@ -86,6 +94,49 @@ class PairWindow(BaseWindow):
         else:
             self.leftWindow.addEvent(event)
             self.rightWindow.addEvent(event)
+
+
+class TabWindow(BaseWindow):
+    def __init__(self, imagecage, font, *windows):
+        self.windows = windows
+        self.tabimage = imagecage.getProxy("GUI/tab.png", True)
+        self.size = (0, 0)
+        self.tab = 0
+        self.dirty = True
+        self.font = font
+        self.images = [imagecage.getProxy(i.getImageName(), False) for i in self.windows]
+
+    def setSize(self, size):
+        self.size = size
+        for i in self.windows:
+            i.setSize((size[0], size[1] - 64))
+
+    def draw(self, surface):
+        self.windows[self.tab].draw(surface.subsurface((0, 64, self.size[0], self.size[1] - 64)))
+        if self.dirty:
+            width = self.size[0] // len(self.windows)
+            for index, window in enumerate(self.windows):
+                surface.blit(self.tabimage.toSurf(), (index * width, 0), (0, 0, 16, 64))
+                surface.blit(pygame.transform.scale(self.tabimage.subsurface((16, 0, 32, 64)), (width - 32, 64)),
+                             (index * width + 16, 0))
+                surface.blit(self.tabimage.toSurf(), (index * width + width - 16, 0), (64 - 16, 0, 16, 64))
+
+                if width >= 64:
+                    surface.blit(self.images[index].toSurf(), (width * index + 16, 16))
+                    if width >= 92:
+                        surface.blit(self.font.render(window.getName(), 1, (255, 255, 255)),
+                                     (width * index + 64, 16), (0, 0, width - 80, 32))
+
+    def addEvent(self, event):
+        if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
+            if event.pos[1] < 64 and event.type == pygame.MOUSEBUTTONDOWN:
+                self.tab = event.pos[0] * len(self.windows) / self.size[0]
+                self.windows[self.tab].dirty = True
+            else:
+                event.pos = (event.pos[0], 64)
+                self.windows[self.tab].addEvent(event)
+        else:
+            self.windows[self.tab].addEvent(event)
 
 
 class Window(BaseWindow):
@@ -192,7 +243,7 @@ class RenderWindow(Window):
                     if (pos[0] > 0 and pos[1] > 0 and pos[0] < self.world.grid_size[0]
                         and pos[1] < self.world.grid_size[1]):
                         if self.world.grid[pos] and (not self.focus or self.focus.visible[pos]):
-                            if not self.focus or self.focus.visible[pos]==2:
+                            if not self.focus or self.focus.visible[pos] == 2:
                                 surface.blit(self.sprites[self.world.grid[pos]],
                                              ((x * 64 - self.draw_offset[0]) + ad, (y * 16 - self.draw_offset[1])))
                             else:
@@ -205,6 +256,9 @@ class RenderWindow(Window):
                             x.draw(surface, ((x.position[0] + x.position[1]) * 32 - self.draw_offset[0],
                                              y * 16 - self.draw_offset[1]))
             Window.draw(self, surface)
+
+    def getName(self):
+        return "game view"
 
 
 class LogWindow(Window):
@@ -223,7 +277,7 @@ class LogWindow(Window):
         self.wrapper = textwrap.TextWrapper(width=self.size[0] / 8)
         self.wrapper.drop_whitespace = False
         if "stdout" not in self.data:
-            self.data["stdout"]=None
+            self.data["stdout"] = None
         else:
             pass
         if "antialias" not in self.data:
@@ -239,6 +293,9 @@ class LogWindow(Window):
         Window.setSize(self, size)
         self.numlines = self.size[1] / 18
         self.wrapper.width = self.numlines
+
+    def getName(self):
+        return "status"
 
     def draw(self, surface):
         if self.dirty:
@@ -266,17 +323,17 @@ class LogWindow(Window):
                 surface.blit(self.font.render(line.strip(), self.data["antialias"], color),
                              [32, 16 * linenum])
             Window.draw(self, surface)
-        
+
     def write(self, text):
         if text == "\b":
             try:
-                self.lines[-1]=self.lines[-1][:-1]
-                if len(self.lines[-1])==0 or (len(self.lines[-1])==2 and self.lines[-1][1]=="}"):
+                self.lines[-1] = self.lines[-1][:-1]
+                if len(self.lines[-1]) == 0 or (len(self.lines[-1]) == 2 and self.lines[-1][1] == "}"):
                     del self.lines[-1]
             except IndexError:
                 self.data["stdout"].write("INVALID BACKSPACE")
         else:
-            if len(self.lines)==0 or self.lines[-1].endswith("\n"):
+            if len(self.lines) == 0 or self.lines[-1].endswith("\n"):
                 line = text
             else:
                 line = self.lines.pop() + text
@@ -287,7 +344,7 @@ class LogWindow(Window):
                 splitlines = self.wrapper.wrap(line)
                 color = "W"
             for i in splitlines:
-                self.lines.append(color+"}"+i)
+                self.lines.append(color + "}" + i)
             if text.endswith("\n"):
                 self.lines[-1] += "\n"
         self.dirty = True
@@ -319,10 +376,57 @@ class StatWindow(Window):
 
             Window.draw(self, surface)
 
+    def getName(self):
+        return "Statistics"
+
 
 class InventoryWindow(Window):
-    """Right now, has a list of inventory, and armor when clikced on the right side, should probably be split up later"""
+    def __init__(self, font, imageCage, trackmonster):
+        Window.__init__(self, imageCage)
+        self.font = font
+        self.imageCage = imageCage
+        self.trackmonster = trackmonster
+        self.scrollPos = 0
 
+    def draw(self, surface):
+        if self.dirty or self.trackmonster.getInvDirty():
+            surface.fill((0, 0, 0))
+            y = 0
+            for item in self.trackmonster.inventory:
+                drawer = self.trackmonster.inventory[item][0].getGui()
+                if y - self.scrollPos < self.size[1] and y - self.scrollPos + drawer.getHeight() > 0:
+                    drawer.draw(self.font, surface, y, self.size[0], self.trackmonster, item,
+                                self.trackmonster.inventory[item])
+                y += drawer.getHeight()
+            self.dirty = True
+            Window.draw(self, surface)
+
+    def getName(self):
+        return "Inventory"
+
+    def getImageName(self):
+        return "Icons/inventory.png"
+
+
+class EquipmentWindow(Window):
+    def __init__(self, font, imageCage, trackmonster):
+        Window.__init__(self, imageCage)
+        self.font = font
+        self.imageCage = imageCage
+        self.trackmonster = trackmonster
+
+    def getName(self):
+        return "Equipment"
+
+    def getImageName(self):
+        return "Icons/armor.png"
+
+    def draw(self, surface):
+        surface.fill((0, 100, 255))
+        Window.draw(self, surface)
+
+
+class OldInventoryWindow(Window):
     def __init__(self, font, imageCage, trackmonster):
         Window.__init__(self, imageCage)
         self.scroll = 0
@@ -350,7 +454,7 @@ class InventoryWindow(Window):
                         [255, 255, 255]),
                         [74, ypos])
 
-                    ypos+=65
+                    ypos += 65
             elif self.tab == "arm":
                 ypos += 30
                 surface.blit(self.font.render("Active slots: ", 1, [255, 255, 255]), (74, ypos))
