@@ -166,7 +166,7 @@ class PlayerObject(items.StaticObject):
                     self.say(item.name + " is not a valid piece of armor")
             elif item.slot not in self.equipment:
                 if saystuff:
-                    self.say("A " + self.body.name + " can't wear anything on his " + item.slot)
+                    self.say("A " + str(self.body.name) + " can't wear anything on his " + str(item.slot))
             elif self.equipment[item.slot] is None:
                 slot = item.slot
                 if saystuff:

@@ -143,17 +143,18 @@ def BasicitemFuncMaker(itemCls=items.Item, *extrastatslist):
                             y = element.attrib["y"]
                             itm[element.attrib["name"]] = (int(x), int(y))
                     else:
-                        raise ValueError(i[1], type(i[1]))
+                        raise ValueError("Invalid type for " + i[0] + " " + str(i[1]) + str(type(i[1])))
                     if len(i) == 2:
                         args.append(itm)
                     elif len(i) == 3:
                         kwargs[i[2]] = itm
                         # print "added argument: "+i[2]
-            # except KeyError as ex:
-            #    raise ValueError("cant find attr "+repr(ex)+" in object "+name)
             finally:
                 pass
-            obj = itemCls(*args, **kwargs)
+            try:
+                obj = itemCls(*args, **kwargs)
+            except TypeError as ex:
+                raise TypeError("invalid arguments for " + itemCls.__name__ + ":" + str(args))
             return obj
 
         return internal2

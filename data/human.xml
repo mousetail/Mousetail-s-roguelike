@@ -239,13 +239,39 @@
 			    <tag>ITM_ITEM</tag>
 				<tag>ITM_UTIL</tag>
 			</tags>
-			<class>key</class>
+			<class>
+				key
+			</class>
 		</basedata>
 		<classdata base="identifyer">
 		    <attr name="pname">keys</attr>
 			<attr name="image_name">twisted_key.png</attr>
 			<attr name="fake name">key</attr>
 			<attr name="fake pname">keys</attr>
+		</classdata>
+	</item>
+	<item>
+		<basedata>
+			<name>Iron helmet</name>
+			<frequency>3</frequency>
+			<tags>
+				<tag>ITM_ARMOR</tag>
+				<tag>ITM_ITEM</tag>
+			</tags>
+			<class>
+				armor
+			</class>
+		</basedata>
+		<classdata>
+			<attr name="pname">iron helmets</attr>
+			<attr name="name">iron helmet</attr>
+			<attr name="image_name">ironHelmet.png</attr>
+			<attr name="fake name">helmet</attr>
+			<attr name="fake pname">helmets</attr>
+			<attr name="defence">0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5</attr>
+			<attr name="weight">3</attr>
+			<attr name="range">1</attr>
+			<attr name="slot">Head</attr>
 		</classdata>
 	</item>
 </itemlist>

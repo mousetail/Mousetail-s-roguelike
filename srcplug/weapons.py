@@ -38,14 +38,3 @@ class Weapon(items.Item):
     def aircollision(self, other):
         if hasattr(other, "body"):
             FakeBodyToRepresentFlyingObject(100,self.thrower.body.target,self.thrower,self.name,0.5).attack(other,self,False)
-
-
-
-#@getitembyname.ri("short sword",1,0,99,(ITM_ITEM, ITM_WEAPON))
-def short_sword(position, world, cage):
-    return Weapon(position,cage.lookup("shortsword.png"),cage, world, "sword","swords",5,1)
-#@getitembyname.ri("dagger",5,0,99,(ITM_ITEM, ITM_WEAPON))
-def dagger(position, world, cage):
-    return Weapon(position,cage.lookup("dagger.png"),cage, world, "dagger","daggers",3,0.5)
-
-    

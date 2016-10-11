@@ -68,9 +68,6 @@ class Potion(items.Item):
     def reverse_identify(self, towhat):
         if hasattr(towhat, "identify"):
             towhat.identify(self)
-    #def alt_potion_message(self, obj):
-    #    """called when"""
-#@getitembyname.ri("speed potion", 5, -3, 12, (ITM_ITEM, ITM_POTION))
 class SpeedPotion(Potion):
     def potion_message(self, obj, lessen=1.0):
         if hasattr(obj,"say"):
@@ -83,8 +80,6 @@ class SpeedPotion(Potion):
                 self.world.spawnItem(items.EventScheduler(self.world, 8, obj.say, "the world speeds up around you"))
         
     
-#@getitembyname.ri("healing potion", 1, -3, 12,(ITM_ITEM, ITM_POTION))
-        
 class HealingPotion(Potion):
     def potion_message(self, obj, lessen=1.0):
         if hasattr(obj, "say"):

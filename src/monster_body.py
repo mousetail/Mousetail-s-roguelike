@@ -196,11 +196,7 @@ class HumanBody(CombatOnlyBody):
                 raise IndexError(self.attack_zones[region], damagetype)
             try:
                 if countarmor and self.attack_zones[region][5] and self.mind.equipment[self.attack_zones[region][5]]:
-                    bl = self.mind.equipment[self.attack_zones[region][5]].defence[damagetype]
-
-                    # print "blocked "+str(bl)
-
-                    d *= bl
+                    d = self.mind.equipment[self.attack_zones[region][5]].defend(d, damagetype)
             except ImportError as ex:
                 raise ex
             except KeyError as ex:

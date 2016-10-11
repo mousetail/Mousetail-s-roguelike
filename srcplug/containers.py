@@ -116,16 +116,3 @@ class Container(items.Item):
         return 100
     def getWeight(self):
         return self.weight+sum(i.getWeight() for i in self.inventory)
-#@getitembyname.ri("sack", 5, 0,20,(ITM_ITEM, ITM_CONTAINER))
-#class Sack (Container):
-#    name="sack"
-#    pname="sacks"
-#    weight=2
-    
-#    item_capacity=3
-#    weight_capacity=10
-#    def __init__(self, position, world, cage):
-#        #print "sacked"
-#        Container.__init__(self, position)
-#        self.image=cage.lookup("sack.png")
-#        self.inventory.append(getitembyname.itemRandomizer.fastrandomitem([-1,-1],world, cage, 1, (ITM_ARMOR,)))
