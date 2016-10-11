@@ -43,7 +43,6 @@
 				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
 				<rectangle name="Left hand"><dimentions><left>24</left> <top>54</top> <width>4</width> <height>3</height></dimentions>
 				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
-				
 			</attr>
             <attr name="armor positions">
                 <slot name="Head" x="50" y="10"/>

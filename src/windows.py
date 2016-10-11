@@ -393,12 +393,17 @@ class ScrollingWindow(Window):
                 event.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0]))
             and event.pos[0] > (self.size[0] - 64)):
             size = self.getTotalSize()
-            barsize = self.size[1] * self.size[1] / size
-            self.scrollPos = size * (event.pos[1] - barsize / 2) / (self.size[1] - barsize / 2)
-            if self.scrollPos < 0:
+            if size > self.size[1]:
+                barsize = self.size[1] * self.size[1] / size
+                self.scrollPos = size * (event.pos[1] - barsize / 2) / (self.size[1] - barsize / 2)
+                if self.scrollPos < 0:
+                    self.scrollPos = 0
+                elif self.scrollPos > size - self.size[1] + 10:
+                    self.scrollPos = size - self.size[1] + 10
+            else:
+                print "resetting to 0"
                 self.scrollPos = 0
-            elif size > self.size[1] and self.scrollPos > size - self.size[1]:
-                self.scrollPos = size - self.size[1]
+
             self.dirty = True
 
     def draw(self, surface):
@@ -460,6 +465,7 @@ class EquipmentWindow(ScrollingWindow):
         self.imageCage = imageCage
         self.trackmonster = trackmonster
         self.questionMarkImage = imageCage.getProxy("GUI/EmptySlot.png", False)
+        self.ysize = 0
 
     def getName(self):
         return "Equipment"
@@ -468,21 +474,54 @@ class EquipmentWindow(ScrollingWindow):
         return "Icons/armor.png"
 
     def getTotalSize(self):
-        return 500
+        x = self.ysize
+        for slot in self.trackmonster.equipment.values():
+            if slot:
+                x += slot.getGui().getHeight()
+        return x
 
     def draw(self, surface):
-
         if self.dirty or self.trackmonster.getInvDirty():
             surface.fill((0, 0, 0))
+
+            self.ysize = 0
+
             for slot in self.trackmonster.equipment:
                 position = [self.size[0] * self.trackmonster.body.armor_positions[slot][i] / 100 - 32 for i in
                             xrange(2)]
                 position[1] -= self.scrollPos
-                if (self.trackmonster.equipment[slot]):
+                if self.trackmonster.equipment[slot] is not None:
                     surface.blit(self.trackmonster.equipment[slot].image.toSurf(), position)
                 else:
                     surface.blit(self.questionMarkImage.toSurf(), position)
                 f = self.font.render(slot, 1, (255, 255, 255))
                 surface.blit(f, (position[0] + 32 - f.get_width() / 2, position[1] + 65))
+
+                self.ysize = max(self.ysize, self.scrollPos + position[1] + 65 + f.get_height())
+            ypos = self.ysize
+            for letter, slot in self.trackmonster.equipment_letters.items():
+                item = self.trackmonster.equipment[slot]
+                item.getGui().draw(self.font, surface, ypos - self.scrollPos, self.size[0], self.trackmonster, letter,
+                                   (item,))
+                ypos += item.getGui().getHeight()
+
             self.dirty = True
             ScrollingWindow.draw(self, surface)
+
+    def addEvent(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for slot in self.trackmonster.equipment:
+                position = [self.size[0] * self.trackmonster.body.armor_positions[slot][i] / 100 - 32 for i in
+                            xrange(2)]
+                position[1] -= self.scrollPos
+                if (self.trackmonster.equipment[slot] is not None and (position[0] <= event.pos[0] < position[0] + 64)
+                    and (position[1] <= event.pos[1] < position[1] + 64)):
+                    self.scrollPos = self.ysize
+                    for slot2 in self.trackmonster.equipment:
+                        if slot2 is slot:
+                            break
+                        if self.trackmonster.equipment[slot2] is not None:
+                            self.scrollPos += self.trackmonster.equipment[slot2].getGui().getHeight()
+                    self.dirty = True
+                    break
+        ScrollingWindow.addEvent(self, event)
