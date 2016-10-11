@@ -14,7 +14,8 @@ def monsterMaker(pobj, *args):
     bholder = Holder(None)
     bodyfunc = BasicitemFuncMaker(pobj, (("world", TYPE_VAR_WORLD), ("image_name", TYPE_STRING),
                                          ("name", TYPE_VAR_NAME), ("speed", TYPE_INT),
-                                         ("attack_zones", TYPE_COMBAT_MAP), ("drops", TYPE_ITEM_PROB)), *args)
+                                         ("attack_zones", TYPE_COMBAT_MAP), ("weapon slots", TYPE_TUPLE_STRING),
+                                         ("drops", TYPE_ITEM_PROB), ("armor positions", TYPE_DICT_POSITION)), *args)
     mindfunc = BasicitemFuncMaker(player_input.MonsterObject, (
         ("position", TYPE_VAR_POSITION), (bholder, TYPE_ATTRNAME_AS_HOLDER), ("cage", TYPE_VAR_CAGE),
         ("world", TYPE_VAR_WORLD),
@@ -135,6 +136,12 @@ def BasicitemFuncMaker(itemCls=items.Item, *extrastatslist):
                             else:
                                 itmname = ellement.text
                             itm.append((prob, amount, itmname))
+                    elif i[1] == TYPE_DICT_POSITION:
+                        itm = {}
+                        for element in stats[i[0]].findall("slot"):
+                            x = element.attrib["x"]
+                            y = element.attrib["y"]
+                            itm[element.attrib["name"]] = (int(x), int(y))
                     else:
                         raise ValueError(i[1], type(i[1]))
                     if len(i) == 2:

@@ -453,12 +453,13 @@ class InventoryWindow(ScrollingWindow):
         return "Icons/inventory.png"
 
 
-class EquipmentWindow(Window):
+class EquipmentWindow(ScrollingWindow):
     def __init__(self, font, imageCage, trackmonster):
-        Window.__init__(self, imageCage)
+        ScrollingWindow.__init__(self, imageCage)
         self.font = font
         self.imageCage = imageCage
         self.trackmonster = trackmonster
+        self.questionMarkImage = imageCage.getProxy("GUI/EmptySlot.png", False)
 
     def getName(self):
         return "Equipment"
@@ -466,6 +467,22 @@ class EquipmentWindow(Window):
     def getImageName(self):
         return "Icons/armor.png"
 
+    def getTotalSize(self):
+        return 500
+
     def draw(self, surface):
-        surface.fill((0, 100, 255))
-        Window.draw(self, surface)
+
+        if self.dirty or self.trackmonster.getInvDirty():
+            surface.fill((0, 0, 0))
+            for slot in self.trackmonster.equipment:
+                position = [self.size[0] * self.trackmonster.body.armor_positions[slot][i] / 100 - 32 for i in
+                            xrange(2)]
+                position[1] -= self.scrollPos
+                if (self.trackmonster.equipment[slot]):
+                    surface.blit(self.trackmonster.equipment[slot].image.toSurf(), position)
+                else:
+                    surface.blit(self.questionMarkImage.toSurf(), position)
+                f = self.font.render(slot, 1, (255, 255, 255))
+                surface.blit(f, (position[0] + 32 - f.get_width() / 2, position[1] + 65))
+            self.dirty = True
+            ScrollingWindow.draw(self, surface)

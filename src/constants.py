@@ -85,6 +85,7 @@ TYPE_VAR_POSITION = 11  # |
 TYPE_IMAGE = 12  # |
 TYPE_ATTRNAME_AS_HOLDER = 13  # |
 TYPE_ITEM_PROB = 14  # |
+TYPE_DICT_POSITION = 15
 # ------------------------------+
 
 

@@ -45,6 +45,17 @@
 				<damage><phis>1</phis> <ele>0</ele> <las>0</las> <hea>0</hea> <ice>0</ice> <rad>0</rad> <bio>0</bio> <gas>0</gas></damage><slot>Hands</slot></rectangle>
 				
 			</attr>
+            <attr name="armor positions">
+                <slot name="Head" x="50" y="10"/>
+                <slot name="Body" x="50" y="30"/>
+                <slot name="Legs" x="50" y="50"/>
+                <slot name="Hands" x="75" y="30"/>
+                <slot name="Feet" x="50" y="70"/>
+                <slot name="right hand" x="25" y="30"/>
+            </attr>
+            <attr name="weapon slots">
+                right hand
+            </attr>
 			<attr name="advanced visibility check">True</attr>
 			<attr name="drops">
 			    <itm prob="0.8" amount="1">meat</itm>

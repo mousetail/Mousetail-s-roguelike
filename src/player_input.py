@@ -637,7 +637,6 @@ class PlayerObject(items.StaticObject):
                             self.body.attack(i)
                 if self.world.grid.hasindex(self.position) and (not self.world.grid[old_position] in WALLS):
                     if self.world.grid[old_position] in STAIRS:
-                        print "Is stair"
                         self.moveToLevel(self.position[2] + STAIRS[self.world.grid[old_position]][0],
                                          STAIRS[self.world.grid[old_position]][1])
                     else:
