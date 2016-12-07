@@ -292,7 +292,7 @@ class LogWindow(Window):
     def setSize(self, size):
         Window.setSize(self, size)
         self.numlines = self.size[1] / 18
-        self.wrapper.width = self.numlines
+        self.wrapper.width = self.size[0] / 8
 
     def getName(self):
         return "status"
@@ -300,7 +300,7 @@ class LogWindow(Window):
     def draw(self, surface):
         if self.dirty:
             surface.fill((0, 0, 0))
-            linenum = 0
+            linenum = -1
             for line in self.lines[-self.numlines:]:
                 linenum += 1
                 clr = line[:3]
@@ -321,7 +321,7 @@ class LogWindow(Window):
                     elif clr[0] == "5" or clr[0] == "B":
                         color = [0X2b, 0Xa3, 0Xab]
                 surface.blit(self.font.render(line.strip(), self.data["antialias"], color),
-                             [32, 16 * linenum])
+                             [16, 8 + 16 * linenum])
             Window.draw(self, surface)
 
     def write(self, text):

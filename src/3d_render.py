@@ -47,7 +47,7 @@ class Displayer_3d(object):
         self.screen.fill([0, 0, 0])
         spritesheet = cage.lookup(kwargs["spritesheet"], True)
         greyspritesheet = cage.lookup(kwargs["greyspritesheet"], True)
-        self.font = pygame.font.SysFont('Tahoma', 14)
+        self.font = pygame.font.SysFont('Tahoma', 16)
         tilesize = kwargs["tilesize"]
         self.sprites = splitsprites(spritesheet, tilesize)
         self.greysprites = splitsprites(greyspritesheet, tilesize)
