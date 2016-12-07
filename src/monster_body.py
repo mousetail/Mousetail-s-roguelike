@@ -60,9 +60,9 @@ class CombatOnlyBody(object):
         if hit:
             damage = [((self.getstat("level") + random.random()
                         * self.getstat("level"))), 0, 0, 0, 0, 0, 0, 0]
-            if weapon or self.mind.equipment[self.weapon_slots[0]]:
-                if weapon == None:
-                    sword = self.mind.equipment[self.weapon_slots[0]]
+            if weapon or self.mind.armor.getSlot(self.weapon_slots[0]):
+                if weapon is None:
+                    sword = self.mind.armor.getSlot(self.weapon_slots[0])
                 else:
                     sword = weapon
                 if isinstance(sword.damage, int) or isinstance(sword.damage, float):
@@ -113,17 +113,17 @@ class HumanBody(CombatOnlyBody):
     weapon_slots = ["right hand"]
 
     def drop(self):
-        itms = list(itertools.chain(*self.mind.inventory.values()))
+        itms = []
 
-        for q in self.mind.equipment:
-            if self.mind.equipment[q]:
-                itms.append(self.mind.equipment[q])
-        # print itms
-        for itm in itms:
-            itm.position = self.mind.position[:]
+        for key, values in itertools.chain(self.mind.inventory, self.mind.armor):
+            for item in values:
+                itms.append(item)
 
-        itms.extend(drops_calculator.calculateDrops(self.world, self.mind.cage, self.drops, self.mind.position[:]))
-        self.world.spawnItem(*itms)
+        itms.extend(
+            drops_calculator.calculateDrops(self.world, self.mind.cage, self.drops, self.mind.position[:], False))
+
+        for item in itms:
+            item.move(self.mind.position)
 
     def __init__(self, world, imagename="hero.png", name="human", speed=100, combatMap={}, weaponSlots=(), drops=(),
                  armor_positions={}):
@@ -195,8 +195,9 @@ class HumanBody(CombatOnlyBody):
             except IndexError:
                 raise IndexError(self.attack_zones[region], damagetype)
             try:
-                if countarmor and self.attack_zones[region][5] and self.mind.equipment[self.attack_zones[region][5]]:
-                    d = self.mind.equipment[self.attack_zones[region][5]].defend(d, damagetype)
+                if countarmor and self.attack_zones[region][5] and self.mind.armor.getSlot(self.attack_zones[region][
+                                                                                               5]):
+                    d = self.mind.armor.getSlot(self.attack_zones[region][5]).defend(d, damagetype)
             except ImportError as ex:
                 raise ex
             except KeyError as ex:

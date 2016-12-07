@@ -265,6 +265,13 @@ class World(object):
     def getsolid(self, position):
         return self.grid[position] in constants.WALLS
 
+    def removeByIdentity(self, itm):
+        self.objects.remove(itm)
+
+    def checkRemoveByIdentity(self, item):
+        if not item in self.objects:
+            return "Item not in world"
+
     def getcollisions(self, position):
         objs = []
         for i in self.objects:

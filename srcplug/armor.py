@@ -8,7 +8,6 @@ class Armor(items.Item):
                             **kwargs)
         self.defense = defense
         self.slot = slot
-        print "kwargs: " + str(kwargs)
 
     __isarmor__ = True
 

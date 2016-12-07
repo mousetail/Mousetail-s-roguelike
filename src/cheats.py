@@ -5,26 +5,9 @@ class CheatHandler(object):
     def __init__(self, world, player):
         self.world=world
         self.player=player
-        self.tmpstring=""
-        self.player.say("R}You lousy cheater!")
-        self.player.say("R}>",newline=False)
 
-    def cheatInput(self, event):
-        if event.type==KEYDOWN:
-            if event.key==K_RETURN:
-                self.player.say()
-                self.cheat(self.tmpstring)
-                return "normal", None
-            elif event.key==K_BACKSPACE:
-                self.tmpstring=self.tmpstring[:-1]
-                if len(self.tmpstring)>=0:
-                    self.player.say("\b",newline=False)
-            else:
-                self.tmpstring+=event.unicode
-                self.player.say(event.unicode,newline=False)
-                return self.cheatInput, None
-
-        return self.cheatInput, None
+    def cheatInput(self, action):
+        self.cheat(action["code"])
   
     def cheat(self, string):
         if string == "Doctor Nostra Quakus":

@@ -228,6 +228,9 @@
 			    <itm prob="1" amount="7" type="tag">
 				    <tag>ITM_POTION</tag>
 				</itm>
+				<itm prob="1" amount="1" type="tag">
+					<tag>ITM_UTIL</tag>
+				</itm>
 			</attr>
 		</classdata>
 	</item>

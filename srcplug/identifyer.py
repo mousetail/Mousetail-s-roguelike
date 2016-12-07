@@ -22,23 +22,21 @@ class Identifier(items.Item):
         
         items.Item.__init__(self, *args, **kwargs)
         self.charges=1
-    def use(self):
-        #TODO: make a event sequence to prompt for the item to identify, check the number of uses remaining etc.
-        if self.charges>0:
-            self.owner.say("What would you like to identify?")
-            self.owner.redictInput(self.identify_event)
-    def identify_event(self, event):
-        if event.type==KEYDOWN:
-            
-            itm=self.owner.removebyletter(event.unicode, False)
-            if itm:
-                self.owner.identify(itm[0])
-                self.owner.say("this is a "+itm[0].getName())
-                self.charges-=1
-                self.owner.identify(self)
-                return "normal",None
-                
-        return self.identify_event, None
+
+    def getUseArgs(self):
+        return "what would you like to identify?", USER_TYPE_ITEM, "target", None
+
+    def use(self, **args):
+        assert "target" in args, str(args)
+        itm = args["target"]
+        if itm:
+            self.owner.identify(itm)
+            self.charges -= 1
+            self.owner.identify(self)
+            return "this is a " + itm.getName()
+        else:
+            raise ValueError("itm may not be none")
+
     def getName(self, p=False):
         if not p:
             return self.name+"("+str(self.charges)+" charges)"

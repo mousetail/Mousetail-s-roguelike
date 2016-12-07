@@ -73,9 +73,16 @@ class Command(object):
     def __init__(self, typ, data=None, **kwargs):
         self.typ = typ
         if data:
+            assert isinstance(data, dict)
             self.data = data
         else:
             self.data = kwargs
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
+    def __getitem__(self, key):
+        return self.data[key]
 
 
 class Item(StaticObject):
@@ -115,9 +122,34 @@ class Item(StaticObject):
     def getGui(self):
         return self.guiInterface
 
-    def use(self):
+    def move(self, dest):
+        if self.owner:
+            self.owner.removeByIdentity(self)
+        if isinstance(dest, list) or isinstance(dest, tuple):
+            self.position = tuple(dest)
+            self.world.spawnItem(self)
+            self.owner = self.world
+        else:
+            self.position = (0, 0)
+            dest.addToInventory(self)
+            self.owner = dest
+
+    def checkMove(self, dest):
+        if self.owner:
+            st = self.owner.checkRemoveByIdentity(self)
+            if st:
+                return st
+        if isinstance(dest, list) or isinstance(dest, tuple):
+            return self.world.checkAddToInventory(self)
+        else:
+            return dest.checkAdd(self)
+
+    def checkUse(self, **kwargs):
+        return "You don't know how to use", self
+
+    def use(self, **kwargs):
         """called when trying to use "A" on a item"""
-        self.owner.say("You don't know how to use", self)
+        raise ValueError("you didn't call check")
 
     def say(self, *args, **kwargs):
         """passes on the say event to the owner"""
@@ -214,17 +246,117 @@ class Item(StaticObject):
             return self.fakename
 
 
-class Armor(Item):
-    def __init__(self, position, image, cage, world, name, pname=None, weight=0, slot=None, defence=None, **kwargs):
-        Item.__init__(self, position, image, cage, world, name, pname, weight, **kwargs)
-        if slot:
-            self.slot = slot
-        if defence:
-            self.defence = defence
+class BasicContainer(StaticObject):
+    def __init__(self):
+        self.inventory = {}
 
-    __isarmor__ = True
-    defence = (1,) * 8
-    slot = ""
+    def checkRemove(self, letter, removeItem=True, ammount=0):
+        if len(letter) == 0:
+            return "no text entered"
+        elif letter[0] not in self.inventory:
+            return "You don't have enything in slot " + letter
+        elif len(letter) > 1:
+            itm = self.inventory[letter[0]][0]
+            if (not hasattr(itm, "removeByLetter")):
+                return itm, " is not a container"
+            else:
+                return itm.checkRemove(letter[1:], removeItem, ammount)
+        elif len(self.inventory[letter]) < ammount:
+            return "You don't have " + str(ammount), self.inventory[letter], "s"
+
+    def removeByLetter(self, letter, removeItem=True, ammount=0):
+        """takes a inventory item out of the inventory, then returns a list, containting amount of the specified item
+        if there are less then amount items in a slot, only the amount available is returned"""
+        if letter[0] in self.inventory:
+            if len(letter) > 1:
+                itm = self.inventory[letter[0]][0]
+                if hasattr(itm, "removeByLetter"):
+                    return itm.removeByLetter(letter[1:], ammount)
+            elif ammount == 0:
+                itm = self.inventory[letter]
+                if removeItem:
+                    del self.inventory[letter]
+                self.update_storage_fullness()
+
+                self.update_storage_fullness()
+                return itm
+            else:
+                itm = self.inventory[letter][:ammount]
+                if removeItem:
+                    del self.inventory[letter][:ammount]
+                    if len(self.inventory[letter]) == 0:
+                        del self.inventory[letter]
+                return itm
+                self.update_storage_fullness()
+                self.update_storage_fullness()
+
+    def removeByIdentity(self, itm):
+        """removes a item from the invectory using "is" operator,
+        usefull for having items remove themselves"""
+
+        assert isinstance(itm, Item)
+
+        for i in self.inventory:
+            for j in range(len(self.inventory[i])):
+                if self.inventory[i][j] is itm:
+                    del self.inventory[i][j]
+                    if len(self.inventory[i]) == 0:
+                        del self.inventory[i]
+                    self.update_storage_fullness()
+                    self.invDirty = True
+                    return j
+        return False
+
+    def checkRemoveByIdentity(self, itm):
+        for i in self.inventory.values():
+            if itm in i:
+                return None
+        return "YOu don't have the ", itm
+
+    def checkAdd(self, itm):
+        return None
+
+    def addToInventory(self, itm):
+        """adds a item to the players inventory, correctly stacking similar items,
+        and calculating the weight"""
+        self.invDirty = True
+        if isinstance(itm, list) or isinstance(itm, tuple):
+            for i in itm:
+                self.addToInventory(i)
+        else:
+
+            assert isinstance(itm, Item)
+            itm.position = (0, 0)  # So they are equal in the inventory but not in the map
+
+            if self.checkAdd(itm):
+                return False
+
+            if len(self.inventory) > 0:
+                for i in self.inventory:
+                    if self.inventory[i][0] == itm:
+                        self.inventory[i].append(itm)
+                        itm.owner = self
+                        self.update_storage_fullness()
+                        return True
+                nextletter = getfirstemptyletter(self.inventory)
+            else:
+                nextletter = alphabet[0]
+            self.inventory[nextletter] = [itm]
+            itm.owner = self
+            return True
+        return False
+
+    def iterInventory(self):
+        """a iterator that iterates over the inventory, returning letter, item on each next"""
+        for letter in self.inventory:
+            for item in self.inventory[letter]:
+                yield letter, item
+
+    def update_storage_fullness(self):
+        pass
+
+    def __iter__(self):
+        return self.inventory.iteritems()
 
 
 class Key(Item):

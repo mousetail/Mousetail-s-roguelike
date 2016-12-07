@@ -151,10 +151,9 @@ def BasicitemFuncMaker(itemCls=items.Item, *extrastatslist):
                         # print "added argument: "+i[2]
             finally:
                 pass
-            try:
-                obj = itemCls(*args, **kwargs)
-            except TypeError as ex:
-                raise TypeError("invalid arguments for " + itemCls.__name__ + ":" + str(args))
+            obj = itemCls(*args, **kwargs)
+            # except TypeError as ex:
+            #    raise TypeError("invalid arguments for " + itemCls.__name__ + ":" + str(args))
             return obj
 
         return internal2

@@ -401,9 +401,19 @@ class ScrollingWindow(Window):
                 elif self.scrollPos > size - self.size[1] + 10:
                     self.scrollPos = size - self.size[1] + 10
             else:
-                print "resetting to 0"
                 self.scrollPos = 0
 
+            self.dirty = True
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+            self.scrollPos -= 20
+            if self.scrollPos < 0:
+                self.scrollPos = 0
+            self.dirty = True
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+            self.scrollPos += 20
+            size = self.getTotalSize()
+            if self.scrollPos + self.size[1] > size:
+                self.scrollPos = size - self.size[1]
             self.dirty = True
 
     def draw(self, surface):
@@ -436,11 +446,11 @@ class InventoryWindow(ScrollingWindow):
         if self.dirty or self.trackmonster.getInvDirty():
             surface.fill((0, 0, 0))
             y = 0
-            for item in self.trackmonster.inventory:
-                drawer = self.trackmonster.inventory[item][0].getGui()
+            for letter, value in self.trackmonster.inventory:
+                drawer = value[0].getGui()
                 if y - self.scrollPos < self.size[1] and y - self.scrollPos + drawer.getHeight() > 0:
-                    drawer.draw(self.font, surface, y - self.scrollPos, self.size[0], self.trackmonster, item,
-                                self.trackmonster.inventory[item])
+                    drawer.draw(self.font, surface, y - self.scrollPos, self.size[0], self.trackmonster, letter,
+                                value)
                 y += drawer.getHeight()
             self.dirty = True
             ScrollingWindow.draw(self, surface)
@@ -450,8 +460,8 @@ class InventoryWindow(ScrollingWindow):
 
     def getTotalSize(self):
         s = 0
-        for i in self.trackmonster.inventory:
-            s += self.trackmonster.inventory[i][0].getGui().getHeight()
+        for key, value in self.trackmonster.inventory:
+            s += value[0].getGui().getHeight()
         return s
 
     def getImageName(self):
@@ -475,9 +485,8 @@ class EquipmentWindow(ScrollingWindow):
 
     def getTotalSize(self):
         x = self.ysize
-        for slot in self.trackmonster.equipment.values():
-            if slot:
-                x += slot.getGui().getHeight()
+        for slot, item in self.trackmonster.armor:
+            x += item[0].getGui().getHeight()
         return x
 
     def draw(self, surface):
@@ -486,12 +495,12 @@ class EquipmentWindow(ScrollingWindow):
 
             self.ysize = 0
 
-            for slot in self.trackmonster.equipment:
+            for slot, armor in self.trackmonster.armor.iterSlots():
                 position = [self.size[0] * self.trackmonster.body.armor_positions[slot][i] / 100 - 32 for i in
                             xrange(2)]
                 position[1] -= self.scrollPos
-                if self.trackmonster.equipment[slot] is not None:
-                    surface.blit(self.trackmonster.equipment[slot].image.toSurf(), position)
+                if armor is not None:
+                    surface.blit(armor.image.toSurf(), position)
                 else:
                     surface.blit(self.questionMarkImage.toSurf(), position)
                 f = self.font.render(slot, 1, (255, 255, 255))
@@ -499,23 +508,23 @@ class EquipmentWindow(ScrollingWindow):
 
                 self.ysize = max(self.ysize, self.scrollPos + position[1] + 65 + f.get_height())
             ypos = self.ysize
-            for letter, slot in self.trackmonster.equipment_letters.items():
-                item = self.trackmonster.equipment[slot]
-                item.getGui().draw(self.font, surface, ypos - self.scrollPos, self.size[0], self.trackmonster, letter,
-                                   (item,))
-                ypos += item.getGui().getHeight()
+            for letter, items in self.trackmonster.armor:
+                for item in items:
+                    item.getGui().draw(self.font, surface, ypos - self.scrollPos, self.size[0], self.trackmonster,
+                                       letter, (item,))
+                    ypos += item.getGui().getHeight()
 
             self.dirty = True
             ScrollingWindow.draw(self, surface)
 
     def addEvent(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for slot in self.trackmonster.equipment:
+            for slot, items in self.trackmonster.armor.iterSlots():
                 position = [self.size[0] * self.trackmonster.body.armor_positions[slot][i] / 100 - 32 for i in
                             xrange(2)]
                 position[1] -= self.scrollPos
-                if (self.trackmonster.equipment[slot] is not None and (position[0] <= event.pos[0] < position[0] + 64)
-                    and (position[1] <= event.pos[1] < position[1] + 64)):
+                if (self.trackmonster.armor.getSlot(slot) is not None and (position[0] <= event.pos[0] < position[0] +
+                    64) and (position[1] <= event.pos[1] < position[1] + 64)):
                     self.scrollPos = self.ysize
                     for slot2 in self.trackmonster.equipment:
                         if slot2 is slot:

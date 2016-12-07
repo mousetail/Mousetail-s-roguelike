@@ -42,6 +42,91 @@ class ObjectSpawner(object):
         return 300
 
 
+class ArmorContainer(object):
+    def __init__(self, armorSlots, weaponSlots):
+        self.armor = {i: None for i in itertools.chain(armorSlots, weaponSlots)}
+        self.armor_letters = {}
+        self.armor_slots = armorSlots
+        self.weaponSlots = weaponSlots
+
+    def checkAdd(self, item):
+        if not (hasattr(item, "__isweapon__") or hasattr(item, "__isarmor__")):
+            return item, "is not a weapon or armor"
+        if hasattr(item, "__isweapon__"):
+            ready = True
+            for i in self.weaponSlots:
+                if self.armor[i] is None:
+                    ready = False
+            if ready:
+                return "You don't have a hand free"
+        else:
+            if item.slot not in self.armor:
+                return "You can't wear this type of weapon"
+            elif self.armor[item.slot] is not None:
+                return "You are allready wearing a ", item.slot
+
+    def addToInventory(self, item):
+        slot = ""
+        if hasattr(item, "__isweapon__"):
+            slot = None
+            for i in self.weaponSlots:
+                if self.armor[i] is None:
+                    slot = i
+        elif hasattr(item, "__isarmor__"):
+            if not item.slot:
+                pass
+            elif self.armor[item.slot] is None:
+                slot = item.slot
+            else:
+                slot = None
+        if slot:
+            letter = items.getfirstemptyletter(self.armor_letters)
+            self.armor[slot] = item
+            self.armor_letters[letter] = slot
+            return True
+        raise ValueError("you didn't call check")
+
+    def checkRemove(self, letter, removeItem=True, amount=0):
+        if letter not in self.armor_letters:
+            return "You are not wearing something in slot " + letter
+        elif amount > 1:
+            return "You can't remove multiple items at once"
+
+    def removeByLetter(self, letter, removeItem=True, amount=0):
+        if letter in self.armor_letters:
+            slot = self.armor_letters[letter]
+            itm = self.armor[slot]
+            if removeItem:
+                self.armor[slot] = None
+                del self.armor_letters[letter]
+            return itm
+        return False
+
+    def removeByIdentity(self, item):
+        for i in self.armor_letters:
+            slot = self.armor_letters[i]
+            if self.armor[slot] == item:
+                del self.armor[slot]
+            #       checkRemoveByIdentity
+
+    def checkRemoveByIdentity(self, item):
+        if item not in self.armor.values():
+            return "You are not wearing the ", item, "you are wearing ", self.armor.values()
+
+    def getSlot(self, slot):
+        return self.armor[slot]
+
+    def iterSlots(self):
+        return self.armor.iteritems()
+
+    def __iter__(self):
+        for key, value in self.armor_letters.iteritems():
+            yield key, (self.armor[value],)
+
+
+class PlayerInventory(items.BasicContainer):
+    pass
+
 class PlayerObject(items.StaticObject):
     '''
     A class that represents a player
@@ -79,8 +164,6 @@ class PlayerObject(items.StaticObject):
         """
         note that startinginv is in (prob, ammount, name) format. 
         """
-        self.equipment_letters = {}
-        self.equipment = {}
         self.speed = body.speed
         self.dirty = False
         self.world = world
@@ -92,7 +175,6 @@ class PlayerObject(items.StaticObject):
         self.actions = [Command("move", {"direction": (1, 0)})] * 2
         self.stats = {"level": 1, "accuracy": 1, "constitution": 1, "strength": 1}
         self.xp = self.stats.copy()
-        self.inventory = {}
 
         self.input_mode = "normal"
         self.status_messages = []
@@ -100,7 +182,8 @@ class PlayerObject(items.StaticObject):
         self.body = body
         self.body.mind = self
         self.body.updatemaxweight()
-        self.clearAndRefreshEquipment()
+        self.inventory = PlayerInventory()
+        self.armor = ArmorContainer(self.body.armor_slots, self.body.weapon_slots)
         self.body.recalculateEverything()
 
         self.identified_items = []
@@ -115,16 +198,9 @@ class PlayerObject(items.StaticObject):
             self.position = position
         invitems = drops_calculator.calculateDrops(self.world, self.cage, startinginv, self.position[:], False)
         for i in invitems:
-            self.addtoinventory(i)
+            self.inventory.addToInventory(i)
         self.statsDirty = True
         self.invDirty = True
-
-    def clearAndRefreshEquipment(self):
-        if hasattr(self, "equipment") and hasattr(self, "equipment_letters"):
-            self.clearEquipment()
-
-        self.equipment = {i: None for i in itertools.chain(self.body.armor_slots, self.body.weapon_slots)}
-        self.equipment_letters = {}
 
     def clearEquipment(self, saystuff=False):
         for i in self.equipment_letters.keys():
@@ -140,54 +216,7 @@ class PlayerObject(items.StaticObject):
         self.say("B}'e' to eat, 'a' to apply")
         self.say("B}'h' to repeat this message")
         self.say("B}thanks for playing!")
-        # self.say()
-        # self.say("B}A friend of me named amish has the motto: \"Sometimes things don't add up, but maybe the series diverges\"")
         self.say()
-
-    def wear(self, item, saystuff=True, dostuff=True):
-        """A function used by event handling. Automatically puts a item into a slot, including the weapon slot
-        is saystuff is true, it gives a message when something goes wrong, or when sucsesfull
-        if dostuff is false, the function just validiates wheter it's possible to wear something, though it could still give a message
-        annyway
-        this is used to sepperate the validiation and messages in the even handling system"""
-        slot = ""
-        self.invDirty = True
-        if hasattr(item, "__isweapon__"):
-            slot = None
-            for i in self.body.weapon_slots:
-                if self.equipment[i] == None:
-                    slot = i
-            if not slot:
-                if saystuff:
-                    self.say("you don't have a hand free")
-        elif hasattr(item, "__isarmor__"):
-            if not item.slot:
-                if saystuff:
-                    self.say(item.name + " is not a valid piece of armor")
-            elif item.slot not in self.equipment:
-                if saystuff:
-                    self.say("A " + str(self.body.name) + " can't wear anything on his " + str(item.slot))
-            elif self.equipment[item.slot] is None:
-                slot = item.slot
-                if saystuff:
-                    self.say("you wear the " + item.name)
-            else:
-                slot = None
-                if saystuff:
-                    self.say("you are allready wearing a " + item.slot)
-        if slot:
-            letter = items.getfirstemptyletter(self.equipment_letters)
-            if dostuff:
-                self.equipment[slot] = item
-                self.equipment_letters[letter] = slot
-            self.update_storage_fullness()
-            return True
-        elif slot == "":
-            if saystuff:
-                self.say(item.name + " is not a weapon")
-            return False
-        else:
-            return False
 
     def eat(self, itm, saystuff=False, dostuff=True):
         """
@@ -196,12 +225,11 @@ class PlayerObject(items.StaticObject):
         """
         if hasattr(itm, "eat"):
             if hasattr(itm, "nutrition"):
-                self.fullness += itm.nutrition
-                if dostuff:
-                    msg = itm.eat()
+                msg, nut = itm.eat()
                 if saystuff:
                     self.say(msg)
                 if dostuff:
+                    self.fullness += nut
                     self.add_xp("strength", int((itm.nutrition / 100) ** 0.5))
                 self.update_nutrition(saystuff)
                 return True
@@ -242,31 +270,6 @@ class PlayerObject(items.StaticObject):
             if saystuff and FLAG_HUNGRY_2 not in oldmsg:
                 self.say("all you can think about is food now")
 
-    def addtoinventory(self, itm):
-        """adds a item to the players inventory, correctly stacking similar items,
-        and calculating the weight"""
-        self.invDirty = True
-        if isinstance(itm, list) or isinstance(itm, tuple):
-            for i in itm:
-                self.addtoinventory(i)
-        else:
-            itm.position = (0, 0)  # So they are equal in the inventory but not in the map
-            if len(self.inventory) > 0:
-                for i in self.inventory:
-                    if self.inventory[i][0] == itm:
-                        self.inventory[i].append(itm)
-                        itm.owner = self
-                        self.update_storage_fullness()
-                        return True
-                nextletter = items.getfirstemptyletter(self.inventory)
-                # print nextletter
-            else:
-                nextletter = items.alphabet[0]
-            self.inventory[nextletter] = [itm]
-            itm.owner = self
-            self.update_storage_fullness()
-            return True
-
     def getspeed(self):
         """checks if any status messages affect the speed, and checks the base speed,
         return the value"""
@@ -283,7 +286,6 @@ class PlayerObject(items.StaticObject):
             s -= 35
         if FLAG_FAST in self.status_messages:
             s *= 2
-            # print "YOU ARE FASTER!"
         elif FLAG_FAST_2 in self.status_messages:
             s *= 3
         if s < 1:
@@ -336,9 +338,13 @@ class PlayerObject(items.StaticObject):
             self.body.updatemaxweight()
             self.say("B}You feel strong")
 
-    def say(self, *what, **kwargs):
+    def say(self, *what, **kwargs):  # I have to use kwargs because I cant put newline after regular args
         """send a message to the player, to be displayed in the log
         """
+        if len(what) == 1 and isinstance(what[0], tuple):
+            for i in what[0]:
+                self.say(i)
+            return
         self.dirty = True
         text = ""
         for i in what:
@@ -360,14 +366,11 @@ class PlayerObject(items.StaticObject):
 
     def update(self):
         """handles events"""
-        actions = 0
         if self.events:
             self.old_postion = self.position[:]
             for event in self.events:
                 if not self.input_mode or self.input_mode == "normal":
                     if event.type == pygame.KEYDOWN:
-
-                        actions += 1
                         if event.key == pygame.K_UP:
                             self.actions.append(Command("move", {"direction": (1, 0)}))
                         elif event.key == pygame.K_DOWN:
@@ -377,29 +380,22 @@ class PlayerObject(items.StaticObject):
                         elif event.key == pygame.K_RIGHT:
                             self.actions.append(Command("move", {"direction": (0, 1)}))
                         elif event.key == pygame.K_h:
-                            self.actions.append(Command("help"))
+                            self.welcomeMessage()
                         elif event.key == pygame.K_PERIOD:
                             self.actions.append(Command("wait"))
                         elif event.key == pygame.K_d:
-                            self.say("what would you like to drop?")
-                            actions -= 1
-                            self.input_mode = "drop"
+                            self.startSimpleAction("drop", "What would you like to drop?")
                         elif event.key == pygame.K_w:
-                            self.say("what would you like to wear/wield")
-                            actions -= 1
-                            self.input_mode = "wear"
+                            self.startSimpleAction("wear", "What would you like to wear/wield?")
                         elif event.key == pygame.K_r:
-                            self.say("what would you like to take off?")
-                            actions -= 1
-                            self.input_mode = "remove"
+                            self.startSimpleAction("remove", "What would you like to take of?", USER_TYPE_ARMOR)
                         elif event.key == pygame.K_a:
-                            self.say("what would you like to use?")
-                            actions -= 1
-                            self.input_mode = "use"
+                            self.startSimpleAction("use", "What would you like to apply/use?", func=self.useDelegate)
                         elif event.key == pygame.K_e:
-                            self.say("what would you like to eat?")
-                            actions -= 1
-                            self.input_mode = "eat"
+                            self.startSimpleAction("eat", "what would you like to eat?")
+                        elif event.key == pygame.K_p:
+                            self.startSimpleAction("put", "what would you like to put into something?",
+                                                   func=self.putInDelegate)
                         elif event.key == pygame.K_o:
                             self.actions.append(Command("open"))
                         elif event.unicode == "c":
@@ -408,209 +404,121 @@ class PlayerObject(items.StaticObject):
                             self.actions.append(Command("pickup"))
                         elif event.key == pygame.K_t:
                             self.input_mode = "throw1"
-                            actions -= 1
                             self.say("what would you like to throw?")
                         elif event.unicode == "C":
-                            self.input_mode = cheats.CheatHandler(self.world, self).cheatInput
-
-                        else:
-                            actions -= 1
-                elif self.input_mode == "drop":
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            self.input_mode = "normal"
-                            self.say("whatever")
-                        else:
-                            self.say(event.unicode)
-                            itm = self.removebyletter(event.unicode, True)
-                            if itm:
-                                self.actions.append(Command("drop", item=itm))
-                                self.input_mode = "normal"
-                            else:
-                                self.say("try again: ")
-                        actions += 1
-                elif self.input_mode == "wear":
-                    if event.type == pygame.KEYDOWN:
-                        self.say(event.unicode)
-                        if event.key == pygame.K_RETURN:
-                            self.input_mode = "normal"
-                            self.say("whatever")
-                        else:
-                            itm = self.removebyletter(event.unicode, False, True, 1)
-                            if itm and itm[0] and self.wear(itm[0], True, False):
-                                self.actions.append(Command("wear", letter=event.unicode))
-                                self.input_mode = "normal"
-                            else:
-                                self.say("try again:")
-                elif self.input_mode == "remove":
-                    if event.type == pygame.KEYDOWN:
-                        self.say(event.unicode)
-                        if event.key == pygame.K_RETURN:
-                            self.input_mode = "normal"
-                            self.say("whatever")
-                        else:
-                            itm = self.removearmorbyletter(event.unicode, False, True)
-                            if itm:
-                                self.input_mode = "normal"
-                                self.actions.append(Command("remove", letter=event.unicode))
-                            else:
-                                self.say("try again: ")
-                elif self.input_mode == "throw1":
-                    if event.type == pygame.KEYDOWN:
-                        self.say(event.unicode)
-                        if event.key == pygame.K_RETURN:
-                            self.input_mode = "normal"
-                            self.say("whatever")
-                        else:
-                            itm = self.removebyletter(event.unicode, False, True, 1)
-                            if itm and itm[0] and hasattr(itm[0], "throw") and hasattr(itm[0], "throwEvent"):
-                                self.redictInput(itm[0].throwEvent)
-                            elif not itm or not itm[0]:
-                                self.say("try again:")
-                            else:
-                                self.say("you can't throw a " + itm[0].name)
-                elif self.input_mode == "use":
-                    if event.type == pygame.KEYDOWN:
-                        self.say(event.unicode)
-                        if event.key == pygame.K_RETURN:
-                            self.input_mode = "normal"
-                            self.say("whatever")
-                            if random.randint(0, 100) == 33:
-                                self.say("I am just trying to help...")
-                        else:
-                            itm = self.removebyletter(event.unicode, False, True, 1)
-                            if itm:
-                                self.actions.append(Command("use", item=itm[0]))
-                                self.input_mode = "normal"
-                                actions += 1
-                            else:
-                                self.say("try again: ")
-                elif self.input_mode == "eat":
-                    if event.type == pygame.KEYDOWN:
-                        self.say(event.unicode)
-                        if event.key == pygame.K_RETURN:
-                            self.input_mode = "normal"
-                            self.say("whatever")
-                        else:
-                            itm = self.removebyletter(event.unicode, False, True, 1)
-                            if itm and itm[0]:
-                                self.actions.append(Command("eat", letter=event.unicode))
-                                self.input_mode = "normal"
-                                actions += 1
-                            else:
-                                self.say("try again: ")
-                elif callable(self.input_mode):
-                    if event.type != pygame.KEYDOWN or event.key != pygame.K_ESCAPE:
-                        output = self.input_mode(event)
-                        self.input_mode = output[0]
-                        if output[1]:
-                            self.actions.append(output[1])
-                    else:
-                        self.input_mode = "normal"
+                            self.startSimpleAction("cheat", "R}enter a cheatcode:",
+                                                   USER_TYPE_STRING, key="code",
+                                                   func=cheats.CheatHandler(self.world, self).cheatInput)
                 elif isinstance(self.input_mode, tuple):
-                    raise NotImplementedError("I don't even know what the function requestmoreinfo is supposed to do")
-                    pass
+                    if event.type == pygame.KEYDOWN:
+                        # input mode is list action, type, key, temp, func
+                        action, type, key, temp, func = self.input_mode
+                        done = False
+                        if type == USER_TYPE_INT:
+                            if event.unicode in "1234567890":
+                                temp += event.key
+                            elif event.key == pygame.K_BACKSPACE:
+                                self.say("\b", newline=False)
+                                temp = temp[:-1]
+                            elif event.key == K_RETURN:
+                                action[key] = int(temp)
+                                done = True
+                        elif type == USER_TYPE_STRING:
+                            if len(event.unicode) != 0 and event.unicode not in "\n\b\r\t":
+                                self.say(event.unicode, newline=False)
+                                temp += event.unicode
+                            elif event.key == pygame.K_BACKSPACE:
+                                self.say("\b", newline=False)
+                                temp = temp[:-1]
+                            elif event.key == K_RETURN:
+                                action[key] = temp
+                                done = True
+                        elif type == USER_TYPE_ITEM or type == USER_TYPE_ITEM_STACK:
+                            if len(event.unicode) == 1 and event.unicode in items.alphabet:
+                                temp += event.unicode
+                                if (self.inventory.checkRemove(temp)):
+                                    self.say("r} ", newline=False)
+                                    self.say(self.inventory.checkRemove(temp))
+                                    self.input_mode = "normal"
+                                else:
+                                    itm = self.inventory.removeByLetter(temp, False)
+                                    if not isinstance(itm[0], items.BasicContainer):
+                                        if type == USER_TYPE_ITEM:
+                                            action[key] = itm[0]
+                                        else:
+                                            action[key] = itm
+                                        done = True
+                            elif event.key == pygame.K_BACKSPACE:
+                                temp = temp[:-1]
+                                self.say("\b", newline=False)
+                            elif event.key == pygame.K_RETURN:
+                                error = self.inventory.checkRemove(temp)
+                                if error:
+                                    self.say()
+                                    self.say("r} ", newline=False)
+                                    self.say(error)
+                                    self.input_mode = "normal"
+                                else:
+                                    itm = self.inventory.removeByLetter(temp)
+                                    if type == USER_TYPE_ITEM:
+                                        action[key] = itm[0]
+                                    else:
+                                        action[key] = itm
+                                    done = True
+                        elif type == USER_TYPE_LETTER:
+                            if len(event.unicode) == 1 and event.unicode not in "\n\r\b\t":
+                                action[key] = event.unicode
+                                done = True
+                        elif type == USER_TYPE_ARMOR:
+                            if self.armor.checkRemove(event.unicode):
+                                self.say(self.armor.checkRemove(event.unicode))
+                                self.input_mode = "normal"
+                            else:
+                                action[key] = self.armor.removeByLetter(event.unicode, False)
+                                done = True
+
+                        if done:
+                            if func is None:
+                                self.actions.append(action)
+                                self.input_mode = "normal"
+                            else:
+                                out = func(action)
+                                if out is None:
+                                    self.actions.append(action)
+                                    self.input_mode = "normal"
+                                elif out is False:
+                                    self.input_mode = "normal"  # cancel action
+                                else:
+                                    question, type, key, func = out
+                                    self.say(question)
+                                    self.input_mode = action, type, key, temp, func
+                        elif self.input_mode != "normal":
+                            self.input_mode = action, type, key, temp, func
+                else:
+                    raise ValueError("This method is now invalid: " + str(self.input_mode))
         self.events[:] = []
-        olddirty = self.dirty
+        old_dirty = self.dirty
         self.dirty = False
-        return olddirty
+        return old_dirty
 
-    def removearmorbyletter(self, letter, removeitem=True, saystuff=False, addtoinv=True
-                            ):
-        """takes off armor and place it into the inventory of the player"""
-        self.invDirty = True
-        if letter in self.equipment_letters:
-            slot = self.equipment_letters[letter]
-            itm = self.equipment[slot]
-            if removeitem:
-                self.equipment[slot] = None  # Don't delete the slot, its permanent
-                del self.equipment_letters[letter]
-                if addtoinv:
-                    self.addtoinventory(itm)
-            self.update_storage_fullness()
-            return itm
+    def startSimpleAction(self, actionName, question, type=USER_TYPE_ITEM, key="item", func=None):
+        self.say(question)
+        self.input_mode = Command(actionName), type, key, "", func
+
+    def useDelegate(self, action):
+        if hasattr(action["item"], "getUseArgs"):
+            return action["item"].getUseArgs()
         else:
-            if saystuff:
-                self.say("you are not wielding anything with that name")
-            self.update_storage_fullness()
-            return False
+            return None
 
-    def removebyletter(self, letter, removeitem=True, saystuff=False, ammount=0):
-        """takes a inventory item out of the inventory, then returns a list, containting amount of the specified item
-        if there are less then amount items in a slot, only the amount available is returned"""
-        self.invDirty = True
-        if letter in self.inventory:
-            if ammount == 0:
-                itm = self.inventory[letter]
-                if removeitem:
-                    del self.inventory[letter]
-                self.update_storage_fullness()
-
-                self.update_storage_fullness()
-                return itm
-            else:
-                itm = self.inventory[letter][:ammount]
-                if removeitem:
-                    del self.inventory[letter][:ammount]
-                    if len(self.inventory[letter]) == 0:
-                        del self.inventory[letter]
-                self.update_storage_fullness()
-                self.update_storage_fullness()
-                return itm
-        else:
-            if saystuff:
-                self.say("1}you don't have anything in slot " + letter)
-            self.update_storage_fullness()
-            return False
-
-    def removebyidentity(self, itm):
-        """removes a item from the invectory using "is" operator,
-        usefull for having items remove themselves"""
-        for i in self.inventory:
-            for j in range(len(self.inventory[i])):
-                if self.inventory[i][j] is itm:
-                    del self.inventory[i][j]
-                    if len(self.inventory[i]) == 0:
-                        del self.inventory[i]
-                    self.update_storage_fullness()
-                    return j
-        self.update_storage_fullness()
-        return False
+    def putInDelegate(self, action):
+        return "what would you like to put " + self.getitemname(action["item"]) + " in?", USER_TYPE_ITEM, "dest", None
 
     def drop(self, itm, saystuff=True):
         """another internal action function, puts a specified item on the ground
         itm can be a Item object, or a list or tuple of Item objects"""
-        if isinstance(itm, list) or isinstance(itm, tuple):
-            for i in itm:
-                i.position = self.position[:]
 
-                i.owner = self.world
-            self.world.objects.extend(itm)
-            if len(itm) == 1:
-                if saystuff:
-                    self.say("dropped a " + itm[0].name)
-                return True
-            else:
-                if saystuff:
-                    self.say("dropped " + str(len(itm)) + " " + itm[0].pname)
-                return True
-        else:
-            self.removebyidentity(itm)
-            itm.position = self.position[:]
-            self.world.spawnItem(itm)
-            if saystuff:
-                self.say("dropped a " + itm.name)
-            return True
-
-    def redictInput(self, method):
-        """call the method with input data next update
-        the method should take a pygame.Event object and return
-        a tuple, first item being the next input mode ("normal" is back to normal controll,
-        function is a function under same perimeters)
-        second item is a action that has to be performed, which is a functon to be
-        executed by the world's turn time calculator, this function should return the number of
-        ticks the action should cost (average is 100)"""
-        self.input_mode = method
+        itm.move(self.position)
 
     def AIturn(self):
         """called when the AI has a chance to update"""
@@ -642,53 +550,56 @@ class PlayerObject(items.StaticObject):
                     else:
                         self.position[:] = old_position
                         actions -= 1
-            elif action.typ == "help":
-                self.welcomeMessage()
             elif action.typ == "wait":
                 actions += 100
             elif action.typ == "drop":
                 if "letter" in action.data:
-                    itm = self.removebyletter(action.data["letter"], True, False, 1)
-                    self.drop(itm)
+                    raise ValueError("using letters is outdated")
                 elif "item" in action.data:
-                    self.drop(action.data["item"])
+                    self.drop(action["item"])
                 actions += 100
             elif action.typ == "wear":
                 if "letter" in action.data:
-                    itm = self.removebyletter(action.data["letter"], True, False, 1)
-                    if itm:
-                        self.wear(itm[0], False)
+                    raise ValueError("using letters is outdated")
                 elif "item" in action.data:
-                    self.wear(action.data["item"], False)
-                actions += 100
+                    if self.armor.checkAdd(action["item"]):
+                        print self.armor.checkAdd(action["item"])
+                    else:
+                        self.armor.addToInventory(action["item"])
+                        self.inventory.removeByIdentity(action["item"])
+                        self.say("you wear the ", action["item"])
+                        actions += 100
             elif action.typ == "remove":
                 if "letter" in action.data:
-                    self.removearmorbyletter(action.data["letter"], True, False, True)
-                elif "item" in self.action.data:
-                    raise NotImplementedError("line 523 in player input can't be fullfilled till a remove item by"
-                                              "identity is implemented")
-                actions += 100
+                    raise ValueError("accessing items by letter is outdated")
+                elif "item" in action.data:
+                    if self.armor.checkRemoveByIdentity(action["item"]):
+                        print self.armor.checkRemoveByIdentity(action["item"])
+                    else:
+                        self.armor.removeByIdentity(action["item"])
+                        self.inventory.addToInventory(action["item"])
+                        actions += 100
 
             elif action.typ == "use":
-                if "letter" in action.data:
-                    itm = self.removebyletter(action.data["letter"], False, True, 1)
-                    itm.owner = self
-                    itm[0].use()
-                elif "item" in action.data:
+                if "item" in action.data:
                     itm = action.data["item"]
-                    itm.owner = self
-                    itm.use()
+                    if itm.checkUse(**action.data):
+                        self.say(itm.checkUse(**action.data))
+                    else:
+                        del action.data["item"]
+                        self.say(itm.use(**action.data))
+                else:
+                    raise ValueError("using letters rather than items is outdated")
                 actions += 100
             elif action.typ == "eat":
                 if "letter" in action.data:
-                    itm = self.removebyletter(action.data["letter"], True, False, 1)
-                    if itm and itm[0]:
-                        if not self.eat(itm[0], True):
-                            self.addtoinventory(itm[0])
+                    raise ValueError("using letters rather than items is outdated")
 
                 elif "item" in action.data:
-                    self.removebyidentity(action.data["item"])
-                    self.eat(action.data["item"], False)
+                    itm = action["item"]
+                    if itm:
+                        if not self.eat(itm, True):
+                            self.inventory.addToInventory(itm)
                 actions += 300
             elif action.typ == "open":
                 # This one should work without intervention
@@ -724,25 +635,29 @@ class PlayerObject(items.StaticObject):
                     if (hasattr(i, "position") and i is not self and i.position[0] == self.position[0]
                         and i.position[1] == self.position[1]):
                         if isinstance(i, items.Item):
-                            self.world.objects.remove(i)
-                            self.addtoinventory(i)
-                            f = True
-                            break
+                            l = i.checkMove(self.inventory)
+                            if l:
+                                print l
+                            else:
+                                i.move(self.inventory)
+                                f = True
+                                break
 
                 if not f:
                     self.say("there is nothing to pick up!")
-                actions += 100
+                else:
+                    actions += 100
             elif action.typ == "throw":
 
                 if "letter" in action.data:
-                    itm = self.removebyletter(action.data["letter"], False, True, 1)
-                    self.drop(itm, False)
-                    actions += itm[0].throw(self, action.data["direction"])
+                    raise ValueError("using letters is outdated")
                 elif "item" in action.data:
                     itm = action.data["item"]
                     self.drop(itm, False)
                     actions += itm.throw(self, action.data["direction"])
-
+            elif action.typ == "put":
+                if action["dest"].addtoinventory(action["item"], True):
+                    self.inventory.removeByIdentity(action["item"])
             elif action.typ == "other" or action.typ == "costom":
                 actions += action.data["action"](action)
 
@@ -753,12 +668,6 @@ class PlayerObject(items.StaticObject):
         self.update_nutrition(True)
 
         return actions
-
-    def iterInventory(self):
-        """a iterator that iterates over the inventory, returning letter, item on each next"""
-        for letter in self.inventory:
-            for item in self.inventory[letter]:
-                yield letter, item
 
     def iterArmor(self):
         """a iterator that iterates over the equipment, returning letter, slot, item"""
@@ -823,10 +732,11 @@ class MonsterObject(PlayerObject):
         self.dead = True
 
     def AIturn(self):
-        for letter, item in self.iterInventory():
-            if isinstance(item, items.Armor) and item.slot in self.body.armor_slots and self.equipment[
-                item.slot] == None:
-                self.actions.append(Command("pickup", letter=letter))
+        for letter, lst in self.inventory:
+            for item in lst:
+                if hasattr(item, "__isarmor__") and item.slot in self.body.armor_slots and self.equipment[
+                    item.slot] == None:
+                    self.actions.append(Command("pickup", letter=letter))
 
         adjpositions = tuple(itertools.chain(generator.getadjacent(self.position, self.world.grid_size, 1, 0, 1),
                                              generator.longrangegetadjacent(self.position, self.world.grid_size, 10, 1,
